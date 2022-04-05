@@ -2,6 +2,6 @@
 sort: 3
 ---
 
-# Today I Learn
+# Today I Thought
 
 {% include list.liquid all=true %}

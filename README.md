@@ -1,100 +1,26 @@
-# jekyll-rtd-theme
+# Sungho's Blog
 
-![CI](https://github.com/rundocs/jekyll-rtd-theme/workflows/CI/badge.svg?branch=develop)
-![jsDelivr](https://data.jsdelivr.com/v1/package/gh/rundocs/jekyll-rtd-theme/badge)
+ - 현재 백엔드 개발자로 재직 중 입니다.
+ - 개발하다 잠깐잠깐 든 생각들, 정리되지 않은 글들을 올릴 계획입니다.
 
-Just another documentation theme compatible with GitHub Pages
+## Skills
+ - ![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?&style=flat&logo=java&logoColor=white) 
+![Kotlin](https://img.shields.io/badge/Kotlin-blueviolet?style=flat&logo=kotlin&logoColor=white)
+![NodeJs](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white) 
 
-## What it does?
+ - ![Spring](https://img.shields.io/badge/Spring%20-6DB33F.svg?&style=flat&logo=spring&logoColor=white) 
+![SpringBoot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat&logo=springboot&logoColor=white)
+![express](https://img.shields.io/badge/Express.js-000000?style=flat&logo=express&logoColor=white) 
 
-This theme is inspired by [sphinx-rtd-theme](https://github.com/readthedocs/sphinx_rtd_theme) and refactored with:
+- ![Hibernate](https://img.shields.io/badge/Hibernate-59666C?&style=flat&logo=hibernate&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1.svg?&style=flat&logo=mysql&logoColor=white) 
 
-- [@primer/css](https://github.com/primer/css)
-- [github-pages](https://github.com/github/pages-gem) ([dependency versions](https://pages.github.com/versions/))
+- ![Amazon AWS](https://img.shields.io/badge/Amazon%20AWS-232F3E.svg?&style=flat&logo=amazon-aws&logoColor=white) 
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white) 
 
-## Quick start
 
-```yml
-remote_theme: rundocs/jekyll-rtd-theme
-```
-
-You can [generate](https://github.com/rundocs/starter-slim/generate) with the same files and folders from [rundocs/starter-slim](https://github.com/rundocs/starter-slim/)
-
-## Usage
-
-Documentation that can guide how to create with Github pages, please refer to [rundocs.io](https://rundocs.io) for details
-
-## Features
-
-- Shortcodes (Toasts card, mermaid)
-- Pages Plugins (emoji, gist, avatar, mentions)
-- Auto generate sidebar
-- [Attribute List Definitions](https://kramdown.gettalong.org/syntax.html#attribute-list-definitions) (Primer/css utilities, Font Awesome 4)
-- Service worker (caches)
-- SEO (404, robots.txt, sitemap.xml)
-- Canonical Link (Open Graph, Twitter Card, Schema data)
-
-## Options
-
-| name          | default value        | description       |
-| ------------- | -------------------- | ----------------- |
-| `title`       | repo name            |                   |
-| `description` | repo description     |                   |
-| `url`         | user domain or cname |                   |
-| `baseurl`     | repo name            |                   |
-| `lang`        | `en`                 |                   |
-| `direction`   | `auto`               | `ltr` or `rtl`    |
-| `highlighter` | `rouge`              | Cannot be changed |
-
-```yml
-# folders sort
-readme_index:
-  with_frontmatter: true
-
-meta:
-  key1: value1
-  key2: value2
-  .
-  .
-  .
-
-google:
-  gtag:
-  adsense:
-
-mathjax: # this will prased to json, default: {}
-
-mermaid:
-  custom:     # mermaid link
-  initialize: # this will prased to json, default: {}
-
-scss:   # also _includes/extra/styles.scss
-script: # also _includes/extra/script.js
-
-translate:
-  # shortcodes
-  danger:
-  note:
-  tip:
-  warning:
-  # 404
-  not_found:
-  # copyright
-  revision:
-  # search
-  searching:
-  search:
-  search_docs:
-  search_results:
-  search_results_found: # the "#" in this translate will replaced with results size!
-  search_results_not_found:
-
-plugins:
-  - jemoji
-  - jekyll-avatar
-  - jekyll-mentions
-```
-
-## The license
-
-The theme is available as open source under the terms of the MIT License
+<div align="center">
+ <a href="https://star-ho.github.io/resume/" target="_blank"><img src="http://img.shields.io/badge/-Resume-102e6b?style=flat"/></a>
+ <a href="http://star-ho.github.io" target="_blank"><img src="http://img.shields.io/badge/-Tech%20blog-black?style=flat&logo=github"/></a>
+ <a href="https://www.linkedin.com/in/starho/0" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-1DA1F2?logo=LinkedIn&logoColor=white"/></a>
+</div>
