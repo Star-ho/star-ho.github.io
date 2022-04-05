@@ -20,8 +20,6 @@ sort: 1
 #### 시큐어루트(2019-10~2021-04) 취약점 분석 및 모의해킹
 
 ## __프로젝트__
----
-
 ### 회사 프로젝트 
 ### 정보 관리 서버 데이터 저장소 변경(2022-02)
  - 내부적 자료에 쓰기위한 데이터 저장소를 MySQL에서 aws 엘라스틱 서치로 변경
@@ -150,7 +148,7 @@ https://github.com/Star-ho/modusaleServer
  - https://github.com/Star-ho/modusaleFront
 
 ## __Skills__
----
+
 Programming : Kotlin, Java, nodeJS
 
 FrameWork : Spring
@@ -159,7 +157,7 @@ DataBase : Mysql, H2
 
 
 ## __Certification__
----
+
 정보보안기사(2019-06)
 
 정보처리기사(2018-04)
