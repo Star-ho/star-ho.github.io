@@ -1,14 +1,17 @@
 ---
-title: TodoList
-icon: fas fa-archive
-order: 1
+sort: 2
 ---
+
+# TodoList
+
 
 ## Architechure
 
  - [오브젝트](https://book.naver.com/bookdb/book_detail.nhn?bid=15007773) ✔️✔️
 
  - [DDD](https://book.naver.com/bookdb/book_detail.naver?bid=6680572)✔️
+
+ - 클린아키텍쳐
 
  - [TDD](https://book.naver.com/bookdb/book_detail.naver?bid=7443642)✔️
 
