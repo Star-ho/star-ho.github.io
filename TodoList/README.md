@@ -11,7 +11,7 @@ sort: 2
 
  - [DDD](https://book.naver.com/bookdb/book_detail.naver?bid=6680572)✔️
 
- - 클린아키텍쳐
+ - 클린아키텍쳐 ✔️
 
  - [TDD](https://book.naver.com/bookdb/book_detail.naver?bid=7443642)✔️
 
