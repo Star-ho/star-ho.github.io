@@ -3,8 +3,6 @@ sort: 1
 ---
 
 # Resume
-
-
 <div align="right">
  <a href="http://github.io/Star-ho" target="_blank"><img src="http://img.shields.io/badge/-Github-black?style=flat&logo=github"/></a>
  <a href="https://www.linkedin.com/in/starho/0" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-1DA1F2?logo=LinkedIn&logoColor=white&style=flat"/></a>
@@ -12,7 +10,6 @@ sort: 1
 </div>
 
 # __황성호__
-
 ## __Experience__
 ---
 #### 더파이러츠(2021-10 ~) 백엔드 개발(물류 서비스 담당)
@@ -21,6 +18,18 @@ sort: 1
 
 ## __프로젝트__
 ### 회사 프로젝트 
+
+### 주문 발주서 엑셀 개선(2022-04)
+  - 기존의 주문 발주서의 구조 문제로 발주서를 다운받고 수정하는 일이 빈번하여 주문 발주서 엑셀을 개선함
+  - 엑셀에 해당 점포의 추가 정보를 확인할 수 있는 QR코드 삽입
+사용기술 : Kotlin, Spring, JPA, poi
+
+### 재고관리기능 추가(2022-03~2022-04)
+  - 물류서비스 재고관리 기능 추가
+  - 재고, 창고 엔티티 및 주문과 연결하여 재고 감소 로직 개발
+  - 재고관리 api개발 및 DB 모델링
+사용기술 : Kotlin, Spring, JPA
+
 ### 정보 관리 서버 데이터 저장소 변경(2022-02)
  - 내부적 자료에 쓰기위한 데이터 저장소를 MySQL에서 aws 엘라스틱 서치로 변경
  - 기존의 프로젝트에서는 로그관리를 위해 엘라스틱서치를 사용고 있었음
@@ -88,7 +97,14 @@ sort: 1
 사용기술 : Gradle
 
 ### 개인 프로젝트 
-### 백엔드 코드 리팩토링(2022-01~진행중)
+
+### 클린아키텍처 어플리케이션 개발(2022-04~)
+ - 클린아키텍처 책을 읽고 클린아키텍처 어플리케이션 개발을 시작함
+ - 간단한 주문도메인 예시로 현재 업무에 적용하려면 어느정도 까지 의존성을 줄일지 고민
+ - 이외에 이때까지 공부해봤던 것들을 적용해볼 계획
+사용기술 : kotlin, Spring, JPA, Clean Architecture
+
+### 백엔드 코드 리팩토링(2022-01~2022-04)
  - 기존 코드를 작성할 때 잘 모를때여서 코드를 기능중심으로 작성하였음
  - 재사용 가능한 코드는 재사용 할 수 있게 변경함
  - 코드를 깔끔하게 변경함
