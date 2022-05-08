@@ -20,7 +20,7 @@
 
 
 <div align="center">
- <a href="https://star-ho.github.io/resume/" target="_blank"><img src="http://img.shields.io/badge/-Resume-102e6b?style=flat"/></a>
+ <a href="https://star-ho.github.io/Resume/" target="_blank"><img src="http://img.shields.io/badge/-Resume-102e6b?style=flat"/></a>
  <a href="http://star-ho.github.io" target="_blank"><img src="http://img.shields.io/badge/-Tech%20blog-black?style=flat&logo=github"/></a>
  <a href="https://www.linkedin.com/in/starho/0" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-1DA1F2?logo=LinkedIn&logoColor=white"/></a>
 </div>
