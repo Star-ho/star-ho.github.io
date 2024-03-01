@@ -1,5 +1,5 @@
 ---
-title: Introductiona
+title: Introduction
 type: docs
 ---
 
