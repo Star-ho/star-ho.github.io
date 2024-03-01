@@ -301,3 +301,6 @@ C
 public/svg/edit.svg,1/9/19cf02cb418a1f5dd237be264dff38bda2b4b4bb
 H
 public/svg/translate.svg,2/9/2968829898c8a9ee466397fa25c1f2ff24f00b0a
+:
+
+.gitIgnore,a/5/a5b5bb8eb2cc429578273e28a0238787a8f404a4
