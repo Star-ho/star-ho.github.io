@@ -1,0 +1,8 @@
+{{ if ne .File nil }}
+    {{ if ne .File.BaseFileName nil }}
+        {{ if ne .File.BaseFileName "_index" }}
+            {{ $title := .File.BaseFileName | humanize | title }}
+            <h1>{{ $title }}</h1>
+        {{ end }}
+    {{ end }}
+{{ end }}
