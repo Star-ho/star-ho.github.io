@@ -1,7 +1,7 @@
 # hugo server --minify --themesDir ../.. --baseURL=http://0.0.0.0:1313/theme/hugo-book/
 
-baseURL = 'https://example.com/'
-title = 'Hugo Book'
+baseURL = 'https://star-ho.github.io'
+title = "Sungho's Blog"
 theme = 'hugo-book'
 
 # Book configuration
