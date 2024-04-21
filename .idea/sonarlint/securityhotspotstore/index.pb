@@ -457,3 +457,7 @@ y
 Icontent/post/3-Resource/Database/Covering Indexes(커버링 인덱스).md,4/1/41efd04f0ed8717e2de6fb101081c336a162a4a1
 _
 /content/post/3-Resource/Database/Cardinality.md,8/0/802c80d5e70f170962667231b50182d30b406c1f
+N
+assets/icon/brand-linkedin.svg,4/3/43b7ee32343070c311f2467711e07701ad4f7def
+O
+assets/icons/brand-linkedin.svg,a/3/a33fa05ac1dc7edbc4c24b96d7c77923ffe8f953
