@@ -1,6 +1,6 @@
 ---
 date: 2024-04-30 22:35:11
-updatedAt: 2024-05-04 20:52:27+4060
+updatedAt: 2024-05-04 22:51:25
 tags:
   - hugo_blog
   - MySQL
@@ -8,7 +8,7 @@ tags:
 categories:
   - Database
 title: Mysql Explain Plan - 1
-lastmod: 2024-05-04T11:52:27.406Z
+lastmod: 2024-05-04T13:51:25.094Z
 ---
 ## 개요
 

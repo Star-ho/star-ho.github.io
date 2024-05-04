@@ -1,6 +1,6 @@
 ---
 date: 2024-05-03 23:34:03
-updatedAt: 2024-05-04 20:51:47+9900
+updatedAt: 2024-05-04 22:51:23
 tags:
   - MySQL
   - Explain-Plan
@@ -8,7 +8,7 @@ tags:
 categories:
   - Database
 title: Mysql Explain Plan(조인타입) - 2
-lastmod: 2024-05-04T11:51:47.990Z
+lastmod: 2024-05-04T13:51:23.979Z
 ---
 ## 조인타입
 

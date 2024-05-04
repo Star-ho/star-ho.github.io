@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : update">
-      <change afterPath="$PROJECT_DIR$/assets/icons/brand-linkedin.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/img/avatar.jpeg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/favicon/avatar.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codestream.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codestream.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/img/avatar.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/img/avatar.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/_default/menu.toml" beforeDir="false" afterPath="$PROJECT_DIR$/config/_default/menu.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/_default/params.toml" beforeDir="false" afterPath="$PROJECT_DIR$/config/_default/params.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/favicon.png" beforeDir="false" afterPath="$PROJECT_DIR$/static/favicon.png" afterDir="false" />
-    </list>
+    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : add theme" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +13,7 @@
   <component name="GOROOT" url="file:///opt/homebrew/Cellar/go@1.18/1.18.9/libexec" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -46,26 +35,27 @@
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="2fOITa0oXF0FSvOsnX6Msg6bqGP" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
-    "git-widget-placeholder": "master",
-    "go.import.settings.migrated": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/sungho/develop/star-ho.github.io/static",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "editor.preferences.tabs"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/sungho/develop/star-ho.github.io/static&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.tabs&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/static" />
@@ -116,7 +106,39 @@
       <option name="project" value="LOCAL" />
       <updated>1713692355806</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fix : add theme">
+      <option name="closed" value="true" />
+      <created>1714826379989</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1714826379989</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix : add theme">
+      <option name="closed" value="true" />
+      <created>1714826534335</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1714826534335</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fix : add theme">
+      <option name="closed" value="true" />
+      <created>1714827140087</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1714827140087</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fix : add theme">
+      <option name="closed" value="true" />
+      <created>1714827279531</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1714827279531</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -133,7 +155,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix : site config" />
     <MESSAGE value="fix : update" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix : update" />
+    <MESSAGE value="fix : add ga" />
+    <MESSAGE value="fix : add ga" />
+    <MESSAGE value="fix : add theme" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix : add theme" />
   </component>
   <component name="VgoProject">
     <integration-enabled>false</integration-enabled>
