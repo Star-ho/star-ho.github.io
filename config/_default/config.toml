@@ -3,6 +3,7 @@ baseurl = "https://sungho94.me"
 languageCode = "ko-or"
 paginate = 5
 title = "Sungho's Dev BLog"
+googleAnalytics = "GTM-PK22FB5P"
 
 # Theme i18n support
 # Available values: en, fr, id, ja, ko, pt-br, zh-cn, zh-tw, es, de, nl, it, th, el, uk, ar
