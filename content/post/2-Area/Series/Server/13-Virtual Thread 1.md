@@ -1,13 +1,13 @@
 ---
 date: 2024-03-31T22:41:00
-updatedAt: 2024-04-21 18:32:05+2150
+updatedAt: 2024-05-06 23:35:58
 tags:
   - Server-History
   - hugo_blog
   - virtual-thread
 categories: Server-History
-title: 13-Virtual Thread
-lastmod: 2024-04-21T09:32:10.689Z
+title: 13-Virtual Thread 1
+lastmod: 2024-05-06T14:35:58.047Z
 ---
 ## Platform Thread
 
@@ -27,13 +27,6 @@ lastmod: 2024-04-21T09:32:10.689Z
   * Carrier Thread가 없는 Virtual Thread는 동작중이지 않음
 * 쓰레드 관리를 JVM에서 함
   * 컨텍스트 스위칭 처리를 OS단이 아닌 JVM내에서 처리함
-
-> 버추얼 쓰레드가 블럭킹 되면
->
-> * 해당하는 코드 찾기\
->   버추얼 쓰레드 스케줄링이\
->   기존 쓰레드 언마운트하고\
->   다른 캐리어 쓰레드로 연결해줌
 
 ## 비교
 
