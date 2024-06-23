@@ -1,6 +1,6 @@
 ---
 date: 2024-05-22 22:43:24
-updatedAt: 2024-05-24 16:29:38
+updatedAt: 2024-06-23 21:05:06
 tags:
   - InnoDB
   - InnoDB-File-Structure
@@ -8,7 +8,7 @@ tags:
 categories:
   - Database
 title: 5-physical structure of records in InnoDB
-lastmod: 2024-05-24T07:29:38.907Z
+lastmod: 2024-06-23T12:05:06.497Z
 ---
 ## Record
 
@@ -24,7 +24,7 @@ lastmod: 2024-05-24T07:29:38.907Z
 
 ### The record header
 
-![center](Pasted%20image%2020240524152545.png#center)
+![center](/image/real-resource-image/Pasted%20image%2020240524152545.png)
 
 * Next Record offset
   * 현재 레코드에서 페이지 내 다음 레코드의 시작점까지의 상대적 오프셋
@@ -60,7 +60,7 @@ lastmod: 2024-05-24T07:29:38.907Z
 
 ### Clustered indexes
 
-![center](Pasted%20image%2020240524153758.png#center)
+![center](/image/real-resource-image/Pasted%20image%2020240524153758.png)
 
 * Cluster Key Fields
   * 클러스 키 필드는 문자 그대로 함께 연결됨
@@ -73,7 +73,7 @@ lastmod: 2024-05-24T07:29:38.907Z
 * Non-Key Fields
   * 기본키가 아닌 실제 행데이터가 단일 바이트 스트림으로 연결되어 있음
 
-![center](Pasted%20image%2020240524160646.png#center)
+![center](/image/real-resource-image/Pasted%20image%2020240524160646.png)
 
 * non-leaf 페이지의 레코드 포맷임
 * non-leaf page는 MVCC가 아니기에, Transaction ID와 Roll Pointer filed는 없음
@@ -86,12 +86,12 @@ lastmod: 2024-05-24T07:29:38.907Z
 * Secondary Index와 clustered key사이에 겹치는 필드가 있는 경우, Secondary Index레코드에 저장된 clustered key에서 겹치는 필드가 제거됨
 * 예를들어, 테이블에 primary key(a,b,c)와 secondary Index(a,d)가 있는경우, 인덱스 내의 secondary key는 (a,d)가 되지만, PKV에는 (b,c)만 포함됨
 
-![center](Pasted%20image%2020240524161849.png#center)
+![center](/image/real-resource-image/Pasted%20image%2020240524161849.png)
 
 * sendary key fields는 clusterd key와 마찬가지로 단일 바이트 스트림으로 연결됨
 * clustered key 필드는 정확한 동일한 방식으로 함께 연결되어 PKV를 만듬
 
-![center](Pasted%20image%2020240524162016.png#center)
+![center](/image/real-resource-image/Pasted%20image%2020240524162016.png)
 
 * Secondary index의 non-leaf page는 PKV가 레코드에 포함되며, 이는 레코드 값이 아닌, 레코드 키의 일부로 간주됨
 * Secondary index는 고유하지 않을 수 있지만, 페이지 내의 각 레코드는 unique 식별자가 필요함
