@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Infrastructure on Sungho's Dev BLog</title><link>https://sungho94.me/tags/infrastructure/</link><description>Recent content in Infrastructure on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-or</language><lastBuildDate>Tue, 03 Oct 2023 23:19:15 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/infrastructure/index.xml" rel="self" type="application/rss+xml"/><item><title>OLTP, OLAP, DW, DL</title><link>https://sungho94.me/p/oltp-olap-dw-dl/</link><pubDate>Tue, 03 Oct 2023 23:19:15 +0000</pubDate><guid>https://sungho94.me/p/oltp-olap-dw-dl/</guid><description>&lt;p>OLTP(Online Transaction Processing)&lt;/p>
+&lt;ul>
+&lt;li>실시간 transaction처리&lt;/li>
+&lt;/ul>
+&lt;p>OLAP(Online Analytical Processing)&lt;/p>
+&lt;ul>
+&lt;li>복잡한 분석처리&lt;/li>
+&lt;/ul>
+&lt;p>DW(Data Warehouse)&lt;/p>
+&lt;ul>
+&lt;li>데이터를 효율적으로 저장, 관리 및 분석하기 위한 중앙 집중식 데이터 저장소&lt;/li>
+&lt;li>원시데이터를 처리하여 저장&lt;/li>
+&lt;/ul>
+&lt;p>ETL&lt;/p>
+&lt;ul>
+&lt;li>데이터 웨어하우스(DW)의 데이터 추출(Extract), 변환(Transform) 및 로드(Load) 프로세스&lt;/li>
+&lt;/ul>
+&lt;p>DL(Data Lake)&lt;/p>
+&lt;ul>
+&lt;li>다양한 종류의 데이터를 대규모로 저장하는 저장소&lt;/li>
+&lt;li>원시데이터를 저장&lt;/li>
+&lt;/ul>
+&lt;p>#Concept&lt;/p></description></item><item><title>Split brain</title><link>https://sungho94.me/p/split-brain/</link><pubDate>Thu, 28 Sep 2023 18:01:16 +0000</pubDate><guid>https://sungho94.me/p/split-brain/</guid><description>&lt;p>마스터노드가 1개라면, 마스터 노드에 장애가 발생하였을때 클러스터 전체가 동작하지 않는다는 문제가 있다.&lt;/p>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020230928180134.png"
+loading="lazy"
+alt="Pasted image 20230928180134"
+>&lt;br>
+그 이유는 위와 같이 어떠한 장애로 인해 클러스터의 노드가 3개, 2개씩 분리가 되었을 때 각각의 집합에서 서비스를 제공하고, 이후에 장애가 해결된 이후 다시 하나의 클러스터로 만들때 데이터 정합성에 문제가 생기고 데이터 무결성이 유지될 수 없다.&lt;br>
+위 상황을 split brain이라고 한다.&lt;/p>
+&lt;p>split brain을 해결하는 방법에는 최소 투표 개수를 지정하여, 최소 투표 개수 이상을 받은 후보가 마스터가 되게하는 방법, 특정 id이상의 마스터 후보만 마스터로 선출하는 방법 등이 있다&lt;/p></description></item></channel></rss>

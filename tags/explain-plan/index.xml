@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Explain-Plan on Sungho's Dev BLog</title><link>https://sungho94.me/tags/explain-plan/</link><description>Recent content in Explain-Plan on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-or</language><lastBuildDate>Fri, 03 May 2024 23:35:47 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/explain-plan/index.xml" rel="self" type="application/rss+xml"/><item><title>Mysql Explain Plan(Extra Information) - 3</title><link>https://sungho94.me/p/mysql-explain-planextra-information-3/</link><pubDate>Fri, 03 May 2024 23:35:47 +0000</pubDate><guid>https://sungho94.me/p/mysql-explain-planextra-information-3/</guid><description>&lt;ul>
+&lt;li>Extra 열에는 Mysql에서 쿼리를 resolve하기 위한 추가적인 정보가 들어감&lt;/li>
+&lt;li>여기서는 추가적인 정보 중 유용하다고 생각되는 정보를 정리할 예정&lt;/li>
+&lt;li>전체 정보는 다음 [링크]를 참고할것&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-file-sort">Using file sort
+&lt;/h2>&lt;ul>
+&lt;li>정렬된 순서로 행을 찾기 위해 추가적인 작업이 필요하다는 것을 의미함&lt;/li>
+&lt;li>정렬은 조인 유형에 따라 모든 행을 살펴보고, Where 절과 일치하는 모든 행에 대해 정렬키와 포인터를 저장하는 방식으로 수행됨
+&lt;ul>
+&lt;li>이후 키가 정렬되고 정렬된 순서대로 행을 검색함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>부하가 많이 걸리는 부분으로 개선이 필요함&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-index">Using index
+&lt;/h2>&lt;ul>
+&lt;li>커버링 인덱스가 사용되었음을 의미함&lt;/li>
+&lt;li>실제 테이블데이터를 읽지 않고, 인덱스만 조회함&lt;/li>
+&lt;li>쿼리가 하나의 인덱스에서 조회에 필요한 모든 데이터를 가지고 있을경우 사용됨&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-index-condition">Using index condition
+&lt;/h2>&lt;ul>
+&lt;li>인덱스를 먼저 읽은 후 필요할 경우 테이블 데이터를 읽음&lt;/li>
+&lt;li>테이블 데이터를 필요할때 까지 읽는것을 미룸&lt;/li>
+&lt;li>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/index-condition-pushdown-optimization.html" target="_blank" rel="noopener"
+>링크&lt;/a>참고&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-index-for-group-by">Using index for group-by
+&lt;/h2>&lt;ul>
+&lt;li>Using index와 유사하게, 실제 테이블데이터를 읽지않고 인덱스에서 group by 또는 distinct에 필요한 모든 열을 찾았음을 의미&lt;/li>
+&lt;li>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/group-by-optimization.html" target="_blank" rel="noopener"
+>그룹바이 최적화&lt;/a>참고&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-join-buffer-block-nested-loopusing-join-buffer-batched-key-accessusing-join-buffer-hash-join">Using join buffer (Block Nested Loop), Using join buffer (Batched Key Access), Using join buffer (hash join) 
+&lt;/h2>&lt;ul>
+&lt;li>이전 조인 테이블을 버퍼에서 부분적으로 읽은 후 버퍼데이터와 해당 테이블의 조인을 실행함&lt;/li>
+&lt;li>각 buffer는 괄호안의 알고리즘을 사용함&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-temporary">Using temporary
+&lt;/h2>&lt;ul>
+&lt;li>해당 쿼리를 수행하기 위해서 임시 테이블이 사용됨을 의미&lt;/li>
+&lt;li>주로 GROUP by나 order by를 사용하는 쿼리에서 보여짐&lt;/li>
+&lt;/ul>
+&lt;h2 id="using-where">Using where
+&lt;/h2>&lt;ul>
+&lt;li>where절을 사용하여 행을 제한한것을 의미함&lt;/li>
+&lt;li>모든 행을 가져오는 경우가 아니라면, using where이 사용되지 않으면서 join type이 ALL이나 index이면 쿼리에 문제가 있는 것일 수 있음&lt;/li>
+&lt;/ul>
+&lt;h4 id="using-index-for-skip-scan">&lt;strong>Using index for skip scan&lt;/strong>
+&lt;/h4>&lt;h4 id="125-using-join-bufferblock-nested-loop-hash-join">&lt;strong>12.5 Using join buffer(Block Nested Loop, hash join)&lt;/strong>
+&lt;/h4>&lt;h4 id="using-where-1">&lt;strong>Using where&lt;/strong>
+&lt;/h4></description></item><item><title>Mysql Explain Plan(조인타입) - 2</title><link>https://sungho94.me/p/mysql-explain-plan%EC%A1%B0%EC%9D%B8%ED%83%80%EC%9E%85-2/</link><pubDate>Fri, 03 May 2024 23:34:03 +0000</pubDate><guid>https://sungho94.me/p/mysql-explain-plan%EC%A1%B0%EC%9D%B8%ED%83%80%EC%9E%85-2/</guid><description>&lt;h2 id="조인타입">조인타입
+&lt;/h2>&lt;p>먼저에 나올수록 성능이 좋음&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>system&lt;/p>
+&lt;ul>
+&lt;li>테이블이 하나의 row만 가지고 있을때 표시됨&lt;/li>
+&lt;li>const join타입의 특별한 케이스임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>const&lt;/p>
+&lt;ul>
+&lt;li>쿼리시작시 결과가 오직 하나일때 표시됨&lt;/li>
+&lt;li>결과가 하나의 row일 경우, 컬럼의 값은 옵티마이저에 의해 상수로 처리됨&lt;/li>
+&lt;li>const 테이블은 오직 한번만 읽기에 매우 빠름&lt;/li>
+&lt;li>기본키 또는 UNIQUE 인덱스의 모든 부분을 상수값과 비교될때 표시됨&lt;/li>
+&lt;li>예제 쿼리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_tbl_name_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_primary_key_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_tbl_name_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_primary_key_part1_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">AND&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_primary_key_part2_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>eq_ref
+&lt;ul>
+&lt;li>const와 system을 제외하고는 가장 최상의 join&lt;/li>
+&lt;li>이전 테이블에서 가져온 행 조합마다 해당 테이블에서 정확히 한 행을 읽음&lt;/li>
+&lt;li>인덱스의 모든 부분이 join에 사용되며, 인덱스가 기본키 또는 유니크키+not null조합이면서 &lt;code>=&lt;/code>를 사용하여 비교될때 사용됨&lt;/li>
+&lt;li>비교하는 값은 상수이거나, 이전에 읽은 테이블의 컬럼 사용&lt;/li>
+&lt;li>예제쿼리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-SQL" data-lang="SQL">&lt;span class="line">&lt;span class="cl">&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_key_column_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_column_&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_key_column_part1_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_column_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">AND&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_key_column_part2_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>ref
+&lt;ul>
+&lt;li>이전 테이블에 가져온 행 조합마다일치하는 모든 인덱스를 읽음&lt;/li>
+&lt;li>키의 접두사만 읽거나, 키가 기본키나 유니크키가 아닐 경우 사용됨
+&lt;ul>
+&lt;li>정확히 하나의 row를 반환하지 않는 경유를 의미&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>키에 해당하는 행이 적은경우, 충분히 좋은 join 방법임&lt;/li>
+&lt;li>&lt;code>=&lt;/code>이거나 &lt;code>&amp;lt;=&amp;gt;&lt;/code>일때 사용됨&lt;/li>
+&lt;li>예제쿼리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-SQL" data-lang="SQL">&lt;span class="line">&lt;span class="cl">&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_key_column_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">_expr_&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_key_column_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_column_&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_key_column_part1_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">_other_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_column_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">AND&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">_key_column_part2_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>
+&lt;p>fulltext&lt;/p>
+&lt;ul>
+&lt;li>FULLTEXT인덱스를 사용할때 사용됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>ref_or_null&lt;/p>
+&lt;ul>
+&lt;li>ref와 유사하지만, null을 포함하는 행의 질의를 할때 사용됨&lt;/li>
+&lt;li>subquery를 처리할때 자주 표시됨&lt;/li>
+&lt;li>예제쿼리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-SQL" data-lang="SQL">&lt;span class="line">&lt;span class="cl">&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_ref_table_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_key_column_&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">_expr_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">OR&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">_key_column_&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">IS&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">NULL&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>
+&lt;p>index_merge&lt;/p>
+&lt;ul>
+&lt;li>인덱스 병합 최적화일때 사용됨&lt;/li>
+&lt;li>이 경우 Explain의 key column에는 사용된 인덱스 목록이 포함되며, key_len에는 가장 긴 인덱스의 키 목록이 표함됨&lt;/li>
+&lt;li>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/index-merge-optimization.html" target="_blank" rel="noopener"
+>링크&lt;/a>참고&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>unique_subquery&lt;/p>
+&lt;ul>
+&lt;li>IN절 내의 eq_ref 서브쿼리의를 대체함&lt;/li>
+&lt;li>효율성을 높이기 위해 서브쿼리를 대체하여 인덱스만 조회함&lt;/li>
+&lt;li>예제쿼리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="n">value&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">IN&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">primary_key&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">single_table&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">some_expr&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>index_subquery
+&lt;ul>
+&lt;li>unique_subquery와 유사하지만, non-unique 서브쿼리일때 사용됨&lt;/li>
+&lt;li>예제쿼리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="n">value&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">IN&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key_column&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">single_table&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">some_expr&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>range
+&lt;ul>
+&lt;li>인덱스로 범위질의를 사용시 사용됨&lt;/li>
+&lt;li> =, &amp;lt;&amp;gt;, &amp;gt;, &amp;gt;=, &amp;lt;, &amp;lt;=, IS NULL, &amp;lt;=&amp;gt;, BETWEEN, LIKE, IN() 연산자를 사용하여 상수 값과 비교할때 나타남&lt;/li>
+&lt;li>key_len에는 사용된 키 중 가장 긴키의 길이를 표시함&lt;/li>
+&lt;li>예제쿼리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">tbl_name&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key_column&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">tbl_name&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key_column&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">BETWEEN&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">and&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">20&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">tbl_name&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key_column&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">IN&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="mi">20&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="mi">30&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">SELECT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">FROM&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">tbl_name&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">WHERE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key_part1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">AND&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key_part2&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">IN&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="mi">20&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="mi">30&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">```&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">index&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">트리가&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">스캔되는&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">것을&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">제외하면&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ALL과&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">동일함&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">아래&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">두가지&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">경우에&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">나타남&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">쿼리가&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">커버링&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스이고&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">테이블에서&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">필요한&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">모든&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">데이터를&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스에서&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">가져올&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">수&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">있는&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">경우&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">트리만&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">스캔함&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Extra&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">column에&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">Using&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Index라고&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">나타남&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">index&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">Only&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">스캔은&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스만&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">스캔하므로&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">모든&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">테이블&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">데이터를&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">스캔하는&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ALL보다&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">항상&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">빠름&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스를&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">사용하여&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">모든&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">테이블&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">데이터를&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">순서대로&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">접근하는&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">경우&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Extra&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">column에&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">Using&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Index라고&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">나타나지&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">않음&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">쿼리가&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">단일&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">인덱스의&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">일부&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">열만&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">사용하는&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">경우&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">이&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">조인&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">유형이&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">나타남&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">ALL&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">이전의&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">모든&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">테이블&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">행&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">조합마다&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">테이블&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">전체&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">테이블을&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">스캔함&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">거의&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">모든&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">경우&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">좋지않음&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">index를&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">추가하여&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">피할&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">수&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="err">있음&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>Mysql Explain Plan - 1</title><link>https://sungho94.me/p/mysql-explain-plan-1/</link><pubDate>Tue, 30 Apr 2024 22:35:11 +0000</pubDate><guid>https://sungho94.me/p/mysql-explain-plan-1/</guid><description>&lt;h2 id="개요">개요
+&lt;/h2>&lt;ul>
+&lt;li>Explain 문은 Mysql이 어떻게 statements를 실행할것인가에 대한 정보를 제공
+&lt;ul>
+&lt;li>select, delete, insert, replace, update문에 적용 가능&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>출력에 테이블이 나열되는 순서는, Mysql이 statements를 처리하는 동안 테이블을 읽는 순서임
+&lt;ul>
+&lt;li>첫번째 테이블에서 행을 읽고, 두번째테이블에서 일치하는 행을 찾고, 세번째에서 또 찾는 방식임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>모든 테이블이 처리되면 Mysql은 선택한 열을 출력하고, 더 많은 행을 찾기 찾을 때 까지 테이블 목록을 역추적함&lt;/li>
+&lt;/ul>
+&lt;h2 id="explain-output-columns">Explain Output Columns
+&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Column&lt;/th>
+&lt;th>JSON Name&lt;/th>
+&lt;th>Meaning&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>id&lt;/td>
+&lt;td>select_id&lt;/td>
+&lt;td>Select 식별자&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>select_type&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>Select Type&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>table&lt;/td>
+&lt;td>table_name&lt;/td>
+&lt;td>결과 행을 가져오는 테이블&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>partitions&lt;/td>
+&lt;td>partitions&lt;/td>
+&lt;td>매칭되는 파티션&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>type&lt;/td>
+&lt;td>access_type&lt;/td>
+&lt;td>join 유형&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>possible_keys&lt;/td>
+&lt;td>possible_keys&lt;/td>
+&lt;td>선택될 수 있는 인덱스&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>key&lt;/td>
+&lt;td>key&lt;/td>
+&lt;td>실제로 선택된 인덱스&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>key_len&lt;/td>
+&lt;td>key_length&lt;/td>
+&lt;td>선택된 키의 길이&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>ref&lt;/td>
+&lt;td>ref&lt;/td>
+&lt;td>인덱스와 비교한 열&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>rows&lt;/td>
+&lt;td>rows&lt;/td>
+&lt;td>예상되는 행의 추정치&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>filtered&lt;/td>
+&lt;td>filtered&lt;/td>
+&lt;td>테이블 조건에 따라 필터링된 행의 비율&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Extra&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>추가정보&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="id">id
+&lt;/h2>&lt;ul>
+&lt;li>Select의 식별자로, 쿼리 내 Select의 일련 번호&lt;/li>
+&lt;li>다른행 의 유니온 결과를 참조하는 경우 Null일수 있음
+&lt;ul>
+&lt;li>이 경우 table Column은 &amp;lt;union M,N&amp;gt; 으로 나타남&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="select_type">select_type
+&lt;/h2>&lt;ul>
+&lt;li>Select의 유형으로 다음 표에 나타나는 것중 하나가 들어감&lt;/li>
+&lt;/ul>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>select_type&lt;/th>
+&lt;th>JSON Name&lt;/th>
+&lt;th>Meaning&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>SIMPLE&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>서브쿼리나 Union을 사용하지 않은 간단한 Select&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>PRIMARY&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>가장 바깥쪽의 SELECT&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>UNION&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>UNION으로 결합하는 첫번째를 제외한 두번째 이후의 쿼리&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>DEPENDENT UNION&lt;/td>
+&lt;td>dependent (true)&lt;/td>
+&lt;td>UNION으로 결합하는 첫번째를 제외한 두번째 이후의 쿼리이지만 외부 쿼리의 영향을 받는 Select&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>UNION RESULT&lt;/td>
+&lt;td>union_result&lt;/td>
+&lt;td>UNION의 결과일때&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>SUBQUERY&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>Subquery의 첫번째 결과, From절 이외에서 사용되는 서브쿼리&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>DEPENDENT SUBQUERY&lt;/td>
+&lt;td>dependent (true)&lt;/td>
+&lt;td>외부 쿼리에 의존하는 Subquery의 첫번째 결과,&lt;br>From절 이외에서 사용되는 서브쿼리&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>DERIVED&lt;/td>
+&lt;td>None&lt;/td>
+&lt;td>Select쿼리의 실행결과로 메모리나 디스크에 임시 저장되는 정보&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>DEPENDENT DERIVED&lt;/td>
+&lt;td>dependent (true)&lt;/td>
+&lt;td>다른 테이블에 의존하고 있는 DERIVED 테이블&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>MATERIALIZED&lt;/td>
+&lt;td>materialized_from_subquery&lt;/td>
+&lt;td>서브쿼리의 내용을 임시테이블로 구체화 할때 사용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>UNCACHEABLE SUBQUERY&lt;/td>
+&lt;td>cacheable (false)&lt;/td>
+&lt;td>결과를 캐시할 수 없고, 외부 쿼리의 각 row에 대해 재평가가 필요한 데이터에 일때 표시됨&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>UNCACHEABLE UNION&lt;/td>
+&lt;td>cacheable (false)&lt;/td>
+&lt;td>캐시를 할 수 없는 서브쿼리를 포함하는, 첫번째를 제외한 두번째 이후의 UNION select일 경우 표시됨&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;ul>
+&lt;li>select쿼리가 아닌 CUD쿼리는 해당 statements의 종류가 표시됨
+&lt;ul>
+&lt;li>DELETE일 경우, select_type에는 DELETE를 표시&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="table">table
+&lt;/h2>&lt;ul>
+&lt;li>각 행의 결과를 가져오는 테이블의 이름&lt;/li>
+&lt;li>&amp;lt;union&lt;code>M&lt;/code>,&lt;code>N&lt;/code>&amp;gt;
+&lt;ul>
+&lt;li>id(Explain의 id 컬럼)가 M과 N인 행의 UNION결과를 나타냄&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&amp;lt;derived&lt;code>N&lt;/code>&amp;gt;
+&lt;ul>
+&lt;li>id(Explain의 id 컬럼)가 N인 쿼리의 결과로 파생된 행&lt;/li>
+&lt;li>derived테이블은 FROM에 있는 서브쿼리의 결과임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&amp;lt;subquery&lt;code>N&lt;/code>&amp;gt;
+&lt;ul>
+&lt;li>id(Explain의 id 컬럼)가 N인 행에 대한 구체화된 subquery의 결과를 나타냄&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="subquery-mareirialzied-최적화-링크httpsdevmysqlcomdocrefman80ensubquery-materializationhtml">subquery mareirialzied 최적화 &lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/subquery-materialization.html" target="_blank" rel="noopener"
+>링크&lt;/a>
+&lt;/h3>&lt;h2 id="partitions">partitions
+&lt;/h2>&lt;ul>
+&lt;li>쿼리에 의해 매치된 파티션을 나타냄&lt;/li>
+&lt;li>파티션이 없는 테이블은 NULL로 표시됨&lt;/li>
+&lt;/ul>
+&lt;h2 id="typejoin-유형">type(join 유형)
+&lt;/h2>&lt;ul>
+&lt;li>join type을 나타냄&lt;/li>
+&lt;/ul>
+&lt;h2 id="possible_keys">possible_keys
+&lt;/h2>&lt;ul>
+&lt;li>MySQL이 해당 테이블에서 데이터를 찾기위해 선택할 수 있는 인덱스를 보여줌&lt;/li>
+&lt;li>EXPLAIN문과는 독립적이어서, possible_keys에 나타난 인덱스를 실제로 사용할 수 없을 수 있음&lt;/li>
+&lt;li>해당 행이 NULL일경우 관련 인덱스가 없다는걸 난타냄
+&lt;ul>
+&lt;li>이 경우 WHERE절을 참고해 컬럼에 인덱스를 지정하여 쿼리 성능을 개선할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="key">key
+&lt;/h2>&lt;ul>
+&lt;li>실제로 사용을 결정한 인덱스를 보여줌&lt;/li>
+&lt;/ul>
+&lt;h2 id="key_len">key_len
+&lt;/h2>&lt;ul>
+&lt;li>사용하기로 결정된 key의 길이를 나타냄&lt;/li>
+&lt;/ul>
+&lt;h2 id="ref">ref
+&lt;/h2>&lt;ul>
+&lt;li>key에서 선택된 인덱스와 비교되는 컬럼 또는 상수값을 나타냄&lt;/li>
+&lt;/ul>
+&lt;h2 id="rows">rows
+&lt;/h2>&lt;ul>
+&lt;li>MySQL이 해당 쿼리를 실행하기 위해 검사해야 한다고 생각되는 행의 수를 나타냄&lt;/li>
+&lt;li>innodb의 경우 항상 추정치이며 정확하지 않을 수 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="filtered">filtered
+&lt;/h2>&lt;ul>
+&lt;li>테이블의 조건에 따라 필터링 되는 행의 수를 퍼센트로 나타낸것&lt;/li>
+&lt;li>최대값은 100이며 필터링 되지 않은 것을 의미함&lt;/li>
+&lt;/ul>
+&lt;h2 id="extra">Extra
+&lt;/h2>&lt;ul>
+&lt;li>Mysql이 쿼리를 해결하는데 필요한 추가정보를 나타냄&lt;/li>
+&lt;/ul>
+&lt;p>Real Mysql 8.0&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/explain-output.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/explain-output.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://zzang9ha.tistory.com/436" target="_blank" rel="noopener"
+>https://zzang9ha.tistory.com/436&lt;/a>&lt;/p></description></item></channel></rss>

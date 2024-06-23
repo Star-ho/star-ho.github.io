@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OOP on Sungho's Dev BLog</title><link>https://sungho94.me/tags/oop/</link><description>Recent content in OOP on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-or</language><lastBuildDate>Tue, 09 Apr 2024 17:03:45 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/oop/index.xml" rel="self" type="application/rss+xml"/><item><title>필드를 노출시키면 안되는 이유</title><link>https://sungho94.me/p/%ED%95%84%EB%93%9C%EB%A5%BC-%EB%85%B8%EC%B6%9C%EC%8B%9C%ED%82%A4%EB%A9%B4-%EC%95%88%EB%90%98%EB%8A%94-%EC%9D%B4%EC%9C%A0/</link><pubDate>Tue, 09 Apr 2024 17:03:45 +0000</pubDate><guid>https://sungho94.me/p/%ED%95%84%EB%93%9C%EB%A5%BC-%EB%85%B8%EC%B6%9C%EC%8B%9C%ED%82%A4%EB%A9%B4-%EC%95%88%EB%90%98%EB%8A%94-%EC%9D%B4%EC%9C%A0/</guid><description>&lt;h2 id="객체의-필드를-그대로-노출하여-로직을-구하는-경우">객체의 필드를 그대로 노출하여 로직을 구하는 경우
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>캡슐화가 깨지고 결합도가 높아진다.&lt;/p>
+&lt;ul>
+&lt;li>다른 객체의 필드값을 가지고 로직을 구현한다면, 로직 변경되었을때 해당 로직을 가지고 있는 모든 로직을 변경해야한다.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>예약이라는 객체가 있다고 생각해보자&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>예약이라는 객체는 capacity라는 속성이 있고, 기존에는 capacity만으로 주문 가능한 여부를 따졌다.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>하지만 요구사항이 추가되어, 거리에 따라 capacity를 수정하기로 하였고, 거리마다 capacity가 다르다&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>이렇게 변경 시 기존에 capacity를 사용해서 마감을 확인하던 코드를 다 변경하여, 거리, capacity 두개 다 확인하도록 변경해야한다.&lt;/p>
+&lt;/li>
+&lt;/ul></description></item><item><title>협력, 책임, 역할</title><link>https://sungho94.me/p/%ED%98%91%EB%A0%A5-%EC%B1%85%EC%9E%84-%EC%97%AD%ED%95%A0/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/%ED%98%91%EB%A0%A5-%EC%B1%85%EC%9E%84-%EC%97%AD%ED%95%A0/</guid><description>&lt;h2 id="협력">협력
+&lt;/h2>&lt;p>어플리케이션의 기능을 구현하기 위해 수행하는 상호작용&lt;/p>
+&lt;h2 id="책임">책임
+&lt;/h2>&lt;p>객체가 협력에 참여하기 위해 수행하는 로직&lt;/p>
+&lt;h2 id="역할">역할
+&lt;/h2>&lt;p>객체가 어떤 특정한 협력 안에서 수행하는 책임의 집합&lt;/p></description></item></channel></rss>

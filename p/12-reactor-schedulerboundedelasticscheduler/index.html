@@ -1,0 +1,413 @@
+<!doctype html><html lang=ko-or dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="서론 Reactor에 대해 여러가지 공부해 보았는데, reactor Scheduler에 대한 글이 없어 소스코드를 보며 분석하였다. reactor-netty에서 디"><title>12-Reactor Scheduler(BoundedElasticScheduler)</title>
+<link rel=canonical href=https://sungho94.me/p/12-reactor-schedulerboundedelasticscheduler/><link rel=stylesheet href=/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css><meta property='og:title' content="12-Reactor Scheduler(BoundedElasticScheduler)"><meta property='og:description' content="서론 Reactor에 대해 여러가지 공부해 보았는데, reactor Scheduler에 대한 글이 없어 소스코드를 보며 분석하였다. reactor-netty에서 디"><meta property='og:url' content='https://sungho94.me/p/12-reactor-schedulerboundedelasticscheduler/'><meta property='og:site_name' content="Sungho's Dev BLog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='Server-History'><meta property='article:tag' content='hugo_blog'><meta property='article:tag' content='Reactive'><meta property='article:published_time' content='2024-04-13T22:11:25+00:00'><meta property='article:modified_time' content='2024-04-21T09:32:10+00:00'><meta name=twitter:title content="12-Reactor Scheduler(BoundedElasticScheduler)"><meta name=twitter:description content="서론 Reactor에 대해 여러가지 공부해 보았는데, reactor Scheduler에 대한 글이 없어 소스코드를 보며 분석하였다. reactor-netty에서 디"><link rel="shortcut icon" href=/favicon.png><script async src="https://www.googletagmanager.com/gtag/js?id=GTM-PK22FB5P"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","GTM-PK22FB5P")}</script></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="메뉴 여닫기">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hua05db4d02880c6d35fd3e7bb8a8c9c1d_47068_300x0_resize_box_3.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>Sungho's Dev BLog</a></h1><h2 class=site-description>백엔드 개발자 황성호입니다.</h2></div></header><ol class=menu-social><li><a href=https://github.com/Star-ho target=_blank title=GitHub rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://www.linkedin.com/in/starho/ target=_blank title=LinkedIn rel=me><svg fill="#000" width="800" height="800" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.975 20.667H3.117V9.059H6.975zM5.072 3.462a2.011 2.011.0 10-.051 4.012h.026a2.012 2.012.0 10.025-4.012zM9.111 20.667h3.858V14.185a2.639 2.639.0 01.127-.941 2.111 2.111.0 011.98-1.411c1.4.0 1.955 1.064 1.955 2.625v6.209h3.858V14.011c0-3.565-1.9-5.225-4.442-5.225A3.828 3.828.0 0012.97 10.7V9.059H9.111c.051 1.089.0 11.609.0 11.609z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>다크 모드</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">목차</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#서론>서론</a></li><li><a href=#reactor-scheduler>Reactor Scheduler</a></li><li><a href=#schedulers>Schedulers</a><ol><li><a href=#default_pool_size>DEFAULT_POOL_SIZE</a></li><li><a href=#default_bounded_elastic_size>DEFAULT_BOUNDED_ELASTIC_SIZE</a></li><li><a href=#default_bounded_elastic_queuesize>DEFAULT_BOUNDED_ELASTIC_QUEUESIZE</a></li><li><a href=#default_bounded_elastic_on_virtual_threads>DEFAULT_BOUNDED_ELASTIC_ON_VIRTUAL_THREADS</a></li></ol></li><li><a href=#boundedelasticscheduler>BoundedElasticScheduler</a></li><li><a href=#추가---boundedelasticscheduler의-inner-class>추가 - BoundedElasticScheduler의 inner class</a></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/server-history/>Server-History</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/12-reactor-schedulerboundedelasticscheduler/>12-Reactor Scheduler(BoundedElasticScheduler)</a></h2></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>Apr 13, 2024</time></div><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>8 분 정도</time></div></footer></div></header><section class=article-content><h2 id=서론>서론</h2><p>Reactor에 대해 여러가지 공부해 보았는데, reactor Scheduler에 대한 글이 없어 소스코드를 보며 분석하였다.<br>reactor-netty에서 디폴트로 제공하는 BoundedElasticScheduler에서 어떻게 쓰레드에 작업이 할당되는지 알아보자</p><h2 id=reactor-scheduler>Reactor Scheduler</h2><p>실제 작업이 실행될 쓰레드를 할당하는 인터페이스이다.<br>java reactor에서는 제공하는 여러가지 스케줄러를 제공하는데, BoundedElasticScheduler는 Scheduler의 구현체이다</p><h2 id=schedulers>Schedulers</h2><p>subscribeOn, publishOn에는 Schedulers의 정적 메서드를 사용하여 스케줄러를 지정하기에 Schedulers클래스부터 알아보자</p><p>필드에 대한 설명이다</p><h3 id=default_pool_size>DEFAULT_POOL_SIZE</h3><ul><li>기본 풀 사이즈로, ParallelScheduler 사용 시쓰레드 수를 지정하는 필드이다.</li><li><code>reactor.schedulers.defaultPoolSize</code> 설정으로 값을 지정할 수 있으며 디폴트 값은 시스템의 CPU개수이다</li></ul><h3 id=default_bounded_elastic_size>DEFAULT_BOUNDED_ELASTIC_SIZE</h3><ul><li>BoundedElasticScheduler에서 사용하는 쓰레드 풀 사이즈를 지정하는 필드이다.</li><li><code>reactor.schedulers.defaultBoundedElasticSize</code>로 설정할 수 있으며 디폴트는 시스템의 CPU개수 * 10개이다</li></ul><h3 id=default_bounded_elastic_queuesize>DEFAULT_BOUNDED_ELASTIC_QUEUESIZE</h3><ul><li>BoundedElasticScheduler에서 쓰레드 별 큐사이즈를 지정하는 필드이다</li><li><code>reactor.schedulers.defaultBoundedElasticQueueSize</code>로 설정할 수 있으며 디폴트는 100,000개이다</li></ul><h3 id=default_bounded_elastic_on_virtual_threads>DEFAULT_BOUNDED_ELASTIC_ON_VIRTUAL_THREADS</h3><ul><li>BoundedElasticScheduler사용 시 가상쓰레드 여부를 결정하는 필드이다</li><li>reactor.schedulers.defaultBoundedElasticOnVirtualThreads로 설정할 수있으며, 디폴트로 false이다</li></ul><p>이제 스케줄러를 생성하는 메서드에 대해 알아보자</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>public</span><span class=w> </span><span class=kd>static</span><span class=w> </span><span class=n>Scheduler</span><span class=w> </span><span class=nf>boundedElastic</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>return</span><span class=w> </span><span class=n>cache</span><span class=p>(</span><span class=n>CACHED_BOUNDED_ELASTIC</span><span class=p>,</span><span class=w> </span><span class=n>BOUNDED_ELASTIC</span><span class=p>,</span><span class=w> </span><span class=n>BOUNDED_ELASTIC_SUPPLIER</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>스케줄러를 생성하는 메서드는 static메서드이고 내부에서 cache로 관리한다.</p><ul><li>한번 스케줄러를 생성하면 내부에서 캐싱된 스케줄러를 가져온다는것을 알 수있다.</li><li>ImmediateScheduler, BoundedElasticScheduler, ParallelScheduler는 다 아래와 같은 형태이다</li></ul><blockquote><p>prefix로 new가 붙은 메서드를 사용하거나 fromExecuter를 사용해서 새로운 스케줄러를 생성할 수 있다.</p></blockquote><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>static</span><span class=w> </span><span class=n>CachedScheduler</span><span class=w> </span><span class=nf>cache</span><span class=p>(</span><span class=n>AtomicReference</span><span class=o>&lt;</span><span class=n>CachedScheduler</span><span class=o>&gt;</span><span class=w> </span><span class=n>reference</span><span class=p>,</span><span class=w> </span><span class=n>String</span><span class=w> </span><span class=n>key</span><span class=p>,</span><span class=w> </span><span class=n>Supplier</span><span class=o>&lt;</span><span class=n>Scheduler</span><span class=o>&gt;</span><span class=w> </span><span class=n>supplier</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>CachedScheduler</span><span class=w> </span><span class=n>s</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>reference</span><span class=p>.</span><span class=na>get</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>s</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>return</span><span class=w> </span><span class=n>s</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>s</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>CachedScheduler</span><span class=p>(</span><span class=n>key</span><span class=p>,</span><span class=w> </span><span class=n>supplier</span><span class=p>.</span><span class=na>get</span><span class=p>());</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>reference</span><span class=p>.</span><span class=na>compareAndSet</span><span class=p>(</span><span class=kc>null</span><span class=p>,</span><span class=w> </span><span class=n>s</span><span class=p>))</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>return</span><span class=w> </span><span class=n>s</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>return</span><span class=w> </span><span class=n>reference</span><span class=p>.</span><span class=na>get</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>cache메서드 간단하다.<br>캐싱된 스케줄러가 있는지 확인하고, 있으면 캐싱된 스케줄러를 반환하고, 없다면 인자로 받은 Scheduler Supplier로 스케줄러를 생성하고, 이를 캐싱한다.</p><p>그럼 이제 BoundedElasticScheduler를 생성하는 BoundedElasticSchedulerSupplier에 대해 알아보자</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>class</span> <span class=nc>BoundedElasticSchedulerSupplier</span><span class=w> </span><span class=kd>implements</span><span class=w> </span><span class=n>Supplier</span><span class=o>&lt;</span><span class=n>Scheduler</span><span class=o>&gt;</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=nd>@Override</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=kd>public</span><span class=w> </span><span class=n>Scheduler</span><span class=w> </span><span class=nf>get</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>		</span><span class=p>...</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>		</span><span class=k>return</span><span class=w> </span><span class=n>newBoundedElastic</span><span class=p>(</span><span class=n>DEFAULT_BOUNDED_ELASTIC_SIZE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>				</span><span class=n>DEFAULT_BOUNDED_ELASTIC_QUEUESIZE</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>				</span><span class=n>BOUNDED_ELASTIC</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>				</span><span class=n>BoundedElasticScheduler</span><span class=p>.</span><span class=na>DEFAULT_TTL_SECONDS</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>				</span><span class=kc>true</span><span class=p>);</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>newBoundedElastic메서드에 Schedulers의 BoundedElasticScheduler의 설정값이 들어가는 것을 볼 수 있다.</p><h2 id=boundedelasticscheduler>BoundedElasticScheduler</h2><p>이제 BoundedElasticScheduler에서 작업을 할당하는 schedule메서드를 알아보자</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Override</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>public</span><span class=w> </span><span class=n>Disposable</span><span class=w> </span><span class=nf>schedule</span><span class=p>(</span><span class=n>Runnable</span><span class=w> </span><span class=n>task</span><span class=p>,</span><span class=w> </span><span class=kt>long</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w> </span><span class=n>TimeUnit</span><span class=w> </span><span class=n>unit</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=c1>//tasks running once will call dispose on the BoundedState, decreasing its usage by one  </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>final</span><span class=w> </span><span class=n>BoundedState</span><span class=w> </span><span class=n>picked</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>state</span><span class=p>.</span><span class=na>currentResource</span><span class=p>.</span><span class=na>pick</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>return</span><span class=w> </span><span class=n>Schedulers</span><span class=p>.</span><span class=na>directSchedule</span><span class=p>(</span><span class=n>picked</span><span class=p>.</span><span class=na>executor</span><span class=p>,</span><span class=w> </span><span class=n>task</span><span class=p>,</span><span class=w> </span><span class=n>picked</span><span class=p>,</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w> </span><span class=n>unit</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>RejectedExecutionException</span><span class=w> </span><span class=n>ex</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=c1>// ensure to free the BoundedState so it can be reused  </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>picked</span><span class=p>.</span><span class=na>dispose</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>throw</span><span class=w> </span><span class=n>ex</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>로직은 간단한데, schedule메서드는 currentResource의 pick메서드를 호출하여 BoundedState를 가져오고, 스케줄러에 작업을 예약한다.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>BoundedState</span><span class=w> </span><span class=nf>pick</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>for</span><span class=w> </span><span class=p>(;</span><span class=w> </span><span class=p>;</span><span class=w> </span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>busyStates</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=n>ALL_SHUTDOWN</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=k>return</span><span class=w> </span><span class=n>CREATING</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=kt>int</span><span class=w> </span><span class=n>a</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>get</span><span class=p>();</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=o>!</span><span class=n>idleQueue</span><span class=p>.</span><span class=na>isEmpty</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=n>BoundedState</span><span class=w> </span><span class=n>bs</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>idleQueue</span><span class=p>.</span><span class=na>pollLast</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>bs</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>bs</span><span class=p>.</span><span class=na>markPicked</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=kt>boolean</span><span class=w> </span><span class=n>accepted</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>setBusy</span><span class=p>(</span><span class=n>bs</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=o>!</span><span class=n>accepted</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w> </span><span class=c1>// shutdown in the meantime  </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>bs</span><span class=p>.</span><span class=na>shutdown</span><span class=p>(</span><span class=kc>true</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>return</span><span class=w> </span><span class=n>CREATING</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=k>return</span><span class=w> </span><span class=n>bs</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>else</span><span class=w> </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>a</span><span class=w> </span><span class=o>&lt;</span><span class=w> </span><span class=n>parent</span><span class=p>.</span><span class=na>maxThreads</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>compareAndSet</span><span class=p>(</span><span class=n>a</span><span class=p>,</span><span class=w> </span><span class=n>a</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>1</span><span class=p>))</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=n>ScheduledExecutorService</span><span class=w> </span><span class=n>s</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Schedulers</span><span class=p>.</span><span class=na>decorateExecutorService</span><span class=p>(</span><span class=n>parent</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=n>parent</span><span class=p>.</span><span class=na>createBoundedExecutorService</span><span class=p>());</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>newState</span><span class=p>.</span><span class=na>markPicked</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=kt>boolean</span><span class=w> </span><span class=n>accepted</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>setBusy</span><span class=p>(</span><span class=n>newState</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=o>!</span><span class=n>accepted</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w> </span><span class=c1>// shutdown in the meantime  </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>                   </span><span class=n>newState</span><span class=p>.</span><span class=na>shutdown</span><span class=p>(</span><span class=kc>true</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>                   </span><span class=k>return</span><span class=w> </span><span class=n>CREATING</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>                </span><span class=k>return</span><span class=w> </span><span class=n>newState</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=p>}</span><span class=w> </span><span class=k>else</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=n>BoundedState</span><span class=w> </span><span class=n>s</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>choseOneBusy</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>s</span><span class=w> </span><span class=o>!=</span><span class=w> </span><span class=kc>null</span><span class=w> </span><span class=o>&amp;&amp;</span><span class=w> </span><span class=n>s</span><span class=p>.</span><span class=na>markPicked</span><span class=p>())</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=k>return</span><span class=w> </span><span class=n>s</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>pick메서드는 무한 루프를 돌며 사용 가능한 BoundedState를 가져온다</p><p>line 3에서 busyState가 전부 종료되어 있다면 종료상태의 BoundedState를 리턴한다</p><ul><li>CREATE enum으로 되어있지만, CREATE는 기본 실행기로서 종료와 같은 상태이므로 종료된 BoundedState를 리턴함</li><li>종료된 상태의 executer가 전달되기에 작업은 실행되지 않음</li></ul><p>line 8에서는 idle한 BoundedState가 있는지 확인하고, 있다면 idleQueue에서 BoundedState를 하나 꺼내 리턴함</p><p>line 19에서는 현재 생성된 쓰레드 수가 최대 생성 가능한 쓰레드보다 작은지 확인 한다. 작다면 새로운 스케줄러 스레드를 생성해 BoundedState를 만들어 리턴함</p><p>line 33에서는 busy상태에 있는 BoundedState 중 작업이 가장 적게 할당된 BoundedState를 가져와 리턴한다.</p><p>다시 schedule메서드를 보자</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Override</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>public</span><span class=w> </span><span class=n>Disposable</span><span class=w> </span><span class=nf>schedule</span><span class=p>(</span><span class=n>Runnable</span><span class=w> </span><span class=n>task</span><span class=p>,</span><span class=w> </span><span class=kt>long</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w> </span><span class=n>TimeUnit</span><span class=w> </span><span class=n>unit</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=c1>//tasks running once will call dispose on the BoundedState, decreasing its usage by one  </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>final</span><span class=w> </span><span class=n>BoundedState</span><span class=w> </span><span class=n>picked</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>state</span><span class=p>.</span><span class=na>currentResource</span><span class=p>.</span><span class=na>pick</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>try</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>return</span><span class=w> </span><span class=n>Schedulers</span><span class=p>.</span><span class=na>directSchedule</span><span class=p>(</span><span class=n>picked</span><span class=p>.</span><span class=na>executor</span><span class=p>,</span><span class=w> </span><span class=n>task</span><span class=p>,</span><span class=w> </span><span class=n>picked</span><span class=p>,</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w> </span><span class=n>unit</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w> </span><span class=k>catch</span><span class=w> </span><span class=p>(</span><span class=n>RejectedExecutionException</span><span class=w> </span><span class=n>ex</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=c1>// ensure to free the BoundedState so it can be reused  </span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>picked</span><span class=p>.</span><span class=na>dispose</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>throw</span><span class=w> </span><span class=n>ex</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>pick으로 가져온 BoundedState의 executer를 directSchdule의 인자로 넘긴다</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>static</span><span class=w> </span><span class=n>Disposable</span><span class=w> </span><span class=nf>directSchedule</span><span class=p>(</span><span class=n>ScheduledExecutorService</span><span class=w> </span><span class=n>exec</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>Runnable</span><span class=w> </span><span class=n>task</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=nd>@Nullable</span><span class=w> </span><span class=n>Disposable</span><span class=w> </span><span class=n>parent</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=kt>long</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>TimeUnit</span><span class=w> </span><span class=n>unit</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>task</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>onSchedule</span><span class=p>(</span><span class=n>task</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>SchedulerTask</span><span class=w> </span><span class=n>sr</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=k>new</span><span class=w> </span><span class=n>SchedulerTask</span><span class=p>(</span><span class=n>task</span><span class=p>,</span><span class=w> </span><span class=n>parent</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Future</span><span class=o>&lt;?&gt;</span><span class=w> </span><span class=n>f</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>delay</span><span class=w> </span><span class=o>&lt;=</span><span class=w> </span><span class=n>0L</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>f</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>exec</span><span class=p>.</span><span class=na>submit</span><span class=p>((</span><span class=n>Callable</span><span class=o>&lt;?&gt;</span><span class=p>)</span><span class=w> </span><span class=n>sr</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>else</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>f</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>exec</span><span class=p>.</span><span class=na>schedule</span><span class=p>((</span><span class=n>Callable</span><span class=o>&lt;?&gt;</span><span class=p>)</span><span class=w> </span><span class=n>sr</span><span class=p>,</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w> </span><span class=n>unit</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>sr</span><span class=p>.</span><span class=na>setFuture</span><span class=p>(</span><span class=n>f</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>return</span><span class=w> </span><span class=n>sr</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>directSchedule메서드를 살펴보자<br>10번, 13번 라인에서 executer에게 작업을 할당한다<br>작업을 할당하는 메서드를 살펴보자</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Override</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=kd>public</span><span class=w> </span><span class=kd>synchronized</span><span class=w> </span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=w> </span><span class=n>Future</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=w> </span><span class=nf>submit</span><span class=p>(</span><span class=n>Callable</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=w> </span><span class=n>task</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>ensureQueueCapacity</span><span class=p>(</span><span class=n>1</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>return</span><span class=w> </span><span class=kd>super</span><span class=p>.</span><span class=na>submit</span><span class=p>(</span><span class=n>task</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>synchronized 메서드이다</p><ul><li>synchronized 메서드이므로 객체마다 lock이 걸리고, 해당 메서드를 가지고있는 BoundedScheduledExecutorService는 static클래스이므로 해당 메서드는 하나의 프로세스에서 동시에 실행될 수 없다.</li></ul><p>ensureQueueCapacity를 살펴보자</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kt>void</span><span class=w> </span><span class=nf>ensureQueueCapacity</span><span class=p>(</span><span class=kt>int</span><span class=w> </span><span class=n>taskCount</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>queueCapacity</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=n>Integer</span><span class=p>.</span><span class=na>MAX_VALUE</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>return</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kt>int</span><span class=w> </span><span class=n>queueSize</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kd>super</span><span class=p>.</span><span class=na>getQueue</span><span class=p>().</span><span class=na>size</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>if</span><span class=w> </span><span class=p>((</span><span class=n>queueSize</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>taskCount</span><span class=p>)</span><span class=w> </span><span class=o>&gt;</span><span class=w> </span><span class=n>queueCapacity</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>throw</span><span class=w> </span><span class=n>Exceptions</span><span class=p>.</span><span class=na>failWithRejected</span><span class=p>(</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>          </span><span class=s>&#34;Task capacity of bounded elastic scheduler reached while scheduling &#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>taskCount</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34; tasks (&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=p>(</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>             </span><span class=n>queueSize</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>taskCount</span><span class=p>)</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34;/&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>queueCapacity</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34;)&#34;</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>위 메서드는 현재 큐의 크기와, 추가된 작업의 개수의 합이 DEFAULT_BOUNDED_ELASTIC_QUEUESIZE를 넘기는지 확인하고, 넘으면 에러를 리턴하는 로직이다.</p><hr><p>pick메서드에서 최대 스레드 생성 개수, ensureQueueCapacity메서드에서 쓰레드 당 최대 작업개수를 검증하는 것을 확인할 수 있었다.<br>pick메서드에서는 compareAndSet으로 동시성을 제어한다.<br>ensureQueueCapacity메서드에서는 호출하는 메서드가 syncronized 메서드로 동시성을 제어한다.</p><h2 id=추가---boundedelasticscheduler의-inner-class>추가 - BoundedElasticScheduler의 inner class</h2><p>BoundedElasticScheduler 내부에 4개의 클래스가 있다.<br>내부 클래스들을 알게 되면 BoundedElasticScheduler의 동작과정을 더 이해할 수 있다.</p><p>먼저 BoundedElasticScheduler의 선언부를 보자</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>final</span><span class=w> </span><span class=kd>class</span> <span class=nc>BoundedElasticScheduler</span><span class=w> </span><span class=kd>implements</span><span class=w> </span><span class=n>Scheduler</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>SchedulerState</span><span class=p>.</span><span class=na>DisposeAwaiter</span><span class=o>&lt;</span><span class=n>BoundedElasticScheduler</span><span class=p>.</span><span class=na>BoundedServices</span><span class=o>&gt;</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Scannable</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>...</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>volatile</span><span class=w> </span><span class=n>SchedulerState</span><span class=o>&lt;</span><span class=n>BoundedServices</span><span class=o>&gt;</span><span class=w> </span><span class=n>state</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nd>@SuppressWarnings</span><span class=p>(</span><span class=s>&#34;rawtypes&#34;</span><span class=p>)</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>static</span><span class=w> </span><span class=kd>final</span><span class=w> </span><span class=n>AtomicReferenceFieldUpdater</span><span class=o>&lt;</span><span class=n>BoundedElasticScheduler</span><span class=p>,</span><span class=w> </span><span class=n>SchedulerState</span><span class=o>&gt;</span><span class=w> </span><span class=n>STATE</span><span class=w> </span><span class=o>=</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>AtomicReferenceFieldUpdater</span><span class=p>.</span><span class=na>newUpdater</span><span class=p>(</span><span class=n>BoundedElasticScheduler</span><span class=p>.</span><span class=na>class</span><span class=p>,</span><span class=w> </span><span class=n>SchedulerState</span><span class=p>.</span><span class=na>class</span><span class=p>,</span><span class=w> </span><span class=s>&#34;state&#34;</span><span class=p>);</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>BoundedElasticScheduler는 Scheduler, SchedulerState.DisposeAwaiter, Scannable의 구현체이다.<br>필드로 SchedulerState&lt;BoundedServices> 타입의 필드가 있는데, BoundedServices로 스케줄러의 상태를 관리한다.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>static</span><span class=w> </span><span class=kd>final</span><span class=w> </span><span class=kd>class</span> <span class=nc>BoundedServices</span><span class=w> </span><span class=kd>extends</span><span class=w> </span><span class=n>AtomicInteger</span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>...</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=kd>final</span><span class=w> </span><span class=n>BoundedElasticScheduler</span><span class=w> </span><span class=n>parent</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=kd>final</span><span class=w> </span><span class=n>Deque</span><span class=o>&lt;</span><span class=n>BoundedState</span><span class=o>&gt;</span><span class=w> </span><span class=n>idleQueue</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=kd>volatile</span><span class=w> </span><span class=n>BusyStates</span><span class=w> </span><span class=n>busyStates</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>...</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=n>BoundedState</span><span class=w> </span><span class=nf>pick</span><span class=p>()</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>...</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>선언부를 보면, BoundedServices는 AtomicInteger를 상속받은 클래스이다.<br>BoundedServices의 Integer 값은, 현재 실행되고 있는 쓰레드의 개수를 의미한다.</p><p>parent필드에서는 부모인 BoundedElasticScheduler을 가지고 있다<br>idleQueue는 idle 상태인 BoundedState를 가지고 있다.<br>busyStates는 BusyStates타입인데, busy상태인 BoundedState을 가지고 있다.<br>pick메서드는 앞서 설명한 바와 같이, 작업을 실행할 BoundedState을 결정한다.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>static</span><span class=w> </span><span class=kd>final</span><span class=w> </span><span class=kd>class</span> <span class=nc>BusyStates</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>final</span><span class=w> </span><span class=n>BoundedState</span><span class=o>[]</span><span class=w> </span><span class=n>array</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>final</span><span class=w> </span><span class=kt>boolean</span><span class=w> </span><span class=n>shutdown</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>public</span><span class=w> </span><span class=nf>BusyStates</span><span class=p>(</span><span class=n>BoundedState</span><span class=o>[]</span><span class=w> </span><span class=n>array</span><span class=p>,</span><span class=w> </span><span class=kt>boolean</span><span class=w> </span><span class=n>shutdown</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>this</span><span class=p>.</span><span class=na>array</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>array</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>this</span><span class=p>.</span><span class=na>shutdown</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>shutdown</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>BusyStates에서는 array 필드에 busy상태인 BoundedState을 가지고 있다.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>static</span><span class=w> </span><span class=kd>class</span> <span class=nc>BoundedState</span><span class=w> </span><span class=kd>implements</span><span class=w> </span><span class=n>Disposable</span><span class=p>,</span><span class=w> </span><span class=n>Scannable</span><span class=w> </span><span class=p>{</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>final</span><span class=w> </span><span class=n>BoundedServices</span><span class=w> </span><span class=n>parent</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>final</span><span class=w> </span><span class=n>ScheduledExecutorService</span><span class=w> </span><span class=n>executor</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>volatile</span><span class=w> </span><span class=kt>int</span><span class=w> </span><span class=n>markCount</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>BoundedState</span><span class=p>(</span><span class=n>BoundedServices</span><span class=w> </span><span class=n>parent</span><span class=p>,</span><span class=w> </span><span class=n>ScheduledExecutorService</span><span class=w> </span><span class=n>executor</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>this</span><span class=p>.</span><span class=na>parent</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>parent</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=k>this</span><span class=p>.</span><span class=na>executor</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>executor</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>parent필드는 부모인 BoundedService를 가지고 있다.<br>executer는 ScheduledExecutorService을 가지고 있는데, 실제 생성자로 들어오는 클래스는 ScheduledExecutorService가 아닌, BoundedScheduledExecutorService을 가진다.<br>markCount는 executer가 실행하고 있는 작업의 개수를 나타낸다.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>static</span><span class=w> </span><span class=kd>final</span><span class=w> </span><span class=kd>class</span> <span class=nc>BoundedScheduledExecutorService</span><span class=w> </span><span class=kd>extends</span><span class=w> </span><span class=n>ScheduledThreadPoolExecutor</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=kd>implements</span><span class=w> </span><span class=n>Scannable</span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=kd>final</span><span class=w> </span><span class=kt>int</span><span class=w> </span><span class=n>queueCapacity</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=kt>void</span><span class=w> </span><span class=nf>ensureQueueCapacity</span><span class=p>(</span><span class=kt>int</span><span class=w> </span><span class=n>taskCount</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=k>if</span><span class=w> </span><span class=p>(</span><span class=n>queueCapacity</span><span class=w> </span><span class=o>==</span><span class=w> </span><span class=n>Integer</span><span class=p>.</span><span class=na>MAX_VALUE</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	       </span><span class=k>return</span><span class=p>;</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=kt>int</span><span class=w> </span><span class=n>queueSize</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=kd>super</span><span class=p>.</span><span class=na>getQueue</span><span class=p>().</span><span class=na>size</span><span class=p>();</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=k>if</span><span class=w> </span><span class=p>((</span><span class=n>queueSize</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>taskCount</span><span class=p>)</span><span class=w> </span><span class=o>&gt;</span><span class=w> </span><span class=n>queueCapacity</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	       </span><span class=k>throw</span><span class=w> </span><span class=n>Exceptions</span><span class=p>.</span><span class=na>failWithRejected</span><span class=p>(</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	          </span><span class=s>&#34;Task capacity of bounded elastic scheduler reached while scheduling &#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>taskCount</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34; tasks (&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=p>(</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	             </span><span class=n>queueSize</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>taskCount</span><span class=p>)</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34;/&#34;</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=n>queueCapacity</span><span class=w> </span><span class=o>+</span><span class=w> </span><span class=s>&#34;)&#34;</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=p>}</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>	
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=nd>@Override</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=kd>public</span><span class=w> </span><span class=kd>synchronized</span><span class=w> </span><span class=n>ScheduledFuture</span><span class=o>&lt;?&gt;</span><span class=w> </span><span class=n>schedule</span><span class=p>(</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=n>Runnable</span><span class=w> </span><span class=n>command</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=kt>long</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=n>TimeUnit</span><span class=w> </span><span class=n>unit</span><span class=p>)</span><span class=w> </span><span class=p>{</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=n>ensureQueueCapacity</span><span class=p>(</span><span class=n>1</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	    </span><span class=k>return</span><span class=w> </span><span class=kd>super</span><span class=p>.</span><span class=na>schedule</span><span class=p>(</span><span class=n>command</span><span class=p>,</span><span class=w> </span><span class=n>delay</span><span class=p>,</span><span class=w> </span><span class=n>unit</span><span class=p>);</span><span class=w>  
+</span></span></span><span class=line><span class=cl><span class=w>	</span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>BoundedScheduledExecutorServices는 ScheduledThreadPoolExecutor구현체이다<br>ScheduledThreadPoolExecutor와 큰 차이라면 queueCapacity필드와 ensureQueueCapacity메서드를 가지고 있다는 것이다.<br>schedule을 할때마다 현재 큐사이즈+새 태스크 개수를 확인해서 queueCapacity를 넘으면 에러를 발생시킨다.</p></section><footer class=article-footer><section class=article-tags><a href=/tags/server-history/>Server-History</a>
+<a href=/tags/hugo_blog/>Hugo_blog</a>
+<a href=/tags/reactive/>Reactive</a></section><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section><section class=article-lastmod><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>마지막 수정: Apr 21, 2024 09:32 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>관련 글</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/15-%EA%B0%80%EC%83%81%EC%8A%A4%EB%A0%88%EB%93%9C-vs-%EB%A6%AC%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%8A%A4%ED%8A%B8%EB%A6%BC%EC%A6%88-vs-%EC%BD%94%EB%A3%A8%ED%8B%B4/><div class=article-details><h2 class=article-title>15 - 가상스레드 vs 리액티브 스트림즈 vs 코루틴</h2></div></a></article><article><a href=/p/10-reactor-java1/><div class=article-details><h2 class=article-title>10-Reactor Java(1)</h2></div></a></article><article><a href=/p/11-reactor-java2/><div class=article-details><h2 class=article-title>11-Reactor Java(2)</h2></div></a></article><article><a href=/p/7-reactive-manifesto/><div class=article-details><h2 class=article-title>7-Reactive Manifesto</h2></div></a></article><article><a href=/p/9-reactive-streams/><div class=article-details><h2 class=article-title>9-Reactive Streams</h2></div></a></article></div></div></aside><script src=https://utteranc.es/client.js repo=Star-ho/star-ho.github.io issue-term=pathname label=Comments crossorigin=anonymous async></script><style>.utterances{max-width:unset}</style><script>let utterancesLoaded=!1;function setUtterancesTheme(e){let t=document.querySelector(".utterances iframe");t&&t.contentWindow.postMessage({type:"set-theme",theme:`github-${e}`},"https://utteranc.es")}addEventListener("message",e=>{if(e.origin!=="https://utteranc.es")return;utterancesLoaded=!0,setUtterancesTheme(document.documentElement.dataset.scheme)}),window.addEventListener("onColorSchemeChange",e=>{if(!utterancesLoaded)return;setUtterancesTheme(e.detail)})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2024 Sungho's Dev BLog</section><section class=powerby><a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a>로 만듦<br><a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a>의 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.26.0>Stack</a></b> 테마 사용 중</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>
