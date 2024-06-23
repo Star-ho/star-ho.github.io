@@ -1,14 +1,13 @@
 ---
 date: 2023-10-05T23:26:11
-updatedAt: 2024-06-23 20:37:20
+updatedAt: 2024-06-23 20:56:34
 tags:
   - ElasticSearch
   - hugo_blog
-  - Concept
 categories:
   - ElasticSearch
 title: ElasticSearch
-lastmod: 2024-06-23T11:37:20.887Z
+lastmod: 2024-06-23T11:56:34.327Z
 ---
 * 분산 문서 장소
 * 분산 시스템으로 구성되어 대용량 데이터와 빠른 검색 가능
