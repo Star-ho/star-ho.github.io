@@ -1,6 +1,6 @@
 ---
 date: 2024-05-19 22:44:51
-updatedAt: 2024-05-22 23:06:34
+updatedAt: 2024-05-24 17:36:24
 tags:
   - InnoDB
   - InnoDB-File-Structure
@@ -8,7 +8,7 @@ tags:
 categories:
   - Database
 title: 3-InnoDB Index
-lastmod: 2024-05-22T14:06:51.145Z
+lastmod: 2024-05-24T08:36:24.421Z
 ---
 ## Index
 
@@ -19,7 +19,7 @@ lastmod: 2024-05-22T14:06:51.145Z
 2. row data(primary key가 아닌 필드)는 primary key 인덳 구조 내에 저장됨
    * 이를 clustered key라고 명함
    * 인덱스 구조는 primary key필드에 키가 저장되며 row data는 해당 키에 연결된 값임(MVCC의 경우 추가적인 필드가 포함됨).
-3. Secondary key는 동일한 인덱스 구조에 저장되며, 키는 해당한는 Secondary key이며, 값은 primary임
+3. Secondary key는 동일한 인덱스 구조에 저장되며, 키는 해당하는 Secondary key이며, 값은 primary임
 
 ## Index page 구조
 
@@ -52,7 +52,7 @@ lastmod: 2024-05-22T14:06:51.145Z
 ![center](/image/real-resource-image/Pasted%20image%2020240519231114.png)
 
 * Index ID
-  * 해당 페이지가 속해있는 index의 ID를 의미함
+  * 해당 페이지에 속해있는 index의 ID를 의미함
 * Format Flag
   * 해당 페이지 안에있는 record들의 포맷을 의미함
     * Number of Heap Record필드의 상위비트(0x8000)비트에 저장됨
@@ -64,7 +64,7 @@ lastmod: 2024-05-22T14:06:51.145Z
   * 현재 사용된 공간의 마지막 바이트 오프셋을 가르킴
   * heap 상단과 page directory의 마지막의 모든 공간은 여유공간임
 * Garbage Space
-  * garbage 레코드 콕록아네 있는 삭제된 레코드가 소비한 총 바이트 수를 저장함
+  * garbage 레코드안에 있는 삭제된 레코드가 소비한 총 바이트 수를 저장함
 * Last Insert Position
   * 페이지 내의 마지막으로 추가된 레코드의 바이트 오프셋을 저장함
 * Page Direction

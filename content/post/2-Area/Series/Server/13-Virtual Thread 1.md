@@ -1,14 +1,19 @@
 ---
 date: 2024-03-31T22:41:00
-updatedAt: 2024-05-06 23:35:58
+updatedAt: 2024-05-27 23:07:12
 tags:
   - Server-History
   - hugo_blog
   - virtual-thread
 categories: Server-History
 title: 13-Virtual Thread 1
-lastmod: 2024-05-06T14:35:58.047Z
+lastmod: 2024-05-27T14:07:12.621Z
 ---
+## 정의
+
+* 처리량이 많은 동시성 애플리케이션을 작성, 유지관리 및 관찰는데 드는 수고를 획기적으로 줄여주는 경량쓰레드임
+  * jep-444
+
 ## Platform Thread
 
 ![Pasted image 20231223233300](/image/real-resource-image/Pasted%20image%2020231223233300.png)

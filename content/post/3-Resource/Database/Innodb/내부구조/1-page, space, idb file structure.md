@@ -1,6 +1,6 @@
 ---
 date: 2024-05-10 22:40:29
-updatedAt: 2024-05-22 23:07:03
+updatedAt: 2024-05-24 17:31:03
 tags:
   - "#InnoDB"
   - hugo_blog
@@ -8,7 +8,7 @@ tags:
 categories:
   - Database
 title: 1-page, space, idb file structure
-lastmod: 2024-05-22T14:07:03.878Z
+lastmod: 2024-05-24T08:31:03.408Z
 ---
 ## Page
 
@@ -33,7 +33,7 @@ lastmod: 2024-05-22T14:07:03.878Z
   * page type은 file space management, extent management, the transaction system, the data dictionary, undo logs, blobs, indexes가 할당될 수 있음
   * 페이지는 앞서 나열한 페이지가 될 수 있다는것을 의미함
 * 페이지가 초기화 될때, page number(Offset)이 할당됨
-  * 해당 필들드에서 읽은 페이지번호가 파일에 오프셋을 기준으로 해야하는 페이지 번호가 일치하는지 확인하여, 읽기가 올바른지 확인함
+  * 해당 필드에서 읽은 페이지번호가 파일에 오프셋을 기준으로 해야하는 페이지 번호가 일치하는지 확인하여, 읽기가 올바른지 확인함
   * 이 필드가 초기화되면 페이자가 초기화되었다는 것을 의미함
 * 해당 페이지의 유형과 같은 이전 페이지와 다음페이지 포인터가 헤더가 저장되어 있음
   * 이 필드들로 페이지를 double-linked list 구조가 됨

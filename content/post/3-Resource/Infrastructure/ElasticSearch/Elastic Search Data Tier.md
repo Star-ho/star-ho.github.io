@@ -1,13 +1,13 @@
 ---
 date: 2023-10-04T22:54:59
-updatedAt: 2024-04-21 18:34:36+3300
+updatedAt: 2024-06-23 20:37:25
 tags:
-  - Elastic-Search
+  - ElasticSearch
   - hugo_blog
 categories:
-  - Infrastructure
+  - ElasticSearch
 title: Elastic Search Data Tier
-lastmod: 2024-04-21T09:36:38.179Z
+lastmod: 2024-06-23T11:39:19.677Z
 ---
 * Data Tier는 Content, Hot, Warm, Cold, Frozen 5개의 티어로 나눔
 

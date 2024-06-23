@@ -1,6 +1,6 @@
 ---
 date: 2024-05-12 17:45:54
-updatedAt: 2024-05-22 23:06:57
+updatedAt: 2024-05-24 17:32:36
 tags:
   - InnoDB
   - hugo_blog
@@ -8,7 +8,7 @@ tags:
 categories:
   - Database
 title: 2-Page management in Innodb space files
-lastmod: 2024-05-22T14:06:57.984Z
+lastmod: 2024-05-24T08:32:36.974Z
 ---
 ## Extent
 
@@ -38,7 +38,7 @@ lastmod: 2024-05-22T14:06:57.984Z
       * 아래에서 자세한 설명
     * 해당 extent가 파일 세그먼트 ID필드에 저장된 ID를 가진 파일 세그먼트에 속함을 의미하는 FSEG상태
 * Page State Bitmap
-  * 2개의 비트로 페이지의 패이지가 free한지, clean 한지 나타냄
+  * 2개의 비트로 페이지가 free한지, clean 한지 나타냄
     * 첫번빼 비트는 페이지가 free한지 여부
     * 두번째 비트는 clean한지 여부
       * 현재 사용되지 않는다면 1로 할당됨
