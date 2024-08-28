@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : add image" />
+    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : update" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -90,6 +90,7 @@
       <workItem from="1713665928773" duration="8098000" />
       <workItem from="1713692144414" duration="3377000" />
       <workItem from="1716386842570" duration="650000" />
+      <workItem from="1719142783194" duration="4955000" />
     </task>
     <task id="LOCAL-00001" summary="fix : site config">
       <option name="closed" value="true" />
@@ -163,7 +164,39 @@
       <option name="project" value="LOCAL" />
       <updated>1716387118626</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix : update">
+      <option name="closed" value="true" />
+      <created>1719142891088</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1719142891088</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fix : update">
+      <option name="closed" value="true" />
+      <created>1719144142972</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1719144142972</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fix : update">
+      <option name="closed" value="true" />
+      <created>1719144326422</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1719144326422</updated>
+    </task>
+    <task id="LOCAL-00013" summary="fix : update">
+      <option name="closed" value="true" />
+      <created>1719145409462</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1719145409462</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -179,14 +212,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix : site config" />
-    <MESSAGE value="fix : update" />
     <MESSAGE value="fix : add ga" />
     <MESSAGE value="fix : add ga" />
     <MESSAGE value="fix : add theme" />
     <MESSAGE value="fix : add innodb file structure" />
     <MESSAGE value="fix : move file" />
     <MESSAGE value="fix : add image" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix : add image" />
+    <MESSAGE value="fix : update" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix : update" />
   </component>
   <component name="VgoProject">
     <integration-enabled>false</integration-enabled>
