@@ -4,22 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : update theme">
-      <change beforePath="$PROJECT_DIR$/.idea/codestream.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codestream.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/2-Area/Series/Async-messaging/Async-messaging.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Aggregate.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Aggregate.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Service.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Service.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Computer-Siece/0.0.0.0 ip address.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Computer-Siece/Long polling, Streaming, Web Socket.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Computer-Siece/네트워크에서 들어온 데이터가 어플리케이션에서 사용되기까지.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Database/Innodb/내부구조/3-InnoDB Index.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Database/Innodb/내부구조/3-InnoDB Index.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Database/Mysql Explain Plan/Mysql Explain Plan(Extra Information) - 3.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Database/Mysql Explain Plan/Mysql Explain Plan(Extra Information) - 3.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/JVM/Garbage Collection/0-Garbage Collection Concept.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/JVM/Garbage Collection/0-Garbage Collection Concept.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate Associate(하이버네이트 연관관계).md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate Associate(하이버네이트 연관관계).md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Interceptor.md" beforeDir="false" />
-    </list>
+    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : add post" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -112,6 +97,7 @@
       <workItem from="1724851321198" duration="1828000" />
       <workItem from="1725375913758" duration="1000" />
       <workItem from="1725376011885" duration="628000" />
+      <workItem from="1725499989174" duration="1874000" />
     </task>
     <task id="LOCAL-00001" summary="fix : site config">
       <option name="closed" value="true" />
@@ -225,7 +211,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724851389885</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="fix : add post">
+      <option name="closed" value="true" />
+      <created>1725500019330</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1725500019330</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -252,7 +246,8 @@
     <MESSAGE value="fix : add image" />
     <MESSAGE value="fix : update" />
     <MESSAGE value="fix : update theme" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix : update theme" />
+    <MESSAGE value="fix : add post" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix : add post" />
   </component>
   <component name="VgoProject">
     <integration-enabled>false</integration-enabled>
