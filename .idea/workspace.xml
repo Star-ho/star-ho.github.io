@@ -4,7 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : update" />
+    <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : update theme">
+      <change beforePath="$PROJECT_DIR$/.idea/codestream.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codestream.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/2-Area/Series/Async-messaging/Async-messaging.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Aggregate.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Aggregate.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Service.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/2-Area/Software-Design/Service.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Computer-Siece/0.0.0.0 ip address.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Computer-Siece/Long polling, Streaming, Web Socket.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Computer-Siece/네트워크에서 들어온 데이터가 어플리케이션에서 사용되기까지.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Database/Innodb/내부구조/3-InnoDB Index.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Database/Innodb/내부구조/3-InnoDB Index.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Database/Mysql Explain Plan/Mysql Explain Plan(Extra Information) - 3.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Database/Mysql Explain Plan/Mysql Explain Plan(Extra Information) - 3.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/JVM/Garbage Collection/0-Garbage Collection Concept.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/JVM/Garbage Collection/0-Garbage Collection Concept.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate Associate(하이버네이트 연관관계).md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate Associate(하이버네이트 연관관계).md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate.md" beforeDir="false" afterPath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Hibernate.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/post/3-Resource/Spring/jpa/Interceptor.md" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -50,6 +65,9 @@
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/sungho/develop/star-ho.github.io/static&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
@@ -91,6 +109,9 @@
       <workItem from="1713692144414" duration="3377000" />
       <workItem from="1716386842570" duration="650000" />
       <workItem from="1719142783194" duration="4955000" />
+      <workItem from="1724851321198" duration="1828000" />
+      <workItem from="1725375913758" duration="1000" />
+      <workItem from="1725376011885" duration="628000" />
     </task>
     <task id="LOCAL-00001" summary="fix : site config">
       <option name="closed" value="true" />
@@ -196,8 +217,19 @@
       <option name="project" value="LOCAL" />
       <updated>1719145409462</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="fix : update theme">
+      <option name="closed" value="true" />
+      <created>1724851389885</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1724851389885</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -219,7 +251,8 @@
     <MESSAGE value="fix : move file" />
     <MESSAGE value="fix : add image" />
     <MESSAGE value="fix : update" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix : update" />
+    <MESSAGE value="fix : update theme" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix : update theme" />
   </component>
   <component name="VgoProject">
     <integration-enabled>false</integration-enabled>

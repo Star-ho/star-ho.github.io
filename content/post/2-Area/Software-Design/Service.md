@@ -1,13 +1,13 @@
 ---
 date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:36:36+4040
+updatedAt: 2024-06-30 23:16:56
 tags:
   - Software-design
   - hugo_blog
   - DDD
 categories: Software-Design
 title: Service
-lastmod: 2024-04-21T09:36:36.404Z
+lastmod: 2024-06-30T14:16:56.323Z
 ---
 ## Service
 

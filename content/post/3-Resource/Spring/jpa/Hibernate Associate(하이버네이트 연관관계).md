@@ -1,6 +1,6 @@
 ---
 date: 2024-01-23T22:39:11
-updatedAt: 2024-04-21 18:34:36+3320
+updatedAt: 2024-07-11 12:11:24
 tags:
   - Spring
   - ORM
@@ -8,7 +8,7 @@ tags:
 categories:
   - Spring
 title: Hibernate Associate(하이버네이트 연관관계)
-lastmod: 2024-04-21T09:36:38.180Z
+lastmod: 2024-07-11T03:11:24.608Z
 ---
 ## 연관관계의 소유
 
@@ -31,13 +31,13 @@ lastmod: 2024-04-21T09:36:38.180Z
 
 * 해당 필드를 가져올 시기를 결정
 * Lazy
-  * oneToMany의 default FetchType
+  * \*ToMany(oneToMany,ManyToMany)의 default FetchType
   * 해당 필드를 엑세스할때 가져옴
 * Eager
-  * ManyToOne의 default FetchType
+  * \*ToOne(ManyToOne,OneToOne)의 default FetchType
   * 소유자의 로딩의 일부로 해당 필드를 가져옴
     * 소유자 로딩시 바로 가져옴\
-      \*\*fetch=EAGER가 의미가 있는 유일한 시나리오는 연관된 객체가 두 번째 수준 캐시에서 발견될 확률이 항상 매우 높다고 생각하는 경우. \*\*
+      \*\*fetch=EAGER가 의미가 있는 유일한 시나리오는 연관된 객체가 두 번째 수준 캐시에서 발견될 확률이 항상 매우 높다고 생각하는 경우.
 
 > 꺠알팁\
 > oneToMany, manyToOne설정된 필드에는 Column어노테이션 불가, joinColumn사용해야함

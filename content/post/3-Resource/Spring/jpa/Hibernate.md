@@ -1,6 +1,6 @@
 ---
 date: 2024-01-19T22:29:15
-updatedAt: 2024-04-21 18:34:36+3320
+updatedAt: 2024-06-28 23:11:22
 tags:
   - Spring
   - ORM
@@ -8,7 +8,7 @@ tags:
 categories:
   - Spring
 title: Hibernate
-lastmod: 2024-04-21T09:36:38.180Z
+lastmod: 2024-06-28T14:11:22.095Z
 ---
 ### Hibernate
 
@@ -16,7 +16,7 @@ lastmod: 2024-04-21T09:36:38.180Z
 * 복잡한 쿼리를 작성하고, 그 결과를 쉽게 사용할 수 있도록함
 * 프로그램이 메모리에 변경된 내용을 쉽게 데이터베이스와 쉽게 동기화 하고 ACID속성을 준수함
 * 기본 영속성 로직이 작성된 후에 성능을 최적화 할 수 있음
-* JPA에서 영감을 얻었으며, JPA의 최신 버전 specification을 구현
+* JPA가 영감을 얻었으며, JPA의 최신 버전 specification을 구현
 
 ## Persistence Context
 

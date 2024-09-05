@@ -1,22 +1,20 @@
 ---
 date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:36:36+4050
+updatedAt: 2024-07-11 12:01:28
 tags:
   - Software-design
   - hugo_blog
   - DDD
 categories: Software-Design
 title: Aggregate
-lastmod: 2024-04-21T09:36:36.405Z
+lastmod: 2024-07-11T03:05:37.484Z
 ---
 * 데이터의 변경단위로 다루는 연관 객체의 묶음
 * Root Entity와 Boundary Entity가 존재
   * Root Entity
     * 전역 식별성을 가짐
   * Boundary Entity
-
     * 지역 식별성을 가짐
-
     > 매우 상대적인 개념\
     > 자동차와 바퀴의 예시\
     > 자동차에만 관심만 있고 바퀴에 대한 관심사가 따로 없을 경우, 루트엔티티는 자동차, 경계 엔티티는 바퀴가됨\

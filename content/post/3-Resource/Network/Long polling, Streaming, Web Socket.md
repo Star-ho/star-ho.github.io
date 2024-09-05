@@ -1,13 +1,13 @@
 ---
 date: 2024-01-04T22:47:40
-updatedAt: 2024-04-21 18:36:37+9980
+updatedAt: 2024-07-15 12:16:32
 tags:
   - Network
   - hugo_blog
 categories:
   - Network
 title: Long polling, Streaming, Web Socket
-lastmod: 2024-04-21T09:36:37.998Z
+lastmod: 2024-07-15T03:16:32.410Z
 ---
 ## Why?
 
