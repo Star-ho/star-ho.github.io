@@ -1,6 +1,6 @@
 ---
 date: 2024-04-07T12:24:58
-updatedAt: 2024-04-21 18:32:05+2410
+updatedAt: 2024-09-18 22:40:23
 tags:
   - Trouble-Shooting
   - JVM
@@ -9,7 +9,7 @@ tags:
 categories:
   - Trouble-Shooting
 title: Querydsl transform connection leak
-lastmod: 2024-04-21T09:32:12.982Z
+lastmod: 2024-09-18T13:43:07.198Z
 ---
 ## 상황
 
@@ -62,7 +62,8 @@ java.lang.Exception: Apparent connection leak detected
 
 * 로그에는 디테일한 메소드 정보까지 남았고, queryDsl의 trasform을 사용하는 메서드였다
   * @Transactional어노테이션 붙어있지 않았다!
-* 관련해서 검색을 해보니, queryDsl의 transform을 @Transactional없이 사용하면, connection leak이 발생한다는 내용이 있었다.
+* 관련해서 검색을 해보니, queryDsl의 transform을 @Transactional없이 사용하면, connection leak이 발생한다는 이슈가 있었다.
+  * [링크참고](https://github.com/querydsl/querydsl/issues/2291)
 * 우선 queryDsl의 transform를 사용하지 않는 로직에 대해 @Transactional을 다 붙여서 이슈를 종료하였다
 
 ## Deep dive!
@@ -157,5 +158,3 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 * 해당 이슈는 2018년 4월부터 발생한 이슈이다.[github 이슈 링크](https://github.com/querydsl/querydsl/issues/2291)
 * 해당 이슈가 테스트 환경인 spring boot 2.7.8에서도 재현되었고 혹시 아직 고쳐지지 않았나 싶어, spring-orm코드를 보니, 23년 11월 26일에 scroll을 추가 되어 있었다.
 * 추가로 spring boot 3.0 버전부터는 JPAQueryFactory생성 자 JPQLTemplates.DEFAULT을 받도록 수정되어, 해당 이슈를 우회할 수 있는것으로 보인다.
-
-\#Trouble-Shooting

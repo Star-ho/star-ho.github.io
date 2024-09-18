@@ -1,6 +1,6 @@
 ---
 date: 2024-08-27 22:57:53
-updatedAt: 2024-09-05 23:15:30
+updatedAt: 2024-09-06 13:47:40
 tags:
   - Optimize
   - JVM
@@ -8,7 +8,7 @@ tags:
 categories:
   - JVM
 title: JVM Tiered Compilation
-lastmod: 2024-09-05T14:18:46.836Z
+lastmod: 2024-09-06T04:47:40.906Z
 ---
 ## Java 언어의 특징
 
@@ -132,10 +132,9 @@ lastmod: 2024-09-05T14:18:46.836Z
 * 현재 컴파일된 메서드를 다시 컴파일할 수 있고, 실행을 인터프리터로 전환해야 할 수도 https://github.com/openjdk/jdk/blob/8eed7dea7b92dd98b74277e8521100f7f807eabb/src/hotspot/share/runtime/deoptimization.hpp#L69
 
 * 트랩이 실행될 수 있는 가능한 이유 목록 [링크]()
-
-* 필요한 조치목록[링크](https://github.com/openjdk/jdk/blob/8eed7dea7b92dd98b74277e8521100f7f807eabb/src/hotspot/share/runtime/deoptimization.hpp#L144)\
-  \
-  ![center](/image/real-resource-image/Pasted%20image%2020240905231051.png)
+  * 필요한 조치목록[링크](https://github.com/openjdk/jdk/blob/8eed7dea7b92dd98b74277e8521100f7f807eabb/src/hotspot/share/runtime/deoptimization.hpp#L144)\
+    \
+    ![center](/image/real-resource-image/Pasted%20image%2020240905231051.png)
 
 ## Compile 관련 옵션
 
@@ -155,6 +154,10 @@ lastmod: 2024-09-05T14:18:46.836Z
 
 * -XX:-TieredCompilation
   * HotSpot이 Tiered Compilation heuristics을 사용하여 컴파일간 전환하지 않고, 다른 heuristics을 사용하여 모든 컴파일에 대해 C1과 C2를 선택하게함
+
+* * XX:InitialCodeCacheSize=N
+
+* * XX:ReservedCodeCacheSize=N\`
 
 * -XX:NonNMethodCodeHeapSize
   * non-method segment 영역을 지정
