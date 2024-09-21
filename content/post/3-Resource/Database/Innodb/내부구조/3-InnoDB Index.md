@@ -1,14 +1,15 @@
 ---
 date: 2024-05-19 22:44:51
-updatedAt: 2024-06-30 23:34:17
+updatedAt: 2024-09-19 23:21:46
 tags:
   - InnoDB
   - InnoDB-File-Structure
   - hugo_blog
+  - Database
 categories:
   - Database
 title: 3-InnoDB Index
-lastmod: 2024-06-30T14:34:17.814Z
+lastmod: 2024-09-19T14:21:46.602Z
 ---
 ## Index
 

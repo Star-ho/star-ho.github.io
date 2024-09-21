@@ -1,14 +1,16 @@
 ---
 date: 2024-03-31T22:41:00
-updatedAt: 2024-04-21 18:32:05+2140
+updatedAt: 2024-09-18 23:40:08
 tags:
   - Server-History
   - hugo_blog
   - virtual-thread
   - Reactive
-categories: Server-History
+  - Server
+categories:
+  - Server-History
 title: 15 - 가상스레드 vs 리액티브 스트림즈 vs 코루틴
-lastmod: 2024-04-21T09:32:10.672Z
+lastmod: 2024-09-18T14:40:40.555Z
 ---
 가상쓰레드, 리액티브 스트림즈, 코루틴 이 세가지 프로젝트는 모두 Blocking I/O로 인한 병목을 줄이기 위해 nonBlocking I/O를 사용할 목적으로 쓰이고 있습니다.
 

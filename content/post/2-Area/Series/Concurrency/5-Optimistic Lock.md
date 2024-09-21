@@ -1,13 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8780
+date: 2024-03-01T22:41:07
+updatedAt: 2024-09-21 23:55:27
 tags:
   - Concurrency
   - lock
   - hugo_blog
-categories: Concurrency
+categories:
+  - Concurrency
 title: 5-Optimistic Lock
-lastmod: 2024-04-21T09:36:36.397Z
+lastmod: 2024-09-21T14:55:27.948Z
 ---
 * CAS(compare and Set)이라고도 함
 * 데이터베이스 수준이 아닌 어플리케이션 수준에서 자원을 관리

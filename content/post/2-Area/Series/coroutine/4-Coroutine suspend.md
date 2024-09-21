@@ -1,12 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8610
+date: 2024-03-03T22:41:05
+updatedAt: 2024-09-21 23:52:38
 tags:
   - Coroutine
   - hugo_blog
-categories: Coroutine
+  - JVM
+categories:
+  - Coroutine
 title: 4-Coroutine suspend
-lastmod: 2024-04-21T09:36:36.367Z
+lastmod: 2024-09-21T14:53:44.130Z
 ---
 * coroutine의 suspend는 게임을 일시 중단하는 것과 유사함
   * 게임을 잠깐 중단했다가 resume하면 게임이 다시 시작됨

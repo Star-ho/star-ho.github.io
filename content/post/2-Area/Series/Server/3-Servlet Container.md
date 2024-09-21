@@ -1,12 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8680
+date: 2024-03-04T22:41:04
+updatedAt: 2024-09-21 23:53:25
 tags:
   - Server-History
   - hugo_blog
-categories: Server-History
+  - Server
+categories:
+  - Server-History
 title: 3-Servlet Container
-lastmod: 2024-04-21T09:36:36.379Z
+lastmod: 2024-09-21T14:54:04.262Z
 ---
 * Servlet Engine이라고도 불림
 * 서블릿을 실행하고 관리함

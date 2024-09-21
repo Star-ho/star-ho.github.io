@@ -1,13 +1,15 @@
 ---
-date: 2024-04-13T22:11:25
-updatedAt: 2024-04-21 18:32:05+2140
+date: 2024-03-05T22:11:03
+updatedAt: 2024-09-21 23:54:48
 tags:
   - Server-History
   - hugo_blog
   - Reactive
-categories: Server-History
+  - Server
+categories:
+  - Server-History
 title: 12-Reactor Scheduler(BoundedElasticScheduler)
-lastmod: 2024-04-21T09:32:10.656Z
+lastmod: 2024-09-21T14:54:48.003Z
 ---
 ## 서론
 

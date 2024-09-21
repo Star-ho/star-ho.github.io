@@ -1,12 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8570
+date: 2024-03-03T22:41:07
+updatedAt: 2024-09-21 23:52:43
 tags:
   - hugo_blog
   - Coroutine
-categories: Coroutine
+  - JVM
+categories:
+  - Coroutine
 title: 6-Coroutine builder
-lastmod: 2024-04-21T09:36:36.355Z
+lastmod: 2024-09-21T14:53:49.345Z
 ---
 * suspend함수는 Continuation을 다른 suspend함수에 전달해야 함
 * 일반함수에서 suspend를 호출 할 수 없음

@@ -1,14 +1,15 @@
 ---
 date: 2024-05-22 22:43:24
-updatedAt: 2024-06-23 21:05:06
+updatedAt: 2024-09-19 23:21:52
 tags:
   - InnoDB
   - InnoDB-File-Structure
   - hugo_blog
+  - Database
 categories:
   - Database
 title: 5-physical structure of records in InnoDB
-lastmod: 2024-06-23T12:05:06.497Z
+lastmod: 2024-09-19T14:21:52.407Z
 ---
 ## Record
 

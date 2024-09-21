@@ -1,12 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8540
+date: 2024-03-03T22:41:06
+updatedAt: 2024-09-21 23:52:41
 tags:
   - hugo_blog
   - Coroutine
-categories: Coroutine
+  - JVM
+categories:
+  - Coroutine
 title: 5-Coroutine  CPS
-lastmod: 2024-04-21T09:36:36.349Z
+lastmod: 2024-09-21T14:53:46.705Z
 ---
 * Kotlin Coroutine은 일시중단을 구현하기 위해 ContinuosPassing style을 적용하였음
 

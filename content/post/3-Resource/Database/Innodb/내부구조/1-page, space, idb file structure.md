@@ -1,14 +1,15 @@
 ---
 date: 2024-05-10 22:40:29
-updatedAt: 2024-05-24 17:31:03
+updatedAt: 2024-09-19 23:21:33
 tags:
   - "#InnoDB"
   - hugo_blog
   - InnoDB-File-Structure
+  - Database
 categories:
   - Database
 title: 1-page, space, idb file structure
-lastmod: 2024-05-24T08:31:03.408Z
+lastmod: 2024-09-19T14:21:33.839Z
 ---
 ## Page
 

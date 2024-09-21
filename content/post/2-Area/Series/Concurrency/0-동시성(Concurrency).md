@@ -1,13 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8770
+date: 2024-03-01T22:41:01
+updatedAt: 2024-09-21 23:55:12
 tags:
   - Concurrency
   - hugo_blog
   - Concept
-categories: Concurrency
+categories:
+  - Concurrency
 title: 0-동시성(Concurrency)
-lastmod: 2024-04-21T09:36:36.396Z
+lastmod: 2024-09-21T14:55:12.604Z
 ---
 ## 개념
 

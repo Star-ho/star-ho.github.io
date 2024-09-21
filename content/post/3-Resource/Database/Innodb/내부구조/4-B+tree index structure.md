@@ -1,14 +1,15 @@
 ---
 date: 2024-05-20 23:10:14
-updatedAt: 2024-05-24 17:37:49
+updatedAt: 2024-09-19 23:21:48
 tags:
   - InnoDB
   - hugo_blog
   - InnoDB-File-Structure
+  - Database
 categories:
   - Database
 title: 4-B+tree index structure
-lastmod: 2024-05-24T08:37:49.964Z
+lastmod: 2024-09-19T14:21:48.868Z
 ---
 ## B+Tree, root, leaf, level 용어정리
 

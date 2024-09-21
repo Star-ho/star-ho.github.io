@@ -1,12 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8630
+date: 2024-03-04T22:41:03
+updatedAt: 2024-09-21 23:53:22
 tags:
   - Server-History
   - hugo_blog
-categories: Server-History
+  - Server
+categories:
+  - Server-History
 title: 2-Sevlet
-lastmod: 2024-04-21T09:36:36.369Z
+lastmod: 2024-09-21T14:54:02.124Z
 ---
 * Server + applet의 합성어
 * 서버에서 특정기능을 수행하는 작은 어플리케이션

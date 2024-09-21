@@ -1,6 +1,6 @@
 # Change baseurl before deploy
 baseurl = "https://sungho94.me"
-languageCode = "ko-or"
+languageCode = "ko-kr"
 paginate = 5
 title = "Sungho's Dev BLog"
 googleAnalytics = "G-PTKY5BPR7H"

@@ -1,13 +1,15 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8600
+date: 2024-03-03T22:41:01
+updatedAt: 2024-09-21 23:52:30
 tags:
   - hugo_blog
   - Coroutine
   - Concept
-categories: Coroutine
+  - JVM
+categories:
+  - Coroutine
 title: 0-Coroutine
-lastmod: 2024-04-21T09:36:36.361Z
+lastmod: 2024-09-21T14:53:34.197Z
 ---
 * 작은 쓰레드, 하나의 쓰레드를 어떻게 효율적으로 처리할것인가에 대한 방안 중 하나
 * block작업(io요청)이 발생했을때, thread를 block하지않고 해당 작업을 suspend시키고 다른작업을 처리함

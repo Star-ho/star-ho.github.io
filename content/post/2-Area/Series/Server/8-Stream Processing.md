@@ -1,12 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8720
+date: 2024-03-04T22:41:08
+updatedAt: 2024-09-21 23:54:28
 tags:
   - Server-History
   - hugo_blog
-categories: Server-History
+  - Server
+categories:
+  - Server-History
 title: 8-Stream Processing
-lastmod: 2024-04-21T09:36:36.384Z
+lastmod: 2024-09-21T14:54:28.027Z
 ---
 * 데이터가 도착하거나 생성되는 즉시실시간으로 데이터를 처리하는 패러다임
 

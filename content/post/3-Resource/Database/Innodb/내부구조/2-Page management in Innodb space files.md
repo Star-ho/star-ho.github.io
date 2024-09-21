@@ -1,14 +1,15 @@
 ---
 date: 2024-05-12 17:45:54
-updatedAt: 2024-05-24 17:32:36
+updatedAt: 2024-09-19 23:21:39
 tags:
   - InnoDB
   - hugo_blog
   - InnoDB-File-Structure
+  - Database
 categories:
   - Database
 title: 2-Page management in Innodb space files
-lastmod: 2024-05-24T08:32:36.974Z
+lastmod: 2024-09-19T14:21:39.686Z
 ---
 ## Extent
 

@@ -1,12 +1,14 @@
 ---
-date: 2024-03-02T22:41:32
-updatedAt: 2024-04-21 18:34:34+8730
+date: 2024-03-04T22:41:02
+updatedAt: 2024-09-21 23:53:20
 tags:
   - Server-History
   - hugo_blog
-categories: Server-History
+  - Server
+categories:
+  - Server-History
 title: 1-Applet
-lastmod: 2024-04-21T09:36:36.385Z
+lastmod: 2024-09-21T14:54:00.141Z
 ---
 * 1990 년 PC 매거진에서 처음 사용된 단어
 * 하나의 프로그램에서 특정 기능을 수행하는 작은 어플리케이션
