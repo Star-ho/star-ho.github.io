@@ -1,6 +1,6 @@
 ---
-date: 2024-02-27T23:37:49
-updatedAt: 2024-04-21 18:34:36+3260
+date: 2024-05-03T23:37:49
+updatedAt: 2024-09-22 00:01:07
 tags:
   - JVM
   - Concurrency
@@ -8,7 +8,7 @@ tags:
 categories:
   - JVM
 title: 2-Semaphore
-lastmod: 2024-04-21T09:36:38.167Z
+lastmod: 2024-09-21T15:01:24.737Z
 ---
 * 허가증을 유지함으로서 동시성을 제어
 

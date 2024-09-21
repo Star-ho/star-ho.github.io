@@ -1,6 +1,6 @@
 ---
-date: 2024-02-26T23:11:59
-updatedAt: 2024-04-21 18:36:38+1630
+date: 2024-05-04T23:11:59
+updatedAt: 2024-09-22 00:01:09
 tags:
   - JVM
   - Concurrency
@@ -8,7 +8,7 @@ tags:
 categories:
   - JVM
 title: 4-Volitile
-lastmod: 2024-04-21T09:36:38.163Z
+lastmod: 2024-09-21T15:01:26.576Z
 ---
 ```kotlin
 fun main(){  

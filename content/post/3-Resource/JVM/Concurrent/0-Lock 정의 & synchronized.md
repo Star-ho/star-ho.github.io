@@ -1,6 +1,6 @@
 ---
-date: 2024-02-25T22:38:42
-updatedAt: 2024-04-21 18:34:36+3270
+date: 2024-05-01T22:38:42
+updatedAt: 2024-09-22 00:01:01
 tags:
   - JVM
   - Concurrency
@@ -8,7 +8,7 @@ tags:
 categories:
   - JVM
 title: 0-Lock 정의 & synchronized
-lastmod: 2024-04-21T09:36:38.168Z
+lastmod: 2024-09-21T15:01:20.143Z
 ---
 # 사용하는 이유
 
