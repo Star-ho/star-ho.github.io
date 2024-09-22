@@ -7,9 +7,9 @@ tags:
   - JVM
 categories:
   - Coroutine
-Series: Coroutine
+  - Coroutine-series
 title: 3-CoroutinDispatcher
-lastmod: 2024-09-22T07:01:48.308Z
+lastmod: 2024-09-22T07:06:45.034Z
 ---
 * dispatcher의 사전적 정의
   * 사람이나 차량, 특히 긴급 차량을 필요한 곳으로 보낼 책임이 있는 사람

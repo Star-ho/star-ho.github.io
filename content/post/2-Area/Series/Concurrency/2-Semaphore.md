@@ -1,14 +1,15 @@
 ---
 date: 2024-03-01T22:41:03
-updatedAt: 2024-09-21 23:55:17
+updatedAt: 2024-09-22 16:07:18
 tags:
   - Concurrency
   - hugo_blog
   - Concept
 categories:
   - Concurrency
+  - Concurrent-series
 title: 2-Semaphore
-lastmod: 2024-09-21T14:55:17.867Z
+lastmod: 2024-09-22T07:07:18.376Z
 ---
 * 임계영역을 보호하는 방법
 

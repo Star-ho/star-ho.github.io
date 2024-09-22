@@ -1,15 +1,15 @@
 ---
 date: 2024-03-05T22:41:01
-updatedAt: 2024-09-21 23:54:37
+updatedAt: 2024-09-22 16:08:09
 tags:
   - Server-History
   - hugo_blog
   - Reactive
   - Server
 categories:
-  - Server-History
+  - Server-History-Series
 title: 10-Reactor Java(1)
-lastmod: 2024-09-21T14:54:37.961Z
+lastmod: 2024-09-22T07:08:09.219Z
 ---
 * callback보다 나은점
   * callback hell이 발생하지 않음

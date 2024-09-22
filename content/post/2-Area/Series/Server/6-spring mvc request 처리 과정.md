@@ -1,14 +1,14 @@
 ---
 date: 2024-03-04T22:41:06
-updatedAt: 2024-09-21 23:54:19
+updatedAt: 2024-09-22 16:08:00
 tags:
   - Server-History
   - hugo_blog
   - Server
 categories:
-  - Server-History
+  - Server-History-Series
 title: 6-spring mvc request 처리 과정
-lastmod: 2024-09-21T14:54:19.490Z
+lastmod: 2024-09-22T07:08:00.188Z
 ---
 ![center|600](/image/real-resource-image/Pasted%20image%2020231125233607.png)
 

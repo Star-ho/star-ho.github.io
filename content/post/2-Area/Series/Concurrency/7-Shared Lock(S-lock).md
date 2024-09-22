@@ -1,6 +1,6 @@
 ---
 date: 2024-03-02T22:41:02
-updatedAt: 2024-09-21 23:55:38
+updatedAt: 2024-09-22 16:07:25
 tags:
   - Concurrency
   - Concept
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Concurrency
+  - Concurrent-series
 title: 7-Shared Lock(S-lock)
-lastmod: 2024-09-21T14:55:38.273Z
+lastmod: 2024-09-22T07:07:25.878Z
 ---
 * 특정 행을 읽기위해 거는 락
 * 어떤 object에 S-lock이 걸려있다면 다른 트랜잭션에서 읽기는 가능하지만 변경은 불가능함

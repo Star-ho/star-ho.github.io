@@ -1,14 +1,15 @@
 ---
 date: 2024-03-03T22:41:03
-updatedAt: 2024-09-21 23:52:34
+updatedAt: 2024-09-22 16:06:42
 tags:
   - Coroutine
   - hugo_blog
   - JVM
 categories:
   - Coroutine
+  - Coroutine-series
 title: 2-CoroutineScope
-lastmod: 2024-09-21T14:53:39.296Z
+lastmod: 2024-09-22T07:06:42.901Z
 ---
 * 새로운 coroutine에 대한 Scope를 정의함
 * launch와 async와 같은 coroutine builder는 CoroutineScope의 확장함수임

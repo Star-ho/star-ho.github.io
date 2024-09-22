@@ -1,15 +1,15 @@
 ---
 date: 2024-03-05T22:41:00
-updatedAt: 2024-09-21 23:54:50
+updatedAt: 2024-09-22 16:08:16
 tags:
   - Server-History
   - hugo_blog
   - virtual-thread
   - Server
 categories:
-  - Server-History
+  - Server-History-Series
 title: 13-Virtual Thread 1
-lastmod: 2024-09-21T14:54:50.754Z
+lastmod: 2024-09-22T07:08:16.405Z
 ---
 ## 정의
 

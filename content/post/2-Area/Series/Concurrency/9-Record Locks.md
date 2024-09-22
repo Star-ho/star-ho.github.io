@@ -1,6 +1,6 @@
 ---
 date: 2024-03-02T22:41:04
-updatedAt: 2024-09-21 23:55:48
+updatedAt: 2024-09-22 16:07:28
 tags:
   - Concurrency
   - hugo_blog
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Concurrency
+  - Concurrent-series
 title: 9-Record Locks
-lastmod: 2024-09-21T14:55:48.850Z
+lastmod: 2024-09-22T07:07:28.889Z
 ---
 * record의 index에 거는 lock
 

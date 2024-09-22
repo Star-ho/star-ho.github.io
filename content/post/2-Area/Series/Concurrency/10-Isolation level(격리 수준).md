@@ -8,8 +8,9 @@ tags:
   - Concept
 categories:
   - Concurrency
+  - Concurrent-series
 title: 10-Isolation level(격리 수준)
-lastmod: 2024-09-22T06:58:35.574Z
+lastmod: 2024-09-22T07:07:30.921Z
 ---
 * 여러 트랜잭션이 동시에 변경을 수행하고 쿼리를 수행할 때 성능과 안정성, 일관성 및 결과 재현성 간의 균형을 미세 조정하는 설정
 

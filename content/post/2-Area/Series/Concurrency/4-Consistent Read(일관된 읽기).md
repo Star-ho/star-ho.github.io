@@ -1,14 +1,15 @@
 ---
 date: 2024-03-01T22:41:05
-updatedAt: 2024-09-21 23:55:24
+updatedAt: 2024-09-22 16:07:21
 tags:
   - Concurrency
   - hugo_blog
   - Concept
 categories:
   - Concurrency
+  - Concurrent-series
 title: 4-Consistent Read(일관된 읽기)
-lastmod: 2024-09-21T14:55:25.161Z
+lastmod: 2024-09-22T07:07:21.425Z
 ---
 * 첫번째 읽을때 스냅샷을 생성함으로써, 다른 트랜잭션에서 발생한 변경과는 무관하게, 스냅샷을 생성했을 때의 데이터를 읽을수 있는 것을 말함
 

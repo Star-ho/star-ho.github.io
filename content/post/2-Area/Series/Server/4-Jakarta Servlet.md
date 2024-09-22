@@ -1,14 +1,14 @@
 ---
 date: 2024-03-03T22:41:05
-updatedAt: 2024-09-21 23:54:07
+updatedAt: 2024-09-22 16:07:53
 tags:
   - Server-History
   - hugo_blog
   - Server
 categories:
-  - Server-History
+  - Server-History-Series
 title: 4-Jakarta Servlet
-lastmod: 2024-09-21T14:54:07.954Z
+lastmod: 2024-09-22T07:07:53.331Z
 ---
 * 이전의 이름음 java servlet임
   * eclipse재단과 oracle과의 상표권 분쟁으로 jakarta로 변경됨 [링크](https://www.samsungsds.com/kr/insights/java_jakarta.html)

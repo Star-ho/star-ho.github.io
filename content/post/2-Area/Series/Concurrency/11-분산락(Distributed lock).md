@@ -1,14 +1,15 @@
 ---
 date: 2024-05-02T22:41:32
-updatedAt: 2024-09-21 23:56:06
+updatedAt: 2024-09-22 16:07:32
 tags:
   - Concurrency
   - Concept
   - hugo_blog
 categories:
   - Concurrency
+  - Concurrent-series
 title: 11-분산락(Distributed lock)
-lastmod: 2024-09-21T14:56:06.249Z
+lastmod: 2024-09-22T07:07:32.291Z
 ---
 * named lock
 

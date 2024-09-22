@@ -1,14 +1,15 @@
 ---
 date: 2024-03-03T22:41:08
-updatedAt: 2024-09-21 23:52:46
+updatedAt: 2024-09-22 16:06:55
 tags:
   - Coroutine
   - hugo_blog
   - JVM
 categories:
   - Coroutine
+  - Coroutine-series
 title: 7-Job
-lastmod: 2024-09-21T14:53:51.958Z
+lastmod: 2024-09-22T07:06:55.580Z
 ---
 ### JOB은 코루틴이 상속하지 않는 유일한 코루틴 컨텍스트임
 

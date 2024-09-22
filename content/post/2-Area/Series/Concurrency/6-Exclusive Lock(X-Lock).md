@@ -1,6 +1,6 @@
 ---
 date: 2024-03-02T22:41:01
-updatedAt: 2024-09-21 23:55:29
+updatedAt: 2024-09-22 16:07:24
 tags:
   - hugo_blog
   - Concurrency
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Concurrency
+  - Concurrent-series
 title: 6-Exclusive Lock(X-Lock)
-lastmod: 2024-09-21T14:55:33.953Z
+lastmod: 2024-09-22T07:07:24.625Z
 ---
 1- X-Lock이 걸린 객체에 대해 다른 트랜잭션에서 읽기, 쓰기 불가능
 

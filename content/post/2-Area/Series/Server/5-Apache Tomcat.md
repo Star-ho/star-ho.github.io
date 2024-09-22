@@ -1,13 +1,13 @@
 ---
 date: 2024-03-04T22:41:05
-updatedAt: 2024-09-21 23:54:12
+updatedAt: 2024-09-22 16:07:56
 tags:
   - Server-History
   - hugo_blog
 categories:
-  - Server-History
+  - Server-History-Series
 title: 5-Apache Tomcat
-lastmod: 2024-09-21T14:54:12.189Z
+lastmod: 2024-09-22T07:07:56.960Z
 ---
 * Jakarta Servlet, Jakarta Server Page, Jakarta Expression Language, Jakarta WebSocket, Jakarta Annotations, Jakarta Authentication 의 세부사항을 구현한 오픈소스 소프트웨어
 

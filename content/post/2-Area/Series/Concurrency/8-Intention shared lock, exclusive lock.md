@@ -1,6 +1,6 @@
 ---
 date: 2024-03-02T22:41:03
-updatedAt: 2024-09-21 23:55:46
+updatedAt: 2024-09-22 16:07:27
 tags:
   - Concurrency
   - Concept
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Concurrency
+  - Concurrent-series
 title: 8-Intention shared lock, exclusive lock
-lastmod: 2024-09-21T14:55:46.152Z
+lastmod: 2024-09-22T07:07:27.376Z
 ---
 * IS, IX lock과 S,X Lock과의 차이는 테이블까지 락이 걸림
 

@@ -1,6 +1,6 @@
 ---
 date: 2024-03-01T22:41:02
-updatedAt: 2024-09-21 23:55:14
+updatedAt: 2024-09-22 16:07:16
 tags:
   - Concurrency
   - hugo_blog
@@ -8,8 +8,9 @@ tags:
   - Concept
 categories:
   - Concurrency
+  - Concurrent-series
 title: 1-Mutex(Lock)
-lastmod: 2024-09-21T14:55:15.318Z
+lastmod: 2024-09-22T07:07:16.790Z
 ---
 * **Mut**ual **ex**clusion의 약자
 * 프로세스 간 동기화에 사용할 수도 있는 동기화 기본 형식입니다.
