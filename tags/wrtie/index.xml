@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Wrtie on Sungho's Dev BLog</title><link>https://sungho94.me/tags/wrtie/</link><description>Recent content in Wrtie on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sun, 23 Jun 2024 10:45:30 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/wrtie/index.xml" rel="self" type="application/rss+xml"/><item><title>Elasticsearch write</title><link>https://sungho94.me/p/elasticsearch-write/</link><pubDate>Sun, 23 Jun 2024 10:45:30 +0000</pubDate><guid>https://sungho94.me/p/elasticsearch-write/</guid><description>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240623104840.png"
+loading="lazy"
+alt="|center"
+>&lt;/p>
+&lt;h2 id="1-coordinateing-stage">1. coordinateing stage
+&lt;/h2>&lt;ul>
+&lt;li>Elasticsearch의 모든 색인 작업은 일반적으로 document ID(routing_key)를 기반으로 라우팅을 사용해 복제 그룹을 확인함
+&lt;ul>
+&lt;li>&lt;code>shard = hash(routing_key) % number_of_primary_shards&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>복제 그룹이 확인되면, 그 작업은 내부적으로 그룹의 현재 기본 샤드로 전달됨&lt;/li>
+&lt;/ul>
+&lt;h2 id="2-primary-stage">2. primary stage
+&lt;/h2>&lt;ul>
+&lt;li>primary 샤드는 작업의 유효성을 검증하고, replica 샤드로 전달하는 역할&lt;/li>
+&lt;li>replica 샤드는 오프라인 상태일 수 있으므로 primary 샤드가 모든 replica에 복제할 필요가 없음
+&lt;ul>
+&lt;li>대신 Elasticsearch는 작업을 수신해야 하는 샤드 복제본 목록을 유지함&lt;/li>
+&lt;li>이 목록을 &lt;code>in-sync copies&lt;/code>라고 불리며, 마스터노드에서 관리됨&lt;/li>
+&lt;li>사용자에게 승인된 모든 인덱스 및 삭제 작업을 처리했음을 보장하는 정상 샤드 복사본 직합&lt;/li>
+&lt;li>primary는 이 불변성을 유지할 책임이 있으므로, 모든 작업을 해당 세트의 replica에 복제해야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>기본 샤드의 요청 흐름&lt;br>
+2-1. 들어오는 연산의 유효성을 검사하고, 유효하지 않은 경우 거부함&lt;br>
+ex) 숫자 필드에 객체 필드가 들어오는경우&lt;br>
+2-2. local에서 작업을 수행하고, 관련 document를 indexing하거나 삭제함
+&lt;ul>
+&lt;li>유효성을 검사하고 필요할경우 거부함(키워드가 너무 길어 Lucene에 색인할 수 없는경우)&lt;br>
+2-3. in-sync copies set의 각 replica에게 작업을 전송함&lt;/li>
+&lt;li>복제본이 여러개인 경우, 병렬로 수행됨&lt;br>
+2-4. 모든 in-sync copies set이 작업을 성공적으로 수행하고, primary에 응답하면 primary는 클라이언트에 대한 요청이 정상적으로 완료되었음을 알 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>검색은 in-sync copies에 있는 reaplica샤드 뿐만아닌, 모든 replica 샤드에서 검색이 가능함&lt;br>
+모든 replica샤드에 요청이 전파되어 저장되기 전에, in-sync copies외 샤드에 검색하면 변경내용이 없음&lt;br>
+이로인해 es는 near real-time search가 됨&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="3-replica-stage">3. replica stage
+&lt;/h2>&lt;ul>
+&lt;li>각 in-sync replica는 로컬에서 인덱싱 작업을 수행하며 복사본을 가짐&lt;/li>
+&lt;/ul>
+&lt;h3 id="위의-indexing단계는-순차적으로-진행되며-내부-재시도를-가능하기-위해-lifetime을-가지고-있음">위의 indexing단계는 순차적으로 진행되며, 내부 재시도를 가능하기 위해 lifetime을 가지고 있음
+&lt;/h3>&lt;p>&lt;a class="link" href="https://www.elastic.co/blog/found-elasticsearch-top-down" target="_blank" rel="noopener"
+>https://www.elastic.co/blog/found-elasticsearch-top-down&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.elastic.co/blog/found-elasticsearch-from-the-bottom-up" target="_blank" rel="noopener"
+>https://www.elastic.co/blog/found-elasticsearch-from-the-bottom-up&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.javaadvent.com/2022/12/elasticsearch-internals.html" target="_blank" rel="noopener"
+>https://www.javaadvent.com/2022/12/elasticsearch-internals.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#basic-write-model" target="_blank" rel="noopener"
+>https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#basic-write-model&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html" target="_blank" rel="noopener"
+>https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html&lt;/a>&lt;/p></description></item></channel></rss>

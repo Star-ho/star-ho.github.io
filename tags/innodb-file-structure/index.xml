@@ -1,0 +1,1329 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>InnoDB-File-Structure on Sungho's Dev BLog</title><link>https://sungho94.me/tags/innodb-file-structure/</link><description>Recent content in InnoDB-File-Structure on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Fri, 24 May 2024 16:30:40 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/innodb-file-structure/index.xml" rel="self" type="application/rss+xml"/><item><title>7-Mysql 8.0에서는?</title><link>https://sungho94.me/p/7-mysql-8.0%EC%97%90%EC%84%9C%EB%8A%94/</link><pubDate>Fri, 24 May 2024 16:30:40 +0000</pubDate><guid>https://sungho94.me/p/7-mysql-8.0%EC%97%90%EC%84%9C%EB%8A%94/</guid><description>&lt;ul>
+&lt;li>Jeremy Cole의 InnoDB정보들은 MySQL 5버전에 관한 내용이며, 10년전의 내용임&lt;/li>
+&lt;li>현재 MySQL 8버전대를 사용하는데, 큰 기본 틀의 큰 차이는 없어 보이지만, 간단하게 알아볼 예정
+&lt;ul>
+&lt;li>Mysql버전에 따라 innodb버전이 업데이트됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Jeremy Cole의 Innodb_ruby는 현재 8버전 대를 지원하고 있지 않음&lt;/li>
+&lt;li>필자는 아래 두가지 도구를 추천한다
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/alibaba/innodb-java-reader" target="_blank" rel="noopener"
+>https://github.com/alibaba/innodb-java-reader&lt;/a>
+&lt;ul>
+&lt;li>이 포스팅에서 사용할 도구&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/baotiao/inno" target="_blank" rel="noopener"
+>https://github.com/baotiao/inno&lt;/a>_space
+&lt;ul>
+&lt;li>사용방법을 익히려 해보았지만, record를 파싱하는 부분에서 에러가 나서 결국 포기하였다.&lt;/li>
+&lt;li>예제 데이터는 ibd2sdi를 이용하여 record정보를 가져오는것 같은데 실패하였다
+&lt;ul>
+&lt;li>방법을 알면 댓글로 알려주시길 바랍니다 ㅠㅠ&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="무엇을-알아볼-것인가">무엇을 알아볼 것인가?
+&lt;/h2>&lt;ul>
+&lt;li>space page구조&lt;/li>
+&lt;li>page들은 doubly-linked list 구조인가?&lt;/li>
+&lt;li>index record들은 singly-linked list구조인가?&lt;/li>
+&lt;/ul>
+&lt;h2 id="space-page-구조">Space page 구조
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524171103.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>매우 작은 테이블의 구조를 나타냄&lt;/li>
+&lt;li>5버전대와의 차이점은 SDI페이지가 생겼다는 것이고, 이외에는 동일하다
+&lt;ul>
+&lt;li>SDI는 데이터베이스 객체에 대한 메타데이터를 저장하는 용도&lt;/li>
+&lt;li>자세한 정보는 &lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/serialized-dictionary-information.html" target="_blank" rel="noopener"
+>링크&lt;/a>참고&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="여전히-page들은-doubly-linked-list인가">여전히 page들은 doubly-linked list인가?
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524172057.png"
+loading="lazy"
+>&lt;/p>
+&lt;ul>
+&lt;li>데이터가 들어있는 페이지의 일부이다&lt;/li>
+&lt;li>page들이 prevPage, nextPage를 가지고 있고 INDEX페이지들은 앞 뒤 페이지를 참조하는 것을 알 수 있음
+&lt;ul>
+&lt;li>doubly-linked list구조 확인&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="index-record들은-singly-linked-list구조인가">index record들은 singly-linked list구조인가?
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524172847.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>하나의 offset만 존재하며, 현재 primaryKeyPosition값에서 offset을 더하면, 다음 primaryKeyPosition이 되는 것을 알 수 있음
+&lt;ul>
+&lt;li>singly-linked list구조 확인&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul></description></item><item><title>5-physical structure of records in InnoDB</title><link>https://sungho94.me/p/5-physical-structure-of-records-in-innodb/</link><pubDate>Wed, 22 May 2024 22:43:24 +0000</pubDate><guid>https://sungho94.me/p/5-physical-structure-of-records-in-innodb/</guid><description>&lt;h2 id="record">Record
+&lt;/h2>&lt;ul>
+&lt;li>해당 포스트에서는 COMPACT row format만 고려함&lt;/li>
+&lt;/ul>
+&lt;h3 id="record-offsets">Record offsets
+&lt;/h3>&lt;ul>
+&lt;li>이전 포스트에서 레코드 오프셋은 레코드를 가르키는 구조라고 설명했음&lt;/li>
+&lt;li>레코드 오프셋은, 가변길이인 레코드 데이터 자체의 시작을 가르키지만, 각 레코드 앞에는 가변길이의 레코드 헤더가 존재함&lt;/li>
+&lt;li>해당 포스트의 글과 그림에서 레코드 데이터는 N에 존재하고, N+1과같이 양수오프셋으로 표현함
+&lt;ul>
+&lt;li>헤더는 N-1과 같이 음수 오프셋으로 표현함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>InnoDB는 종종 레코드의 시작점 위치인 N을 원본으로 지칭함&lt;/li>
+&lt;/ul>
+&lt;h3 id="the-record-header">The record header
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524152545.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>Next Record offset&lt;/p>
+&lt;ul>
+&lt;li>현재 레코드에서 페이지 내 다음 레코드의 시작점까지의 상대적 오프셋&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Record Type&lt;/p>
+&lt;ul>
+&lt;li>레코드 유형으로 일반(0), 노드 포인터(1), 최소값(2), 최상위(3)의 4가지 값만 지원됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Order&lt;/p>
+&lt;ul>
+&lt;li>이 레코드가 힙에 삽입된 순서임&lt;/li>
+&lt;li>Infimum, supremum을 포함한 힙 레코드는 0번부터 번호가 매겨짐, Infimum은 항상 0, supremum은 항상 1임&lt;/li>
+&lt;li>삽입된 사용자 레코드는 2부터 번호가 매겨짐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Number of Records Owned&lt;/p>
+&lt;ul>
+&lt;li>페이지 디렉토리에서 현재 레코드가 &amp;lsquo;소유&amp;rsquo;한 레코드수&lt;/li>
+&lt;li>향후 포스트에서 설명할 예정&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Info Flag&lt;/p>
+&lt;ul>
+&lt;li>레코드에 대한 boolean flag를 지정하는 4비트 비트맵&lt;/li>
+&lt;li>현재 두개의 플래그만 정의도어 있음
+&lt;ul>
+&lt;li>min_rec(1)는 이 레코드가 B+Tree의 non-leaf에서 최소 레코드임을 의미함&lt;/li>
+&lt;li>deleted(2)는 레코드가 삭제 표시되어 있으며, 향후 purge operation에 의해 실제로 삭제될 것임을 의미함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Nullable field bitmap(optional)&lt;/p>
+&lt;ul>
+&lt;li>필드가 NULL인지 여부를 저장하기 위한 필드, nullable한 필드당 1비트를 사용하고, byte로 반올림됨&lt;/li>
+&lt;li>필드가 NULL인 경우 해당 필드 값은 레코드의 키 또는 행부분에서 제거됨&lt;/li>
+&lt;li>Null이 필드가 없는 경우 이 비트맵은 존재하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Variable file lengths array(optional)&lt;/p>
+&lt;ul>
+&lt;li>가변길이 필드당 8비트 또는 16비트 정수 배열(필드의 최대크기에 따라 다름)로 해당 필드에 대한 데이터 길이를 저장&lt;/li>
+&lt;li>가변길이 필드가 없는경우, 이 배열은 없음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>record header는 row당 최소 5 byte이며, 가변길이 필드에 의해 더 길어질 수 있음&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="clustered-indexes">Clustered indexes
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524153758.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>Cluster Key Fields
+&lt;ul>
+&lt;li>클러스 키 필드는 문자 그대로 함께 연결됨&lt;/li>
+&lt;li>InnoDB는 column유형 별 내부 저장소 형식의 raw byte를 단이 바이트 스트림으로 연결하기만 함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Transaction ID
+&lt;ul>
+&lt;li>이 레코드를 마지막으로 수정한 트랜잭션의 48비트 정수 트랜직션 ID&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Roll Pointer
+&lt;ul>
+&lt;li>해당 레코드를 마지막으로 수정한 트랜잭션의 undu record의 rollback segment 위치를 포함하고 있는 구조체&lt;/li>
+&lt;li>이 필드의 roll pointer 구조는 1비트의 &amp;ldquo;삽입중&amp;rdquo; 플래그, 7비트의 rollback segment ID, 4바이트 페이지 번호, 2바이트의 undo log위치의 페이지 오프셋으로 이루어짐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Non-Key Fields
+&lt;ul>
+&lt;li>기본키가 아닌 실제 행데이터가 단일 바이트 스트림으로 연결되어 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524160646.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>non-leaf 페이지의 레코드 포맷임&lt;/li>
+&lt;li>non-leaf page는 MVCC가 아니기에, Transaction ID와 Roll Pointer filed는 없음&lt;/li>
+&lt;li>non-key field 대신에 이 노드 포인터가 가르키는 하위 페이지 번호가 포함됨&lt;/li>
+&lt;li>클러스터 키는 NUL이 될 수 없으므로 nullable field bitmap도 없음&lt;/li>
+&lt;/ul>
+&lt;h3 id="secondary-indexes">Secondary indexes
+&lt;/h3>&lt;ul>
+&lt;li>InnoDB의 Secondary Index는 clustered key와 전체 구조가 동일하지만, non-key대신 Primary Key Value(PKV)라고 하는 clustered key field를 포함함&lt;/li>
+&lt;li>Secondary Index와 clustered key사이에 겹치는 필드가 있는 경우, Secondary Index레코드에 저장된 clustered key에서 겹치는 필드가 제거됨&lt;/li>
+&lt;li>예를들어, 테이블에 primary key(a,b,c)와 secondary Index(a,d)가 있는경우, 인덱스 내의 secondary key는 (a,d)가 되지만, PKV에는 (b,c)만 포함됨&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524161849.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>sendary key fields는 clusterd key와 마찬가지로 단일 바이트 스트림으로 연결됨&lt;/li>
+&lt;li>clustered key 필드는 정확한 동일한 방식으로 함께 연결되어 PKV를 만듬&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240524162016.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>Secondary index의 non-leaf page는 PKV가 레코드에 포함되며, 이는 레코드 값이 아닌, 레코드 키의 일부로 간주됨&lt;/li>
+&lt;li>Secondary index는 고유하지 않을 수 있지만, 페이지 내의 각 레코드는 unique 식별자가 필요함
+&lt;ul>
+&lt;li>그러므로 고유성을 보장하기 위해 PKV가 레코드에 포함되어 있어야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>즉, Secondary key의 non-leaf에 있는 레코드는 leaf 페이지의 레코드보다 4바이트 커짐&lt;/li>
+&lt;/ul>
+&lt;h3 id="row당-오버헤드">row당 오버헤드
+&lt;/h3>&lt;ul>
+&lt;li>
+&lt;p>위의 그림을 보면 InnoDB에 필요한 행당 오버헤드를 쉽게 계산할 수 있음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>clusterd key leaf에는 헤더에 최소 5바이트, 트랜잭션 ID에 6파인트, 롤포인터에 7바이트, row당 총 18바이트가 필요함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>매우 작은 테이블(2-3개의 정수컬럼을 가지는 테이블)의 경우 오버헤드가 상당히 높을 수 있음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>또한 페이지당 오버헤드가 상당하여, 비 효율적으로 페이지를 채우면 많은 야의 공간을 차지할 수 있음&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://blog.jcole.us/2013/01/10/the-physical-structure-of-records-in-innodb/" target="_blank" rel="noopener"
+>https://blog.jcole.us/2013/01/10/the-physical-structure-of-records-in-innodb/&lt;/a>&lt;/p></description></item><item><title>4-B+tree index structure</title><link>https://sungho94.me/p/4-b-tree-index-structure/</link><pubDate>Mon, 20 May 2024 23:10:14 +0000</pubDate><guid>https://sungho94.me/p/4-b-tree-index-structure/</guid><description>&lt;h2 id="btree-root-leaf-level-용어정리">B+Tree, root, leaf, level 용어정리
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>B+Tree는 InnoDB 인덱스의 구조임&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>데이터가 메모리 크기와 일치하지 않아, 디스크에서 읽어야하는 경우 효율적임&lt;/p>
+&lt;ul>
+&lt;li>트리의 깊이에 따라 요청된 데이터에 엑세스하는데 필요한 최대 읽기 횟수가 고정되어 있어 확장성이 뛰어남&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>인덱스 트리는 트리에 엑세스하기 위한 시작점으로 root 페이지에서 시작됨&lt;/p>
+&lt;ul>
+&lt;li>root page는 InnoDB의 data dictionary에 영구적으로 저장되어 있음&lt;/li>
+&lt;li>트리는 단일 루트 페이지일만큼 작을 수 있고, multi-level tree의 수백만 페이지 일 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>페이지를 leaf(internal)과 non-leaf(node)페이지로 구분함&lt;/p>
+&lt;ul>
+&lt;li>leaf 페이지에는 실제 행 데이터가 포함됨&lt;/li>
+&lt;li>non-leaf페이지는 다른 non-leaf페이지 또는 leaf 페이지를 가지고 있음&lt;/li>
+&lt;li>tree는 균형이 잡혀있고, 모든 가지의 깊이는 동일함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>InnoDB는 트리의 각 페이지에 level을 할당함&lt;/p>
+&lt;ul>
+&lt;li>리프페이지에는 level 0을 할당하고, 트리 위로 올라갈수록 level이 증가함&lt;/li>
+&lt;li>root page의 level은 트리의 깊이와 같음&lt;/li>
+&lt;li>구분이 중요하지 않은 경우, leaf페이지와 non-leaf페이지는 둘다 internal페이지라고 부름&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="leaf-and-non-leaf-page">Leaf and non-leaf page
+&lt;/h2>&lt;ul>
+&lt;li>leaf와 non-leaf페이지(Infimum과 supreme을 포함)는 next record의 오프셋을 저장한 &amp;ldquo;next record&amp;quot;포인터를 가지고 있음&lt;/li>
+&lt;li>이 연결은 infimum에서 시작하여 모든 레코드를 오름차순으로 연결되며, sumpemum에서 끝남&lt;/li>
+&lt;li>레코드는 물리적으로 정렬되어 있지 않고, 링크된 목록에서의 위치가 유일한 순서임
+&lt;ul>
+&lt;li>insert시 사용 가능한 공간이 있으면 insert됨&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240520232314.png"
+loading="lazy"
+alt="center"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>leaf page의 구조로, 각 레코드의 데이터의 일부로 키가 아닌 값을 가지고 있음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240520232449.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>non-leaf페이지는 동일한 구조를 가지지만, 데이터로 하위 페이지 번호를 가르키며, 정확한 키 대신 하위페이지의 가장 작은 키를 가짐&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240520232622.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>대부분의 인덱스는 2개 이상의 페이지로 구성되며, 여러 페이지가 오름차순 및 내림차순으로 링크되어 있음&lt;/li>
+&lt;li>각각의 페이지는 FIL헤더 안에 이전페이지와 다음 페이지를 가르키는 point를 가지고 있음
+&lt;ul>
+&lt;li>이로인해 INDEX 페이지들은 동일한 레벨에서 double linked list구조를 가짐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240520232907.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>위 그림은 B+Tree내의 단일 index page임&lt;/li>
+&lt;/ul>
+&lt;h2 id="실제로-살펴보기">실제로 살펴보기
+&lt;/h2>&lt;ul>
+&lt;li>실제로 그림에서 사용중인 테스트 테이블을 생성하고, 데이터를 삽입해보자!&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">CREATE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">TABLE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">t_btree&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">INT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">NOT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">NULL&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">CHAR&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">NOT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">NULL&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">PRIMARY&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">KEY&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ENGINE&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">InnoDB&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">INSERT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">INTO&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">t_btree&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">VALUES&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;A&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;B&amp;#34;&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;C&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>매우 작고 비현실적이지만, 레코드와 레코드 순회가 어떻게 이루어 지는지 알기 위해 적절한 테이블임&lt;/li>
+&lt;/ul>
+&lt;h3 id="실제-기본-table-space-파일-구조-확인">실제 기본 table space 파일 구조 확인
+&lt;/h3>&lt;ul>
+&lt;li>실제 테이블을 확인해보면, 이전에 보았던 테이블들과 같이 FSP_HDR, IBUF_BITMAP, INODE 페이지가 있고, 루트 인덱스가 있는 INDEX페이지, 아직 사용되지 않은 FREE 페이지 2개가 존재함&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">$ innodb_space -f t_btree.ibd space-page-type-regions
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">start end count &lt;span class="nb">type&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">0&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">1&lt;/span> FSP_HDR
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">1&lt;/span> &lt;span class="m">1&lt;/span> &lt;span class="m">1&lt;/span> IBUF_BITMAP
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">2&lt;/span> &lt;span class="m">2&lt;/span> &lt;span class="m">1&lt;/span> INODE
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">3&lt;/span> &lt;span class="m">3&lt;/span> &lt;span class="m">1&lt;/span> INDEX
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">4&lt;/span> &lt;span class="m">5&lt;/span> &lt;span class="m">2&lt;/span> FREE &lt;span class="o">(&lt;/span>ALLOCATED&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>space-index-pages-summary 명령은 각 페이지에 레코드가 몇개 있는지 알려준다
+&lt;ul>
+&lt;li>3개가 있을것으로 예상함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">$ innodb_space -f t_btree.ibd space-index-pages-summary
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">page index level data free records
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">3&lt;/span> &lt;span class="m">18&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">96&lt;/span> &lt;span class="m">16156&lt;/span> &lt;span class="m">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">4&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">16384&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">5&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="m">16384&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="실제-레코드-확인">실제 레코드 확인
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">$ innodb_space -f t_btree.ibd -r ./simple_t_btree_describer.rb -d SimpleTBTreeDescriber -p &lt;span class="m">3&lt;/span> page-dump
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">{&lt;/span>:format&lt;span class="o">=&lt;/span>&amp;gt;:compact,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :offset&lt;span class="o">=&lt;/span>&amp;gt;125,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :header&lt;span class="o">=&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">{&lt;/span>:next&lt;span class="o">=&lt;/span>&amp;gt;157,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :type&lt;span class="o">=&lt;/span>&amp;gt;:conventional,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :heap_number&lt;span class="o">=&lt;/span>&amp;gt;2,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :n_owned&lt;span class="o">=&lt;/span>&amp;gt;0,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :min_rec&lt;span class="o">=&lt;/span>&amp;gt;false,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :deleted&lt;span class="o">=&lt;/span>&amp;gt;false,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :field_nulls&lt;span class="o">=&lt;/span>&amp;gt;nil,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :field_lengths&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">[&lt;/span>0, 0, 0, 0&lt;span class="o">]&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :field_externs&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">[&lt;/span>false, false, false, false&lt;span class="o">]}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :next&lt;span class="o">=&lt;/span>&amp;gt;157,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :type&lt;span class="o">=&lt;/span>&amp;gt;:clustered,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :key&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">[{&lt;/span>:name&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;i&amp;#34;&lt;/span>, :type&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;INT&amp;#34;&lt;/span>, :value&lt;span class="o">=&lt;/span>&amp;gt;0, :extern&lt;span class="o">=&lt;/span>&amp;gt;nil&lt;span class="o">}]&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :transaction_id&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;0000000f4745&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :roll_pointer&lt;span class="o">=&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">{&lt;/span>:is_insert&lt;span class="o">=&lt;/span>&amp;gt;true, :rseg_id&lt;span class="o">=&lt;/span>&amp;gt;8, :undo_log&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">{&lt;/span>:page&lt;span class="o">=&lt;/span>&amp;gt;312, :offset&lt;span class="o">=&lt;/span>&amp;gt;272&lt;span class="o">}}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :row&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">[{&lt;/span>:name&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;s&amp;#34;&lt;/span>, :type&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;CHAR(10)&amp;#34;&lt;/span>, :value&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;A&amp;#34;&lt;/span>, :extern&lt;span class="o">=&lt;/span>&amp;gt;nil&lt;span class="o">}]}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>:format
+&lt;ul>
+&lt;li>레코드가 Barracuda 포맷 테이블 내의 compact포맷인것을 의미
+&lt;ul>
+&lt;li>반대로 Antelope 테이블 내의 redundant가 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>:key
+&lt;ul>
+&lt;li>인덱스의 키 필드 배열&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>:row
+&lt;ul>
+&lt;li>키가아닌 필드의 배열&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>:transaction_id and :roll_pointer
+&lt;ul>
+&lt;li>각 레코드에 포함된 MVCC를 위한 내부 필드&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>:header내의 :next
+&lt;ul>
+&lt;li>실제로는 상대저 오프셋(32)가 들어가며, 편의를 위해 계산된 오프셋이 표시됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="인덱스-재귀">인덱스 재귀
+&lt;/h3>&lt;ul>
+&lt;li>index-recurse모드를 사용하면 전체 인덱스를 재귀하는 멋지고 간단한 출력을 얻을 수 있음
+&lt;ul>
+&lt;li>예시는 단일 페이지 인덱스이므로 매우 짧음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">$ innodb_space -f t_btree.ibd -r ./simple_t_btree_describer.rb -d SimpleTBTreeDescriber -p &lt;span class="m">3&lt;/span> index-recurse
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ROOT NODE &lt;span class="c1">#3: 3 records, 96 bytes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>0&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">(&lt;/span>&lt;span class="nv">s&lt;/span>&lt;span class="o">=&lt;/span>A&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>1&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">(&lt;/span>&lt;span class="nv">s&lt;/span>&lt;span class="o">=&lt;/span>B&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>2&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">(&lt;/span>&lt;span class="nv">s&lt;/span>&lt;span class="o">=&lt;/span>C&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="간단하지-않은-인덱스-트리-구축">간단하지 않은 인덱스 트리 구축
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240522223300.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>multi level 인덱스는 위와같이 나타남&lt;/li>
+&lt;li>이전에 설명했듯이, 모든 페이지는 각각 doubly-linked 되어있고, 각 페이지 안의 레코드들은 오름차순으로 singly-linked되어있음&lt;/li>
+&lt;li>Non-leaf페이지는 실제 키보다는 자식의 페이지 넘버를 포함한 포인터를 가지고 있음&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">$ innodb_space -f t.ibd -r ./simple_t_describer.rb -d SimpleTDescriber -p &lt;span class="m">3&lt;/span> index-recurse
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ROOT NODE &lt;span class="c1">#3: 2 records, 26 bytes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> NODE POINTER RECORD &amp;gt;&lt;span class="o">=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>252&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="c1">#36&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> INTERNAL NODE &lt;span class="c1">#36: 1117 records, 14521 bytes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> NODE POINTER RECORD &amp;gt;&lt;span class="o">=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>252&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="c1">#4&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LEAF NODE &lt;span class="c1">#4: 446 records, 9812 bytes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>1&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>2&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>3&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>4&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;lt;many lines omitted&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> NODE POINTER RECORD &amp;gt;&lt;span class="o">=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>447&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="c1">#1676&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LEAF NODE &lt;span class="c1">#1676: 444 records, 9768 bytes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>447&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>448&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>449&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>450&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;lt;many lines omitted&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> NODE POINTER RECORD &amp;gt;&lt;span class="o">=&lt;/span> &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>891&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="c1">#771&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> LEAF NODE &lt;span class="c1">#771: 512 records, 11264 bytes&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>891&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>892&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> RECORD: &lt;span class="o">(&lt;/span>&lt;span class="nv">i&lt;/span>&lt;span class="o">=&lt;/span>893&lt;span class="o">)&lt;/span> -&amp;gt; &lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>10만개의 row를 가지는 간단한 테이블은 위와같은 구조리르 가짐
+&lt;ul>
+&lt;li>ROOT, INTERNAL, LEAF NODE를 가지고 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>일부 페이지는 완전히 꽉차있으며, 468개의 레코드가 16KB페이지의 거의 15KB를 차지하고 있음을 알 수 있음&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">$ innodb_space -f t.ibd -r ./simple_t_describer.rb -d SimpleTDescriber -p &lt;span class="m">36&lt;/span> page-dump
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">{&lt;/span>:format&lt;span class="o">=&lt;/span>&amp;gt;:compact,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :offset&lt;span class="o">=&lt;/span>&amp;gt;125,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :header&lt;span class="o">=&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">{&lt;/span>:next&lt;span class="o">=&lt;/span>&amp;gt;11877,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :type&lt;span class="o">=&lt;/span>&amp;gt;:node_pointer,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :heap_number&lt;span class="o">=&lt;/span>&amp;gt;2,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :n_owned&lt;span class="o">=&lt;/span>&amp;gt;0,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :min_rec&lt;span class="o">=&lt;/span>&amp;gt;true,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :deleted&lt;span class="o">=&lt;/span>&amp;gt;false,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :field_nulls&lt;span class="o">=&lt;/span>&amp;gt;nil,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :field_lengths&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">[&lt;/span>0&lt;span class="o">]&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :field_externs&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">[&lt;/span>false&lt;span class="o">]}&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :next&lt;span class="o">=&lt;/span>&amp;gt;11877,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :type&lt;span class="o">=&lt;/span>&amp;gt;:clustered,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :key&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="o">[{&lt;/span>:name&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;i&amp;#34;&lt;/span>, :type&lt;span class="o">=&lt;/span>&amp;gt;&lt;span class="s2">&amp;#34;INT UNSIGNED&amp;#34;&lt;/span>, :value&lt;span class="o">=&lt;/span>&amp;gt;252, :extern&lt;span class="o">=&lt;/span>&amp;gt;nil&lt;span class="o">}]&lt;/span>,
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> :child_page_number&lt;span class="o">=&lt;/span>&amp;gt;4&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>위는 non-leaf 페이지임&lt;/li>
+&lt;li>:key 배열이 나타나고, 정확한 키보다는 자식레코드의 최소키를 포함하고 있음&lt;/li>
+&lt;li>:row 필드가 없으며, child_page_number가 해당 필드를 대신함&lt;/li>
+&lt;/ul>
+&lt;h3 id="특별한-root-page">특별한 root page
+&lt;/h3>&lt;ul>
+&lt;li>인덱스가 처음 생성될때 루트페이지가 할당되고, 해당 페이지 번호가 데이터 사전에 저장되므로 루트페이지는 절대 재배치하거나 제거할 수 없음&lt;/li>
+&lt;li>루트페이지가 가득 차면, 루트페이지와 두개의 리프 페이지로 구성된 작은 트리를 형성하여 분할해야함&lt;/li>
+&lt;li>하지만 루트 페이지 자체는 재배치 할 수 없으므로 분할할 수 없음&lt;/li>
+&lt;li>대신 새 빈페이지가 할당되고, 루트 레코드가 그 페이지르 이동되며(루트페이지가 한단계 상향됨) 새페이지가 두개로 분할됨&lt;/li>
+&lt;li>그러면 루트페이지는 바로 그 아래 레벨에 하위페이지(node pointer라 부름)로 가득 찰 때까지 다시 분할할 필요가 없으며, 실제로 수천개의 페이지가 될 수 있음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://blog.jcole.us/2013/01/10/btree-index-structures-in-innodb/" target="_blank" rel="noopener"
+>https://blog.jcole.us/2013/01/10/btree-index-structures-in-innodb/&lt;/a>&lt;/p></description></item><item><title>3-InnoDB Index</title><link>https://sungho94.me/p/3-innodb-index/</link><pubDate>Sun, 19 May 2024 22:44:51 +0000</pubDate><guid>https://sungho94.me/p/3-innodb-index/</guid><description>&lt;h2 id="index">Index
+&lt;/h2>&lt;ul>
+&lt;li>물리적인 인덱스 구조를 알기전, InnoDB에서 Index에 대해 중요하게 알아야하는 아래 3가지에 대해 알아야 함&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>모든 테이블은 primary key를 가지고 있다
+&lt;ul>
+&lt;li>테이블 생성시 primary key를 설정하지 않는다면, 먼저 non-NULL unique키를 사용하고, 없다면 48bit의 숨겨진 ROW id를 primary key로 사용함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>row data(primary key가 아닌 필드)는 primary key 인덱스 구조 내에 저장됨
+&lt;ul>
+&lt;li>이를 clustered key라고 명함&lt;/li>
+&lt;li>인덱스 구조는 primary key필드에 키가 저장되며 row data는 해당 키에 연결된 값임(MVCC의 경우 추가적인 필드가 포함됨).&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Secondary key는 동일한 인덱스 구조에 저장되며, 키는 해당하는 Secondary key이며, 값은 primary임&lt;/li>
+&lt;/ol>
+&lt;h2 id="index-page-구조">Index page 구조
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240519225801.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>FIL header and trailer
+&lt;ul>
+&lt;li>모든 페이지 유형에 일반적이고 공통적임&lt;/li>
+&lt;li>다른 페이지 유형들과 다른점은, previous page와 next page 포인터가 인덱스 키를 기준으로 동일한 수준의 이전페이지와 다음페이지를 오름차순으로 가르킴&lt;/li>
+&lt;li>이로인해 모든 페이지가 이중으로 연결된 double-linked list가 형성됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>FSEG header
+&lt;ul>
+&lt;li>이전 글에서 보았던, index root page의 FSEG헤더에는 포함됨
+&lt;ul>
+&lt;li>해당 인덱스에서 사용하는 파일 세그먼트에 대한 포인터가 포함되어 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>다른 index page는 FSEG header를 사용되지 않고 0으로 채워짐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>INDEX header
+&lt;ul>
+&lt;li>Index 페이지 관리와 record관리에 필요한 필드가 포함되어 있음&lt;/li>
+&lt;li>자세한 설명은 아래에 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>System records
+&lt;ul>
+&lt;li>인덱스의 각 페이지에는 infimum과 supremum로 불리는 system record가 존재함&lt;/li>
+&lt;li>이러한 레코드들은 페이지의 고정된 장소에 저장되어, 패이지 내에서 바로 접근이 가능함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>User records
+&lt;ul>
+&lt;li>실제 데이터임&lt;/li>
+&lt;li>각 레코드는 가변길이의 헤더와, 실제 데이터 컬럼을 가지고 있음&lt;/li>
+&lt;li>헤더에는 오름차순으로 정렬된 singly-linked list를 구현하기 위한 next record 포인터를 포함함&lt;/li>
+&lt;li>자세한 설명은 아래에 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>The page directory
+&lt;ul>
+&lt;li>FIL 트레일러에서 시작하여 페이지의 top에서 아래쪽으로 커지며(메모리 스택과 유사한 구조라고 생각됨), 페이지의 일부 레코드(4~8번째 레코드마다)에 대한 포인터를 포함함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="index-header">INDEX Header
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240519231114.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>Index ID
+&lt;ul>
+&lt;li>해당 페이지에 속해있는 index의 ID를 의미함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Format Flag
+&lt;ul>
+&lt;li>해당 페이지 안에있는 record들의 포맷을 의미함
+&lt;ul>
+&lt;li>Number of Heap Record필드의 상위비트(0x8000)비트에 저장됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>현재 COMPACT와 REDUNDANT가 가능함
+&lt;ul>
+&lt;li>뒤에 자세히 설명함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Number of Heap Records
+&lt;ul>
+&lt;li>infimum과 supremum 시스템 레코드, 삭제된garbage records를 포함한 페이지 내의 총 레코드 수를 의미함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Heap Top Position
+&lt;ul>
+&lt;li>현재 사용된 공간의 마지막 바이트 오프셋을 가르킴&lt;/li>
+&lt;li>heap 상단과 page directory의 마지막의 모든 공간은 여유공간임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Garbage Space
+&lt;ul>
+&lt;li>garbage 레코드안에 있는 삭제된 레코드가 소비한 총 바이트 수를 저장함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Last Insert Position
+&lt;ul>
+&lt;li>페이지 내의 마지막으로 추가된 레코드의 바이트 오프셋을 저장함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Page Direction
+&lt;ul>
+&lt;li>현재 LEFT, RIGHT, NO_DIRECTION 세가지 값이 사용됨&lt;/li>
+&lt;li>페이지가 순차적으로 insert되는지, 무작위로 insert되는지를 나타냄&lt;/li>
+&lt;li>각 insert시 마지막 insert위치의 레코드를 일고, 해당 키를 insert된 레코드 키와 비교하여 insert방향을 결정함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Number of Inserts in Page Direction
+&lt;ul>
+&lt;li>한번 페이지 방향이 설정된 후 방향을 바꾸지 않은 모든 다음 삽입은 이값을 증가시킴
+&lt;ul>
+&lt;li>한번 페이지 방향이 설정된 후에 같은 방향으로 insert된 레코들 수를 의미&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Number of Directory Slots
+&lt;ul>
+&lt;li>페이지 디렉토리의 크기(16바이트 오프셋인 slot의 단위)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Page Level
+&lt;ul>
+&lt;li>index에서 해당 페이지의 level을 의미&lt;/li>
+&lt;li>Leaf 페이의 레벨은 0이고, B+트리를 따라 올라감&lt;/li>
+&lt;li>일반적으로 3레벨 B+트리에서 루트는 레벨2, internal non-leaf page중 일부가 level 1, leaf page는 level 0임&lt;/li>
+&lt;li>항후 게시글에서 추가로 설명함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="record-format-redundant-vs-compact">Record format: REDUNDANT vs COMPACT
+&lt;/h2>&lt;ul>
+&lt;li>COMPACT 레코드 형식은, Barracuda테이블의 새로운 형식이고, REDUNDANT레코드 형식은 Antelope테이블의 기존 형식임
+&lt;ul>
+&lt;li>둘다 Barracuda가 만들어질때까지, 공식적인 이름이 없었음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>COMPACT형식은 각 레코드에 중복 저장되어 data dictionary에 있는 정보(필드수, nullable한 필드, 동적 길이 필드)를 대부부분 제거함&lt;/li>
+&lt;/ul>
+&lt;h2 id="record-pointer에-대한-추가설명">record pointer에 대한 추가설명
+&lt;/h2>&lt;ul>
+&lt;li>record pointer는 INDEX Header안에 있는 Last Insert Position field, System record와 user record의 next pointer, page directory안에 있는 모든값 등 여러 다른 위치에서 사용됨&lt;/li>
+&lt;li>모든 레코드는 헤더(가변 길이 일수 있는)와 실제 레코드 데이터(가변 길이 일수 있는)를 포함함&lt;/li>
+&lt;li>record pointer는 레코드 데이터의 첫번째 바이트 위치를 가르키며, 실제로는 header와 record 데이터 사이에 위치함&lt;/li>
+&lt;li>이를 통해 역방향으로 헤더를 읽고, 정방향으로 레코드 데이터를 읽음&lt;/li>
+&lt;li>시스템 및 사용자 필드에서 next record pointer를 항상 레코드의 첫번째 필드임
+&lt;ul>
+&lt;li>이로인해, 항상 가변 width레코드 데이터를 파싱할 필요없이 페이지의 모든 레코드를 매우 효율적으로 읽을 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="system-records-infimum-and-supremum">System records: infimum and supremum
+&lt;/h2>&lt;ul>
+&lt;li>모든 INDEX 페이지는 고정된 위치에 infimum과 supremum이라는 시스템 레코드가 포함함&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240520221729.png"
+loading="lazy"
+alt="center"
+>&lt;/li>
+&lt;li>두 시스템 레코드는 일반적인 헤더를 가지며, infimum과 supremum이 유일한 데이터임
+&lt;ul>
+&lt;li>데이터를 가지고있는 필드 바로 앞은 다음 레코드 포인터임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="infimum-record">infimum record
+&lt;/h3>&lt;ul>
+&lt;li>infimum record는 페이지에서 모든 키보다 낮은 값을 나타냄&lt;/li>
+&lt;li>&amp;ldquo;next record&amp;quot;포인터는 가장 낮은 키를 가진 사용자 레코드를 가르킴&lt;/li>
+&lt;li>infimum은 사용자 레코드를 순차적으로 스캔하기 위한 고정된 진입점 역할을 함&lt;/li>
+&lt;/ul>
+&lt;h3 id="supremum">supremum
+&lt;/h3>&lt;ul>
+&lt;li>supremum레코드는 페이지에서 가장 높은 키를 나타냄&lt;/li>
+&lt;li>&amp;ldquo;next record&amp;quot;포인터는 항상 0임
+&lt;ul>
+&lt;li>페이지 헤도로 인해 실제 레코드에 대해서는 항상 NUMM을 나타내며, 위효화지 않은 위치임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>페이지에서 가장 높은 키를 가진 사용자레코드의 &amp;ldquo;next record&amp;quot;포인터는 항상 supremum레코드를 가르킴&lt;/li>
+&lt;/ul>
+&lt;h2 id="user-records">User records
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>user record의 길고 복잡하기에 자세한 설명은 다음 게시글에서 다룸&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>사용자 레코드는 삽입된 순서대로 page body에 추가되며, 각 레코드 헤더의 &amp;ldquo;next record&amp;quot;포인터를 사용하여 키별로 오름차순으로 단일 링크됨&lt;/p>
+&lt;ul>
+&lt;li>이전에 삭제된 리코드에서 기존 여유공간을 차지 가능&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>단일 링크된 목록은 infimum record부터 오름차순으로 모든 사용자 레코드를 거쳐 supremum으로 끝남&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>이 list를 사용하면 한페이지의 모든 사용자 레코드를 오름차순으로 스캔하는 것은 간단함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>또한 FIL헤더의 &amp;ldquo;next page&amp;quot;포인터를 사용하면 전체 인덱스를 오름차순으로 한페이지에서 다른 페이지로 쉽게 스캔 가능&lt;/p>
+&lt;ul>
+&lt;li>FIL헤더로 인해 오름차순 테이블 스캔도 간단히 구현 가능&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>인덱스 안의 첫번째 page에서 시작
+&lt;ul>
+&lt;li>이 페이지는 B+트리 탐색을 통해 찾을 수 있음(향후 게시글에서 설명)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>infimum record를 읽고, next record 포인터를 따라감&lt;/li>
+&lt;li>record가 supremum이라면 step 5로 이동하고, 아니라면 레코드 내용을 읽고 처리함&lt;/li>
+&lt;li>&amp;ldquo;next record&amp;quot;포인터를 따라가 step 3으로 돌아감&lt;/li>
+&lt;li>&amp;ldquo;next page&amp;rdquo; 포인터가 NULL을 가르키면 종료하고 아니라면 &amp;ldquo;next page&amp;quot;포인터를 따라 step 2로 돌아감&lt;/li>
+&lt;/ol>
+&lt;p>*레코드가 doubly-linked가 아닌 singly-linked이므로 내림차순 탐색은 쉽지 않음&lt;/p>
+&lt;h2 id="page-directory">Page directory
+&lt;/h2>&lt;ul>
+&lt;li>page directory는 FIL trailer에서 시작하여 user record방향으로 커짐&lt;/li>
+&lt;li>page directory는 4-8개의 레코드 포인터를 가지고 있으며, infimum과 supremum값을 포함함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240520223401.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>page directory는 단순히 페이지 레코드에 대한 16비트 오프센 포인터인 동적 크기 배열(dynamically-sized array)임&lt;/li>
+&lt;li>향후 게시물에 자세하게 설명할 예정&lt;/li>
+&lt;/ul>
+&lt;h2 id="free-space">Free space
+&lt;/h2>&lt;ul>
+&lt;li>user record(위쪽으로 증가함)와 page directory(아래로 증가함) 사이의 공간을 free space로 간주함&lt;/li>
+&lt;li>두 섹션이 중간에 만나서 여유공간이 소진되면 페이지가 가득 찬것으로 간주함
+&lt;ul>
+&lt;li>garbage를 제거하기 위한 re-organizing으로 공간을 확보할 수 없을때도 가득 찬것으로 간주함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://blog.jcole.us/2013/01/07/the-physical-structure-of-innodb-index-pages/" target="_blank" rel="noopener"
+>https://blog.jcole.us/2013/01/07/the-physical-structure-of-innodb-index-pages/&lt;/a>&lt;/p></description></item><item><title>2-Page management in Innodb space files</title><link>https://sungho94.me/p/2-page-management-in-innodb-space-files/</link><pubDate>Sun, 12 May 2024 17:45:54 +0000</pubDate><guid>https://sungho94.me/p/2-page-management-in-innodb-space-files/</guid><description>&lt;h2 id="extent">Extent
+&lt;/h2>&lt;ul>
+&lt;li>64개의 연속된 페이지인 1MiB블록&lt;/li>
+&lt;li>space에서 페이지를 관리하려면 복잡하기에, 중간에 Extent를 두어 space는 Extent를 관리하고, Extent에서 page를 관리&lt;/li>
+&lt;li>Innodb는 FSD_HDR과 XDES페이지를 고정된 위치에 두어 extent가 사용중인지, extent내의 사용중인 페이지를 추적함&lt;/li>
+&lt;/ul>
+&lt;h3 id="fsp_hdrxdes-구조-요약">FSP_HDR/XDES 구조 요약
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512174953.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>FIL Header와 trailer, FSP Header와 256개의 extent discriptors(EHSMS descriptors)가 포함됨
+&lt;ul>
+&lt;li>많은 양의 미사용공간도 포함됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>아래에 더 자세한 설명 있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="extent-decriptor">Extent decriptor
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512175239.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>File Segment ID
+&lt;ul>
+&lt;li>extent가 파일 세그먼트에 속할시, extent가 속한 파일 세그먼트 id&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>List node for XDES list
+&lt;ul>
+&lt;li>double linked extent descriptor 목록의 이전 및 다음 extent를 가르키는 포인터&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>State
+&lt;ul>
+&lt;li>extent의 현재 상태를 나타냄(4가지 상태가 있음)
+&lt;ul>
+&lt;li>해당 extent가 동일한 space목록에 속하는 FREE, FREE_FRAG, FULL_FRAG 상태
+&lt;ul>
+&lt;li>아래에서 자세한 설명&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>해당 extent가 파일 세그먼트 ID필드에 저장된 ID를 가진 파일 세그먼트에 속함을 의미하는 FSEG상태&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Page State Bitmap
+&lt;ul>
+&lt;li>2개의 비트로 페이지가 free한지, clean 한지 나타냄
+&lt;ul>
+&lt;li>첫번빼 비트는 페이지가 free한지 여부&lt;/li>
+&lt;li>두번째 비트는 clean한지 여부
+&lt;ul>
+&lt;li>현재 사용되지 않는다면 1로 할당됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>extent를 참조하는 다른 구조에서는 extent&amp;rsquo;s descriptor가 있는 FSP_HDR 또는 XDES 페이지 번호와, descriptor entry가 존재하는 페이지의 byte offset을 조합하여 위치를 나타냄
+&lt;ul>
+&lt;li>page 0 offset 150은 첫번째 페이지에서 150번째 오프셋의 XDES Entry를 참조
+&lt;ul>
+&lt;li>0-63페이지를 가지고 있는 XDES Entry임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>page 16384 offset 270은 16384페이지에서 270번째 오프셋의 XDES Entry를 참조
+&lt;ul>
+&lt;li>16576-16639페이지를 가지고 있는 XDES Entry임&lt;/li>
+&lt;li>page 16384는 실제로 첫 번째 XDES 페이지를 의미함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="list---free-list">List - free list
+&lt;/h2>&lt;ul>
+&lt;li>List는 여러 관련 구조를 함께 연결할 수 있는 일반적인 구조체&lt;/li>
+&lt;li>2개의 상호보완적인 구조를 사용해서, 디스크상의 이중 링크드 리스트를 구현함&lt;/li>
+&lt;/ul>
+&lt;h3 id="list-base-node">List base node
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512201648.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>하이레벨구조(FSP헤더와 같은)에서 한번만 저장됨&lt;/li>
+&lt;li>리스트의 길이 및 리스트의 처음과 마지막 리스트 노드의 정보를 포함함&lt;/li>
+&lt;/ul>
+&lt;h3 id="list-node">List Node
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512201700.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>이전과 다음 노드에 대한 포인터를 저장함&lt;/li>
+&lt;li>모든 포인터는 페이지 번호(같은 space내에 있는)와 리스트 노드를 찾을 수 있는 해당 페이지 내의 byte offset으로 구성됨&lt;/li>
+&lt;li>모든 포인터는 리스트 노드의 시작을 가르킴&lt;/li>
+&lt;li>반드시 서로 연결된 구조는 아님&lt;/li>
+&lt;/ul>
+&lt;h2 id="fsp-header-상세">FSP Header 상세
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512201947.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>Space ID
+&lt;ul>
+&lt;li>현재 space의 ID&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Highest page number in the space (size)
+&lt;ul>
+&lt;li>파일이 커짐에 따라, 증가되는 유효한 최대 페이지 수&lt;/li>
+&lt;li>space확장은 여러 단계에 걸쳐 이루어지므로, 모든 페이지가 초기화 되지 않음(일부는 0으로 채워질 수 있음)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Highest page number initialized (free limit)
+&lt;ul>
+&lt;li>FIL헤더가 초기화된 가장 높은 페이지 번호로, 페이지자체에 페이지 번호를 저장함&lt;/li>
+&lt;li>free lmit은 항상 이 크기보다 작거나 같음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Flags
+&lt;ul>
+&lt;li>space와 연관된 플래그&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Next Unused Segment ID
+&lt;ul>
+&lt;li>다음에 할당될 파일 세그먼트에 사용될 파일 세그먼트 ID&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Number of pages used in the FREE_FRAG list
+&lt;ul>
+&lt;li>목록의 모든 extents를 순회하지 않고 FREE_FRAG갯수를 확인할 수 있게하기 위한 필드&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>다음 extent descriptor list의 List base node도 저장됨
+&lt;ul>
+&lt;li>FREE_FRAG
+&lt;ul>
+&lt;li>여유페이지가 남아있는 extent를 나타냄
+&lt;ul>
+&lt;li>여유 페이지가 있는 extent는 개별 페이지를 다른 용도로 사용 가능함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>예를들어, FSP_HDR 이나 XDES 페이지가 있는 모든 extent는 FREE_FRAG 목록에 배치뒤어 남은 free page를 다른 용도로 할당할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>FULL_FRAG
+&lt;ul>
+&lt;li>FREE_FRAG와 똑같지만, 여유페이지가 없는 extent를 나타냄&lt;/li>
+&lt;li>extent가 가득차면 FULL_FRAG로 이동되며, 페이지가 해제되어 가득차 있지 않으면 FREE_FRAG로 이동됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>FREE
+&lt;ul>
+&lt;li>완전히 사용되지 않고, 특정 용도로 전체 할당할 수 있는 extent를 의미함&lt;/li>
+&lt;li>FREE extent는 파일세그먼트(적절한 INODE 목록에 배치되기 위해)에 할당되거나, 개별 페이지 사용을 위해 FREE_FRAG목록이로 이동될 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="file-segment-inode">file segment, INODE
+&lt;/h2>&lt;ul>
+&lt;li>InnoDB는 파일시스템에서 사용하는 file segment, INODE를 오버로드해서 사용함&lt;/li>
+&lt;li>InnoDB는 inode를 다음 2가지 유형에 사용함
+&lt;ul>
+&lt;li>INODE entires(하나의 작은 구조)&lt;/li>
+&lt;li>INODE pages(많은 INODE 항목을 포함하는 페이지 유형)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>InnoDB의 INODE는 단순히 file segment(FSEG)를 설명할 뿐이며, 앞으로 &amp;ldquo;file segment INODE&amp;quot;라 칭함&lt;/li>
+&lt;/ul>
+&lt;h3 id="inode-pages">INODE pages
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512220333.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>각각의 INODE page는 85개의 file segment INODE entries(총 16KiB page)를 포함함
+&lt;ul>
+&lt;li>각각의 INODE page는 192바이트임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>INODE page는 FSP_HDR의 FSP 헤더 구조에서 설명했던 List node가 있음
+&lt;ul>
+&lt;li>해당 List node는 INODE pages를 위한 것, 해당 INODE page의 INODE가 아님!&lt;/li>
+&lt;li>FREE_INODES
+&lt;ul>
+&lt;li>적어도 하나의 free file segment INODE entry가 있는 INODE pages의 리스트&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>FULL_INODES
+&lt;ul>
+&lt;li>free file segment INODE entry가 하나도 없는 INODE pages의 리스트&lt;/li>
+&lt;li>file per table space를 사용하는 경우, 테이블에 42개 이상의 인덱스가 없는 한 각 file per table space 안에 있는 해당 목록은 비어있음
+&lt;ul>
+&lt;li>각각의 index는 정확히 두개의 file segment INODE entry를 사용하기 때문&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="inode-entry">INODE ENTRY
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512231201.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>필드 설명
+&lt;ul>
+&lt;li>File Segment ID
+&lt;ul>
+&lt;li>file segment ID는 해당 file segment INODE entry를 의미함&lt;/li>
+&lt;li>ID가 0이면 해당 entry는 사용되지 않은 것을 의미&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Magic Number
+&lt;ul>
+&lt;li>값이 97937874이면 file segment INODE entry가 초기화 되었다는 것을 의미&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Number of used pages in the NOT_FULL list
+&lt;ul>
+&lt;li>space의 FREE_FLAG list(FSP header에 있는)와 정확히 같음&lt;/li>
+&lt;li>NOT_FULL 리스트 수 빠르게 확인할 수 있게 하기 위한 필드&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Fragment Array
+&lt;ul>
+&lt;li>space에 있는 FREE_FRAG 또는 FULL_FRAG 리스트(&amp;ldquo;fragment&amp;quot;의 extent) 안의 extent로부터 개별적으로 할당된 32페이지의 배열&lt;/li>
+&lt;li>해당 array가 꽉 차면, 오직 full extents만 file segment에 할당될 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>table이 커지면 각 file segment는 배열이 가득 찰때까지, 각 file segment에 개별 pages들을 할당하고, 이후 1개의 extent를 할당함, 결국에는 4개의 extent가 할당됨&lt;/li>
+&lt;li>extent descriptors의 list base node또한 각각의 file segment INODE entry에 나타남
+&lt;ul>
+&lt;li>FREE
+&lt;ul>
+&lt;li>완전히 사용되지 않고, 해당 file segment에 할당된 extents&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>NOT_FULL
+&lt;ul>
+&lt;li>해당 file segment에 할당된 사용된 페이지가 하나 이상 있는 extents&lt;/li>
+&lt;li>마지막 사용가능한 페이지가 사용되면, extents는 FULL list로 이동함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>FULL
+&lt;ul>
+&lt;li>해당 file segment에 할당된 사용가능한 페이지가 없는 extent&lt;/li>
+&lt;li>페이지가 여유가 생기면, NOT_FULL 목록이도 이동함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>마지막으로 사용된 page가 NOT_FULL 목록의 범위에서 해제되면, 해당 extent는 file segment&amp;rsquo;s의 FREE로 이동될 수 있지만, 실제로는 space의 FREE list로 이동됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="index는-어떻게-file-segments를-사용할까">Index는 어떻게 file segments를 사용할까
+&lt;/h2>&lt;ul>
+&lt;li>인덱스 페이지에 대한 설명은 없지만, 한가지 작은 측면을 살펴볼 수 있음&lt;/li>
+&lt;li>각 인덱스의 FSEG의 루트페이지는 인덱스에서 사용하는 파일 세그먼트를 설명하는 file segment INODE entry에 대한 포인터가 포함되어 있음&lt;/li>
+&lt;li>각 인덱스는 leaf페이지에 하나의 세그먼트와, non-leaf페이지에 하나의 파일 세그먼트를 사용함&lt;/li>
+&lt;li>이 정보는 FSEG header 구조에 저장되어 있음&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512234447.png"
+loading="lazy"
+alt="center"
+>&lt;/li>
+&lt;li>space ID는 불필요한 것으로, 항상 현재 sapce와 동일함&lt;/li>
+&lt;li>page number와 offset은 file segment INODE entry를 가르킴&lt;/li>
+&lt;li>두 파일 세그먼트는 완전히 비어있어도 항상 존재함
+&lt;ul>
+&lt;li>예를 들면 새로 만든 테이블에서 존재하는 페이지는 루트페이지이며 리프페이지 이기도 하지만, internal file segment에 존재하므로 나중에 옮길 필요가 없음&lt;/li>
+&lt;li>leaf file segment의INODE list와 fragment는 모두 비어있음&lt;/li>
+&lt;li>internal file segment INODE list는 모두 비어있고, 단일 루트 페이지는 fragment array에 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="인덱스에-대한-전체-multi-level">인덱스에 대한 전체 multi level
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240512234938.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>index root pages는 두개의 inodes(file segment)를 가르키며, 각각은 fragment array(fragment list에서 최대 32개의 개별 페이지를 가르킴)전체 extents 목록(extent descriptor의 리스트 포인터를 사용하여 연결된)을 가짐&lt;/li>
+&lt;li>extent descriptor는 extent를 참조할 뿐 아니라, extent내 free page를 추적하는 데도 사용됨&lt;/li>
+&lt;/ul>
+&lt;p>참고&lt;br>
+&lt;a class="link" href="https://blog.jcole.us/2013/01/04/page-management-in-innodb-space-files/" target="_blank" rel="noopener"
+>https://blog.jcole.us/2013/01/04/page-management-in-innodb-space-files/&lt;/a>&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/blog-archive/innodb-tablespace-space-management/" target="_blank" rel="noopener"
+>https://dev.mysql.com/blog-archive/innodb-tablespace-space-management/&lt;/a>&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/blog-archive/extent-descriptor-page-of-innodb/" target="_blank" rel="noopener"
+>https://dev.mysql.com/blog-archive/extent-descriptor-page-of-innodb/&lt;/a>&lt;/p></description></item><item><title>1-page, space, idb file structure</title><link>https://sungho94.me/p/1-page-space-idb-file-structure/</link><pubDate>Fri, 10 May 2024 22:40:29 +0000</pubDate><guid>https://sungho94.me/p/1-page-space-idb-file-structure/</guid><description>&lt;h2 id="page">Page
+&lt;/h2>&lt;ul>
+&lt;li>각 스페이스는 16KiB의 페이지로 나누어짐
+&lt;ul>
+&lt;li>UNIV_PAGE_SIZE를 변경하거나, InnoDB 압축을 사용하는경우 변경 가능&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>오프셋 이라고하는 32bit 정수 페이지 번호가 할당됨&lt;/li>
+&lt;li>파일의 시작부분부터 해당 페이지 위치까지의 실제 오프셋임&lt;/li>
+&lt;li>페이지 0은 파일 오프셋 0, 페이지1은 오프셋은 16384(16*1024)임&lt;/li>
+&lt;/ul>
+&lt;h3 id="페이지-구조">페이지 구조
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240511112606.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>각 페이지는 38바이트의 FIL(file의 줄임말) header와 FIL Trailer를 가지고 있음&lt;/li>
+&lt;li>헤더에는 페이지의 남은 부분을 결정하는 page type 필드를 포함하고 있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="fil-header--trailer">FIL Header / Trailer
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240511112813.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>page type은 페이지의 다른 부분을 파싱하기 위해 필수적인 부분임
+&lt;ul>
+&lt;li>page type은 file space management, extent management, the transaction system, the data dictionary, undo logs, blobs, indexes가 할당될 수 있음&lt;/li>
+&lt;li>페이지는 앞서 나열한 페이지가 될 수 있다는것을 의미함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>페이지가 초기화 될때, page number(Offset)이 할당됨
+&lt;ul>
+&lt;li>해당 필드에서 읽은 페이지번호가 파일에 오프셋을 기준으로 해야하는 페이지 번호가 일치하는지 확인하여, 읽기가 올바른지 확인함&lt;/li>
+&lt;li>이 필드가 초기화되면 페이자가 초기화되었다는 것을 의미함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>해당 페이지의 유형과 같은 이전 페이지와 다음페이지 포인터가 헤더가 저장되어 있음
+&lt;ul>
+&lt;li>이 필드들로 페이지를 double-linked list 구조가 됨&lt;/li>
+&lt;li>인덱스 페이지를 동일한 수순으로 연결하는데 사용되므로 전체 인덱스 스캔을 효율적으로 수행할 수 있음&lt;/li>
+&lt;li>대부분의 페이지 유형은 이 필드들을 사용하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="space---tablespace">Space - tablespace
+&lt;/h2>&lt;ul>
+&lt;li>각 테이블당 하나의 space가 존재&lt;/li>
+&lt;li>하나의 스페이스는 .idb파일로 구성됨
+&lt;ul>
+&lt;li>하나 이상의 idb파일로 구현 될 수 있음&lt;/li>
+&lt;li>물리적으로 하나 이상의 파일이지만, 논리적으로 단일파일 취급함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>.idb파일은 하나의 테이블에 대한 정보가 들어감
+&lt;ul>
+&lt;li>하나의 .idb파일에 여러 테이블이 들어갈 수 있는 구조지만, 하나의 테이블만 넣음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>space별로 32bit 정수인 space ID가 할당됨
+&lt;ul>
+&lt;li>해당 space를 참조할 목적&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>InnoDB는 InnoDB에서 필요로 하는 장부(book-keeping)를 작성하기 위해 system space를 가지고 있음
+&lt;ul>
+&lt;li>system space의 space ID는 0임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>많은 페이지가 연결된것&lt;/li>
+&lt;li>효율적으로 페이지를 관리하기 위헤 1MiB 블록 단위로 페이지를 관리함
+&lt;ul>
+&lt;li>이를 extent라 부름&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>파티션을 나누면 각각의 space가 나누어짐&lt;/li>
+&lt;/ul>
+&lt;h3 id="space-file-구조">Space File 구조
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240511225238.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>Innodb는 모든 page, extent, space를 추적-관리하기 해야하므로 위와같은 구조를 가짐&lt;/li>
+&lt;li>space의 첫번째 페이지(page 0)은 항상 FSP_HDR 또는 file space header 페이지임&lt;/li>
+&lt;li>FSP_HDR페이지는 space의 크기, free, fragmented, full extents의 목록을 추적할 수 있는 FSP header 구조를 포함하고 있음&lt;/li>
+&lt;li>FSP_HDR페이지는 내부적으로 256 extents(또는 16384페이지, 256MiB)에 대한 정보를 저장 가능함
+&lt;ul>
+&lt;li>그러므로 256extents마다 XDES정보를 저장하기 위해 공간을 미리 예약해놓음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>XDES와 FSP_HDR페이지는 XDES에서 FSP해더 구조가 0으로 처리된다는 점을 제외하면 동일함&lt;/li>
+&lt;li>추가페이지는 스페이스 파일이 커짐에 따라 할당됨&lt;/li>
+&lt;li>두번째페이지인 IBUF_BITMAP페이지는 insert buffering과 관련된 정보를 저장함(이 글의 범위를 벗어나는 부분이라 더 이상 언급하지 않음)&lt;/li>
+&lt;li>세번째 페이지인 INODE페이지는 파일 세그먼트와 관련된 목록을 저장하는데 사용됨
+&lt;ul>
+&lt;li>각 INODE페이지에는 85개의 INODE항목을 저장할 수 있으며, 각 인덱스에는 2개의 INODE항목이 필요함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="system-space">System space
+&lt;/h3>&lt;ul>
+&lt;li>InnoDB에는 space ID가 0인 system space가 존재함&lt;/li>
+&lt;li>InnoDB의 작동에 중요한 정보를 저장하기 위해 고정 페이지 번호로 할당된 페이지가 포함되어 있음&lt;/li>
+&lt;li>다른공간과 마찬가지로 FSP_HDR, IBUF_BITMAP, INODE페이지가 처음 3페이지로 할당되어 있음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240511231613.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>3번째 SYS페이지에는 insert buffering에 관련된 헤더와 부기정보가 있음&lt;/li>
+&lt;li>4번째 INDEX페이지에는 insert buffering에 관련된 index구조의 루트 페이지가 존재&lt;/li>
+&lt;li>5번째 TRX_SYS페이지에는 InnodDB의 트랜잭션 시스템의 동작과 관련된 정보가 존재함
+&lt;ul>
+&lt;li>최신 transaction ID, Mysql binary log정보, double write buffer extents의 위치 등&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>6번째 SYS페이지에는 첫번째 롤백 segment page정보가 있음
+&lt;ul>
+&lt;li>rollback segment data의 저장이 필요하다면, 추가적인 페이지가 할당될 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>7번째 SYS페이지에는 data dictionary와 관련된 헤더가 있음
+&lt;ul>
+&lt;li>data dictionary를 구성하는 인덱스의 루트 페이지 번호를 포함함&lt;/li>
+&lt;li>루트 페이지 번호가 data dictionary 자체에 저장되므로,다른 인덱스를 찾기 위해 필요함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>64-127번째 페이지에는 double write buffer에 저장됨&lt;/li>
+&lt;li>128-192번째 페이지에는 두번째 double write buffer&lt;/li>
+&lt;/ul>
+&lt;h2 id="ibd-파일-구조">IBD 파일 구조
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240511233507.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>런타임에 인덱스를 생성하는 fast index creation을 제외하고, 필수 초기 3페이지 이후 공간에 할당된 페이지들은 테이블 생성에 정의된 순서대로 테이블에 있는 각 인덱스 루트 페이지가 됨&lt;/li>
+&lt;li>3번째 페이지는 clustered index의 루트페이지, 4번째 페이지는 첫번째 secondary index의 루트페이지임&lt;/li>
+&lt;li>InnoDB의 부기 구조는 대부분 시스템 공간에 저장되므로, 테이블별 공간에 할당된 대부분의 페이지는 INDEX유형이며, 테이블 데이터를 저장함&lt;/li>
+&lt;/ul>
+&lt;p>참고&lt;/p>
+&lt;p>&lt;a class="link" href="https://blog.jcole.us/2013/01/03/the-basics-of-innodb-space-file-layout/" target="_blank" rel="noopener"
+>https://blog.jcole.us/2013/01/03/the-basics-of-innodb-space-file-layout/&lt;/a>&lt;/p></description></item></channel></rss>

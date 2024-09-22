@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Test on Sungho's Dev BLog</title><link>https://sungho94.me/tags/test/</link><description>Recent content in Test on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sat, 02 Mar 2024 22:41:32 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/test/index.xml" rel="self" type="application/rss+xml"/><item><title>Test</title><link>https://sungho94.me/p/test/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/test/</guid><description>&lt;ol>
+&lt;li>기능에 대한 명세이다&lt;/li>
+&lt;li>내가 개발한 기능의 동작방법 및 현재 잘 동작하는것을 보증한다&lt;/li>
+&lt;li>다른사람이 수정시 기존의 동작을 보장&lt;/li>
+&lt;li>코드 퀄리티에 대한 보장이다
+&lt;ul>
+&lt;li>코드가 복잡하면 테스트짜기 어렵기 때문이다&lt;/li>
+&lt;li>하나의 메서드에 대해 테스트가 너무 많다면 해당 메서드가 기능이 너무 많지 않은지 확인&lt;/li>
+&lt;li>객체에 모킹할게 너무 많다면 객체가 너무 많은 일을 하고 있는지 확인&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;p>#eventually-update&lt;/p></description></item><item><title>Cucumber</title><link>https://sungho94.me/p/cucumber/</link><pubDate>Mon, 02 Oct 2023 23:26:54 +0000</pubDate><guid>https://sungho94.me/p/cucumber/</guid><description>&lt;p>테스트 자동화 도구&lt;br>
+BDD를 지원&lt;/p>
+&lt;p>#Test&lt;/p></description></item></channel></rss>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>#JVM on Sungho's Dev BLog</title><link>https://sungho94.me/tags/%23jvm/</link><description>Recent content in #JVM on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Wed, 20 Mar 2024 23:29:00 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/%23jvm/index.xml" rel="self" type="application/rss+xml"/><item><title>Jfrog</title><link>https://sungho94.me/p/jfrog/</link><pubDate>Wed, 20 Mar 2024 23:29:00 +0000</pubDate><guid>https://sungho94.me/p/jfrog/</guid><description>&lt;p>&lt;a class="link" href="https://jfrog.com/artifactory/" target="_blank" rel="noopener"
+>https://jfrog.com/artifactory/&lt;/a>&lt;br>
+코드, 컨테이너, cloud component를 한번에 관리해주는 툴&lt;br>
+비쌈&lt;/p></description></item></channel></rss>

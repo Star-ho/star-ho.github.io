@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Annotation on Sungho's Dev BLog</title><link>https://sungho94.me/tags/annotation/</link><description>Recent content in Annotation on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sun, 01 Oct 2023 23:06:17 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/annotation/index.xml" rel="self" type="application/rss+xml"/><item><title>Java built in Annotation</title><link>https://sungho94.me/p/java-built-in-annotation/</link><pubDate>Sun, 01 Oct 2023 23:06:17 +0000</pubDate><guid>https://sungho94.me/p/java-built-in-annotation/</guid><description>&lt;p>java의 built in Annotation은&lt;br>
+&lt;strong>@Deprecated&lt;/strong>&lt;br>
+&lt;strong>@Override&lt;/strong>&lt;br>
+&lt;strong>@SuppressWarnings&lt;/strong>&lt;br>
+&lt;strong>@SafeVarargs&lt;/strong>&lt;br>
+&lt;strong>@FunctionalInterface&lt;/strong>&lt;br>
+이 있고,&lt;/p>
+&lt;p>다른 어노테이션에 붙을 수 있는 어노테이션은&lt;br>
+&lt;strong>@Retention&lt;/strong>&lt;br>
+&lt;strong>@Documented&lt;/strong>&lt;br>
+&lt;strong>@Target&lt;/strong>&lt;br>
+&lt;strong>@Inherited&lt;/strong>&lt;br>
+&lt;strong>@Repeatable&lt;/strong>&lt;br>
+이 있다&lt;/p>
+&lt;p>이 중 Retention의 정확한 의미가 와닿지 않아 정리해 보겠다.&lt;/p>
+&lt;h1 id="retention">Retention
+&lt;/h1>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">Indicates how long annotations with the annotated interface are to be retained
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>-&amp;gt; annotation이 얼마나 유지되는 정도를 나타냄, 디폴트는 Class&lt;/p>
+&lt;h3 id="source">Source
+&lt;/h3>&lt;ul>
+&lt;li>컴파일될때 사라짐&lt;/li>
+&lt;/ul>
+&lt;h2 id="class">Class
+&lt;/h2>&lt;ul>
+&lt;li>클래스파일에는 기록되지만, vm에 올라갈떄 사라짐&lt;/li>
+&lt;li>런타임시 리플렉션으로 정보를 가져올 수 없음&lt;/li>
+&lt;/ul>
+&lt;h2 id="runtime">Runtime
+&lt;/h2>&lt;ul>
+&lt;li>클래스파일에도 기록되고, vm에 올라감&lt;/li>
+&lt;li>런타임시 리플렉션으로 정보를 가져올 수 있음&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Source vs Class&lt;br>
+Source는 컴파일된 바이트 코드에서 아예 보이지 않음&lt;br>
+Class는 바이트코드에서 보이지만 invisible이라는 주석이 붙음&lt;br>
+바이트코드로 된 라이브러리를 만들때 사용&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>Class vs Runtime&lt;br>
+런타임에 사용 가능 여부에 따라 다름&lt;br>
+@Lorg/example/RetentionSourceAnnotation;() // invisible &amp;lt;- Class&lt;br>
+@Lorg/example/RetentionSourceAnnotation;() &amp;lt;- Runtime&lt;br>
+javaasist 라이브러로 두개다 확인가능&lt;br>
+&lt;a class="link" href="https://www.javassist.org/html/javassist/bytecode/AnnotationsAttribute.html" target="_blank" rel="noopener"
+>https://www.javassist.org/html/javassist/bytecode/AnnotationsAttribute.html&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/javase/tutorial/java/annotations/predefined.html" target="_blank" rel="noopener"
+>https://docs.oracle.com/javase/tutorial/java/annotations/predefined.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://minkukjo.github.io/language/2020/09/30/Java-02/" target="_blank" rel="noopener"
+>https://minkukjo.github.io/language/2020/09/30/Java-02/&lt;/a>&lt;/p>
+&lt;p>#Java&lt;/p></description></item></channel></rss>

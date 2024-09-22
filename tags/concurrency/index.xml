@@ -1,0 +1,981 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Concurrency on Sungho's Dev BLog</title><link>https://sungho94.me/tags/concurrency/</link><description>Recent content in Concurrency on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Thu, 02 May 2024 22:41:32 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/concurrency/index.xml" rel="self" type="application/rss+xml"/><item><title>11-분산락(Distributed lock)</title><link>https://sungho94.me/p/11-%EB%B6%84%EC%82%B0%EB%9D%BDdistributed-lock/</link><pubDate>Thu, 02 May 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/11-%EB%B6%84%EC%82%B0%EB%9D%BDdistributed-lock/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>named lock&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>mysql, redis 등 named lock을 지원하는 저장소에서 사용가능&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>redis서버가 없는 상황에서 mysql named lock도 유용한 선택지임&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>mysql은 connection 끊기면 lock도 풀림&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>분산락은 자원에대한 락이 아닌 작업,행위에 대한 락&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>하나의 작업이 한번만 실행되게 할때 유용함&lt;/p>
+&lt;ul>
+&lt;li>따닥 방지&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>데이터베이스에 부하가 가지않음&lt;/p>
+&lt;ul>
+&lt;li>but, 실제로 작업하는 row가 db lock이 걸려있을시 처리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>실제로 사용하기 위해 멱등성 보장이 필요할 수 있음&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html" target="_blank" rel="noopener"
+>https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul></description></item><item><title>5-ExecutorService &amp; CountDownLatch</title><link>https://sungho94.me/p/5-executorservice-countdownlatch/</link><pubDate>Fri, 05 Apr 2024 17:25:00 +0000</pubDate><guid>https://sungho94.me/p/5-executorservice-countdownlatch/</guid><description>&lt;h1 id="executorservice">ExecutorService
+&lt;/h1>&lt;ul>
+&lt;li>비동기 작업을 할때 쓰레드관리가 복잡한 과정임
+&lt;ul>
+&lt;li>ExecutorService가 복잡한 쓰레드관리를 단순화 시켜줌&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>하나이상의 비동기 작업을 과정을 추적하기 위한 Future를 생성하는 메서드와 종료관리 메서드를 제공&lt;/li>
+&lt;li>Excutor를 상속받았기에 execute메서드와 ExecutorService자체에서 제공하는 submit 메서드, shutdown, shutdownNow, awaitTermination등의 메서드가 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="method">Method
+&lt;/h2>&lt;h3 id="executerunnable-command">execute(Runnable command)
+&lt;/h3>&lt;ul>
+&lt;li>Runnable한 인자를 받아 미래에 실행시킴&lt;/li>
+&lt;li>void를 리턴함&lt;/li>
+&lt;/ul>
+&lt;h3 id="submitrunnable-command">submit(Runnable command)
+&lt;/h3>&lt;ul>
+&lt;li>execute와 마찬가지고러 Runnable한 인자와 Callable한 인자를 받아 미래에 실행시킴&lt;/li>
+&lt;li>인자의 수행 결과를 Future로 감싸서 리턴함&lt;/li>
+&lt;/ul>
+&lt;h3 id="awaitterminationlong-timeout-timeunit-unit">awaitTermination(long timeout, TimeUnit unit)
+&lt;/h3>&lt;ul>
+&lt;li>시간을 인자로 받으며, 모든 작업이 끝나거나, 시간 초과되거나, 인터럽트가 발생할때까지 쓰레드를 block시킴&lt;/li>
+&lt;/ul>
+&lt;h3 id="shutdown">shutdown()
+&lt;/h3>&lt;ul>
+&lt;li>이전에 제출된 작업은 유지하지만, 새로운 작업은 받지않음&lt;/li>
+&lt;li>제출된 작업이 완료되면 종료함&lt;/li>
+&lt;/ul>
+&lt;h3 id="shutdownnow">shutdownNow()
+&lt;/h3>&lt;ul>
+&lt;li>실행중인 작업과 대기중인 작업 모두 중지하고, 실행 대기중인 작업을 반환함&lt;/li>
+&lt;/ul>
+&lt;h1 id="countdownlatch">CountDownlatch
+&lt;/h1>&lt;ul>
+&lt;li>하나 이상의 스레드가 다른 쓰레드의 작업이 완료될때 까지 기다려주는 보조 동기화 장치&lt;/li>
+&lt;li>생성자로 count를 받으며, count가 0이 되면 await를 즉시 리턴함&lt;/li>
+&lt;/ul>
+&lt;h2 id="메서드">메서드
+&lt;/h2>&lt;h3 id="countdownlatchintcount">CountDownLatch(int count)
+&lt;/h3>&lt;ul>
+&lt;li>생성자로 count를 받고, await를 호출하면 해당 count가 0이 될때까지 스레드를 wait함&lt;/li>
+&lt;/ul>
+&lt;h3 id="countdown">countDown()
+&lt;/h3>&lt;ul>
+&lt;li>count를 1감소시킴, 0이되면 await중인 스레드의 release함&lt;/li>
+&lt;/ul>
+&lt;h3 id="getcount">getCount()
+&lt;/h3>&lt;ul>
+&lt;li>현재 count를 가져옴&lt;/li>
+&lt;/ul>
+&lt;h3 id="await">await()
+&lt;/h3>&lt;ul>
+&lt;li>스레드가 인터럽트 되지 않는 한, count가 0이 될때까지 현재 쓰레드를 wait함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CountDownLatch.html" target="_blank" rel="noopener"
+>https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CountDownLatch.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html" target="_blank" rel="noopener"
+>https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html&lt;/a>&lt;/p></description></item><item><title>4-Volitile</title><link>https://sungho94.me/p/4-volitile/</link><pubDate>Thu, 04 Apr 2024 23:11:59 +0000</pubDate><guid>https://sungho94.me/p/4-volitile/</guid><description>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span class="line">&lt;span class="cl">&lt;span class="k">fun&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">(){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">repeat&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="m">3&lt;/span>&lt;span class="p">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">val&lt;/span> &lt;span class="py">worker&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="n">VolatileWorker&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1">// worker 쓰레드 생성
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">worker&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">start&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1">// worker 쓰레드 시작
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nc">Thread&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">sleep&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="m">100&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="c1">// 메인 쓰레드 잠시 수면
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;stop을 true로 변경&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">worker&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">stop&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="k">true&lt;/span> &lt;span class="c1">// worker쓰레드의 stop 플래그 변경
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">worker&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">join&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="c1">// worker 쓰레드가 끝날 때까지 메인쓰레드에서 대기
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;작업 종료&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">VolatileWorker&lt;/span> &lt;span class="p">:&lt;/span> &lt;span class="n">Thread&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Volatile&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">var&lt;/span> &lt;span class="py">stop&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="k">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">override&lt;/span> &lt;span class="k">fun&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">super&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">run&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span>&lt;span class="p">(!&lt;/span>&lt;span class="n">stop&lt;/span>&lt;span class="p">){&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">Worker&lt;/span> &lt;span class="p">:&lt;/span> &lt;span class="n">Thread&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">var&lt;/span> &lt;span class="py">stop&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="k">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">override&lt;/span> &lt;span class="k">fun&lt;/span> &lt;span class="nf">run&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">super&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">run&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">while&lt;/span>&lt;span class="p">(!&lt;/span>&lt;span class="n">stop&lt;/span>&lt;span class="p">){&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>현재 실행되고 있는 프로그램의 변수의 값을 읽기 위해서는 main메모리 혹은 cpu캐시에서 데이터를 읽어오게 된다&lt;/li>
+&lt;li>cpu캐시에 데이터가 있을 경우, main메모리가 아닌, cpu캐시에서 읽어오는 것이 더 효율적이기에 cpu캐시에서 데이터를 읽어온다&lt;/li>
+&lt;li>하지만 cpu캐시에서 계속 데이터를 읽어올경우, 다른 쓰레드에서 변경한 데이터를 읽지 않아 변경을 확인하지 못하는 문제가 발생할 수 있다&lt;/li>
+&lt;li>이때 변수에 @Volatile을 사용하면 해당 변수는 항상 main메모리에서만 데이터를 읽고 쓰기에 최신의 데이터에 대한 동작을 보장받을 수 있다&lt;/li>
+&lt;li>항상 main메모리에서 데이터를 읽어오기에 성능 저하가 발생한다&lt;/li>
+&lt;/ul>
+&lt;h3 id="volatile을-사용하지-않았을때">Volatile을 사용하지 않았을때
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240226231655.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;h3 id="volatile을-사용할-때">Volatile을 사용할 때
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240226231714.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;p>&lt;a class="link" href="https://nesoy.github.io/articles/2018-06/Java-volatile" target="_blank" rel="noopener"
+>https://nesoy.github.io/articles/2018-06/Java-volatile&lt;/a>&lt;br>
+&lt;a class="link" href="https://jenkov.com/tutorials/java-concurrency/volatile.html" target="_blank" rel="noopener"
+>https://jenkov.com/tutorials/java-concurrency/volatile.html&lt;/a>&lt;/p></description></item><item><title>2-Semaphore</title><link>https://sungho94.me/p/2-semaphore/</link><pubDate>Wed, 03 Apr 2024 23:37:49 +0000</pubDate><guid>https://sungho94.me/p/2-semaphore/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>허가증을 유지함으로서 동시성을 제어&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>acquire()메서드는 허가증이 사용가능할때까지 block하고 사용가능할때 허가증을 가짐&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>release는 허가증을 추가하고, 잠재적으로 blocking되어있는 acquirer를 해제함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>실제로 퍼미션 객체는 사용되지 않으며, 세마포어는 사용가능한 개수를 카운팅할 뿐임&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Semaphore는 자원에 대해 접근할수 있는 쓰레드의 수를 제한하는데 사용함&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">Pool&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">MAX_AVAILABLE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">100&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Semaphore&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">available&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Semaphore&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">MAX_AVAILABLE&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">getItem&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">throws&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">InterruptedException&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">available&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">acquire&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">getNextAvailableItem&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">putItem&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">markAsUnused&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">x&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">available&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">release&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// Not a particularly efficient data structure; just for demo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="o">[]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">items&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">whatever&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">kinds&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">of&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">items&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">being&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">managed&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="o">[]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">used&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">MAX_AVAILABLE&lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">synchronized&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">getNextAvailableItem&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">for&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">MAX_AVAILABLE&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="n">used&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">used&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">items&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// not reached&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">protected&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">synchronized&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">markAsUnused&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">item&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">for&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">MAX_AVAILABLE&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">item&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">items&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">used&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">used&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="o">]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">false&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>ReentrantLock과 유사하게 lock을 얻어 자원을 확보한 이후에 작업을 진행함&lt;/li>
+&lt;li>허가증을 1개만 사용하여 metex처럼 사용 가능&lt;/li>
+&lt;li>reentrantLock과 같이 공정성 여부를 파라미터로 받아 공정성 여부를 결정함&lt;/li>
+&lt;/ul>
+&lt;h2 id="vs-reentrantlock">vs ReentrantLock
+&lt;/h2>&lt;ul>
+&lt;li>ReentrantLock은 1개의 자원에 대해 1개의 쓰레드만 접근이 가능함&lt;/li>
+&lt;li>Semaphore는 1개의 자원에 대해 n개의 쓰레드 접근이 가능함&lt;/li>
+&lt;li>ReentrantLock은 하나의 자원에 대해 여러번 시도하여 재진입이 가능함
+&lt;ul>
+&lt;li>재진입한 횟수만큼 자원 해제를 해야함&lt;/li>
+&lt;li>Semaphore에서는 지원하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul></description></item><item><title>1-ReentrantLock &amp; Condition</title><link>https://sungho94.me/p/1-reentrantlock-condition/</link><pubDate>Tue, 02 Apr 2024 18:05:04 +0000</pubDate><guid>https://sungho94.me/p/1-reentrantlock-condition/</guid><description>&lt;h1 id="reentrantlock">ReentrantLock
+&lt;/h1>&lt;ul>
+&lt;li>Lock 인터페이스의 구현체&lt;/li>
+&lt;li>synchronized method, statements와 기본적인 동작과 의미가 동일하지만 확장된 기능을 가짐&lt;/li>
+&lt;li>synchronized 키워드를 사용할때보다 더 유연하게 사용가능&lt;/li>
+&lt;li>lock을 얻은후 다시 Lock을 얻을 수 있음
+&lt;ul>
+&lt;li>hold count를 증가시키고, hold count가 0이 되면 자원을 release함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="fair">Fair
+&lt;/h2>&lt;ul>
+&lt;li>생정자에서 fair변수의 값을 받음&lt;/li>
+&lt;li>fair가 true라면 잠금을 가장 오래 기다린 쓰레드에 엑세스 권한부여&lt;/li>
+&lt;li>false라면 특정 엑세스 순서를 보장하지 않음&lt;/li>
+&lt;li>fair가 true인 경우가 전체처리량이 낮을 수 있지만, lock을 얻는 편차가 적고, lock starvartion이 덜 발생함&lt;/li>
+&lt;li>fair가 true라도 쓰레드 스케줄링이 공정하지 않을 수 있음
+&lt;ul>
+&lt;li>쓰레드 A,B,C가 lock을 대기하고 순서도 A,B,C순일때, A가 lock을 점유하고 해제한뒤 A가 다시 lock 요청시 B와 C가 사용한 가 아닌, A가 다시 사용하는 현상&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>tryLock 메소드는 fair필드의 여부와는 상관없음&lt;/li>
+&lt;li>tryLock을 사용한다면, 다른 쓰레드가 대기중이더라도 lock을 점유할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="method">Method
+&lt;/h2>&lt;h3 id="lock">lock()
+&lt;/h3>&lt;ul>
+&lt;li>lock을 점유함&lt;/li>
+&lt;li>다른 스레드에서 lock을 점유하고 있지 않다면 lock을 점유하고 즉시 return함&lt;/li>
+&lt;li>현재 스레드에서 점유하고 있었다면, hold count를 1 증가시키고 즉시 return함&lt;/li>
+&lt;li>다른 스레드에서 점유중이라면 현재 스레드는 사용불가능하고 lock을 얻을 수 있을때 까지 대기함
+&lt;ul>
+&lt;li>lock을 얻는다면 hold count를 1로 세팅함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="unlock">unLock()
+&lt;/h3>&lt;ul>
+&lt;li>lock을 헤제함&lt;/li>
+&lt;li>현재 스레드가 lock을 점유하고 있다면 hold count를 1 감소시킴
+&lt;ul>
+&lt;li>hold count가 0이 된다면 락을 해제함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>현재 스레드가 lock을 점유하고 있지 않다면 illegalMonitorStateException 예외를 발생시킴&lt;/li>
+&lt;/ul>
+&lt;h3 id="trylock">tryLock()
+&lt;/h3>&lt;ul>
+&lt;li>다른 스레드에서 lock을 점유하지 않다면, 락을 점유하고 true를 리턴하고 hold count를 1로 세팅함
+&lt;ul>
+&lt;li>심지어 해당 ReentrantLock객체가 fair하게 동작하고 있고, 다른 스레드에서 lock을 대기하고 있는 상태라도 해당 lock을 점유할 수 있는 상태라면 lock을 점유함&lt;/li>
+&lt;li>만약 공정성을 해치고 싶지 않다면 tryLock(0,TimeUnit.SECONDS)로 호출하면 공정성을 해치지 않을 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>해당 스레드가 Lock을 이미 점유하고 있다면 true를 리턴하고 hold count를 1 증가시킴&lt;/li>
+&lt;li>다른 스레드에 의해 이미 lock이 점유되어 있다면 즉시 false를 리턴함&lt;/li>
+&lt;/ul>
+&lt;h3 id="기타">기타
+&lt;/h3>&lt;ul>
+&lt;li>hasQueuedThreads() : 해당 락을 점유하기 위해 대기하고 있는 쓰레드의 존재여부를 알려줌&lt;/li>
+&lt;li>hasQueuedThread(Thread thread) : 주어진 쓰레드가 락을 점유하기 위해 대기중인지 여부를 알려줌&lt;/li>
+&lt;li>getQueueLength() : 락 점유 대기중인 스레드 수를 알려줌&lt;/li>
+&lt;li>getQueuedThreads() : 락 점유 대기중인 스레드 Collection을 리턴&lt;/li>
+&lt;/ul>
+&lt;h2 id="condition">Condition
+&lt;/h2>&lt;ul>
+&lt;li>Lock이 synchronized를 대체하듯 Condition은 Object를 대체함&lt;/li>
+&lt;li>Lock.newCondition 메서드로 생성가능&lt;/li>
+&lt;/ul>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: center">synchronized&lt;/th>
+&lt;th style="text-align: center">lock&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: center">wait&lt;/td>
+&lt;td style="text-align: center">await&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">notify&lt;/td>
+&lt;td style="text-align: center">signal&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">notifyAll&lt;/td>
+&lt;td style="text-align: center">signalAll&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>javadoc&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/locks/ReentrantLock.html" target="_blank" rel="noopener"
+>https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/locks/ReentrantLock.html&lt;/a>&lt;/p></description></item><item><title>0-Lock 정의 &amp; synchronized</title><link>https://sungho94.me/p/0-lock-%EC%A0%95%EC%9D%98-synchronized/</link><pubDate>Mon, 01 Apr 2024 22:38:42 +0000</pubDate><guid>https://sungho94.me/p/0-lock-%EC%A0%95%EC%9D%98-synchronized/</guid><description>&lt;h1 id="사용하는-이유">사용하는 이유
+&lt;/h1>&lt;h3 id="쓰레드-동기화">쓰레드 동기화
+&lt;/h3>&lt;ul>
+&lt;li>멀티 쓰레드 환경에서 서로 다른 스레드가 하나의 자원을 공유해서 사용할때, 자원을 동시에 사용하면 예상치 않은 동작이 발생
+&lt;ul>
+&lt;li>쓰레드 간섭(Thread Interference), 메모리 일관성 오류(Memory consistency Error)&lt;/li>
+&lt;li>ex) 두개의 쓰레드가 하나의 변수에 10을 증가시키려할때, 20이 증가되지 않고 10이 증가되는 문제&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>위와 같은 방법을 해결하기 위해 쓰레드를 동기화 하여 하나의 자원을 동시에 사용하지 못하는 방법&lt;/li>
+&lt;/ul>
+&lt;h1 id="종류-및-사용방법">종류 및 사용방법
+&lt;/h1>&lt;h2 id="synchronized">Synchronized
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>synchronized는 내재적 잠금(Intrinsic Lock) 또는 모니터 잠금(Monitor Lock)으로 알려진 내부 앤티티 중심으로 구현됨&lt;/p>
+&lt;ul>
+&lt;li>내재적 잠금은 동기화의 두가지 측면을 구현함
+&lt;ul>
+&lt;li>객체의 상태에 대한 배타적 엑세스를 강제함&lt;/li>
+&lt;li>가시성에 필수적인 happens-before relationships(발생 전 관계)를 설정&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>java의 모든 Object은 내재적 잠금을 가지고 있음&lt;/p>
+&lt;ul>
+&lt;li>header에 들어가있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>객체의 필드에 독점적이고 일관된 엑세스를 필요로 하는 쓰레드는, 객체를 접근하기전객체의 내재적 잠금을 얻어야함&lt;/p>
+&lt;ul>
+&lt;li>그리고 작업이 끝나면 내재적 잠금을 해제(release)해야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>쓰레드는 잠금을 획득한 시점부터 해제할때까지 내재적 잠금을 소유해야함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>한 스레드가 내재적 잠금을 소유하고 있으면, 다른 쓰레드는 같은 lock을 소유할 수 없음&lt;/p>
+&lt;ul>
+&lt;li>다른 쓰레드가 잠금을 획득하려하면 block됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>스레드가 내재적 잠금을 해제하면, 해당 작업과 이후 동일한 잠금을 획득하는 모든 작업간에 선후(happens-before) 관계가 설정됨&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>java에서는 synchronized method와 synchronized statment를 제공함&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="synchronized-method">synchronized method
+&lt;/h3>&lt;ul>
+&lt;li>스레드가 synchronized 메서드를 호출하면, 해당 메서드의 객체에 대한 내재 잠금을 자동으로 획득하고 메서드가 반환될때 잠금을 해제
+&lt;ul>
+&lt;li>반환이 잡히지 않은 예외로 인해 발생한 경우에도 잠금이 해제됨&lt;/li>
+&lt;li>잠금이 객체단위에 적용되므로 increment뿐만 아닌 increment와 decrement도 동시에 동작하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>정적 synchronized 메서드가 호출되면 객체가 아닌 클래스에 대한 내재 잠금을 획득&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">SynchronizedCounter&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">private&lt;/span> &lt;span class="k">var&lt;/span> &lt;span class="py">c&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Synchronized&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">fun&lt;/span> &lt;span class="nf">increment&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">c&lt;/span>&lt;span class="o">++&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Synchronized&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">fun&lt;/span> &lt;span class="nf">decrement&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">c&lt;/span>&lt;span class="o">--&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nd">@Synchronized&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">fun&lt;/span> &lt;span class="nf">value&lt;/span>&lt;span class="p">():&lt;/span> &lt;span class="n">Int&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="n">c&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>synchronized 메소드를 사용하면 아래 2가지 효과를 얻을 수 있음
+&lt;ul>
+&lt;li>동일한 객체에 대해 synchronized 메서드 호출이 동시에 발생되지 않음
+&lt;ul>
+&lt;li>한 스레드가 객체에 대해 synchronized 메서드를 실행하면, 첫번째 쓰레드가 작업을 완료할때까지 동기화된 메서드를 호출하는 다른 모든 쓰레드가 block됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>synchronized된 메서드가 종료되면, 동일한 객체에 대한 synchronized 메서드의 후속 호출과 함께 happends-before 관계가 설립됨
+&lt;ul>
+&lt;li>이로인해 모든 스레드에서 해당 객체 변경사항을 확인할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>생성자 메소드에는 synchronized를 호출할 수 없음&lt;/li>
+&lt;/ul>
+&lt;h3 id="synchronized-statements">Synchronized statements
+&lt;/h3>&lt;ul>
+&lt;li>synchronized method와 다르게 명시적으로 객체를 정의해야함&lt;/li>
+&lt;li>명시적의로 정의한 객체의 잠금을 획득하고 반환할때 잠금을 해제함&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">addName&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">synchronized&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">lastName&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">nameCount&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">nameList&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>
+&lt;p>위의 예시에서는 lastName과 nameCount에는 동기화가 필요하지만, nameList에는 동기화가 필요하지 않은 경우이다&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Synchronized statements가 없다면 nameList.add를 호출하는 별도의 메서드가 필요함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>세분화된 동기화시에도 Synchronized statements가 유용함&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">MsLunch&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">c1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">c2&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">lock1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">private&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">lock2&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">inc1&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">synchronized&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">lock1&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">c1&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">inc2&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">synchronized&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">lock2&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">c2&lt;/span>&lt;span class="o">++&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>c1과 c2는 절대 함께 사용되지 않으며, 이런 필드의 모든 업데이트는 동기화 되어야함
+&lt;ul>
+&lt;li>하지만 c1과 c2사이의 동기화는 고려하지도 않아도 됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>위와 같은상황에서 synchronized statements가 유용함&lt;/li>
+&lt;/ul>
+&lt;h3 id="synchronized-method-or-statements에서만-사용가능한-메서드">Synchronized method or statements에서만 사용가능한 메서드
+&lt;/h3>&lt;ul>
+&lt;li>
+&lt;p>Synchronized method or statements외에 사용시 IllegalMonitorStateException 오류 발생&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>wait&lt;/p>
+&lt;ul>
+&lt;li>현재 쓰레드를 중단하고 객체 잠금을 해제함&lt;/li>
+&lt;li>notify() 또는 notifyAll메서드를 호출하여 해당 객체를 알릴때까지 대기함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>notify&lt;/p>
+&lt;ul>
+&lt;li>객체 잠금을 가진 한 쓰레드르 깨우고 실행함&lt;/li>
+&lt;li>깨어난 쓰레드는 객체 잠금을 얻고 작업을 수행&lt;/li>
+&lt;li>어떤 쓰레드를 깨울지는 알 수 없기에 notifyAll을 주로 사용&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>notifyAll&lt;/p>
+&lt;ul>
+&lt;li>객체 잠금을 기다리는 모든 스레드르 꺠우고 실행&lt;/li>
+&lt;li>깨어난 쓰레드들은 객체 잠금을 얻기위해 경쟁함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://www.ibm.com/docs/en/i/7.3?topic=techniques-synchronization-among-threads" target="_blank" rel="noopener"
+>https://www.ibm.com/docs/en/i/7.3?topic=techniques-synchronization-among-threads&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.linkedin.com/pulse/thread-synchronization-techniques-ensuring-order-concurrent-n/" target="_blank" rel="noopener"
+>https://www.linkedin.com/pulse/thread-synchronization-techniques-ensuring-order-concurrent-n/&lt;/a>&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html" target="_blank" rel="noopener"
+>https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html&lt;/a>&lt;/p></description></item><item><title>10-Isolation level(격리 수준)</title><link>https://sungho94.me/p/10-isolation-level%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/10-isolation-level%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80/</guid><description>&lt;ul>
+&lt;li>여러 트랜잭션이 동시에 변경을 수행하고 쿼리를 수행할 때 성능과 안정성, 일관성 및 결과 재현성 간의 균형을 미세 조정하는 설정&lt;/li>
+&lt;/ul>
+&lt;h2 id="read-uncommitted">Read Uncommitted
+&lt;/h2>&lt;ul>
+&lt;li>가장 낮은 격리 수준&lt;/li>
+&lt;li>커밋되지 않은 다른 트랜잭션의 변경 내용을 읽을 수 있음&lt;/li>
+&lt;li>어떤 트랜잭션의 변경 내용이 COMMIT이나 ROLLBACK과 상관없이 다른 트랜잭션에서 보여짐&lt;/li>
+&lt;/ul>
+&lt;h2 id="read-committed">Read Committed
+&lt;/h2>&lt;ul>
+&lt;li>다른 트랜잭션에서 커밋되지 않은 데이터는 읽을수 없음&lt;/li>
+&lt;li>Dirty Read(더티 리드)문제는 해결되지만, Phantom Read(유령 읽기) 문제는 발생함&lt;/li>
+&lt;/ul>
+&lt;h2 id="repeatable-read">REPEATABLE READ
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>한 트랜잭션 내에서 같은 쿼리를 여러 번 실행했을 때, 항상 동일한 결과를 얻을 수 있음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>첫번째 읽기 작업이 이루어진 때를 기준으로 스냅샷을 생성함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>InnoDB의 default isolation level임&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="serializablehttpsdevmysqlcomdocrefman80englossaryhtmlglos_serializable">&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_serializable" target="_blank" rel="noopener"
+>Serializable&lt;/a>
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>어떤 한 트랜잭션이 데이터를 읽었다면, lock을 걸어 이 트랜잭션이 끝날때까지 다른트랜잭션이 읽기, 쓰기가 불가능하도록 하는 level&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>autocommit이 활성화 되어있지 않으면, select 문을 select &amp;hellip; for share 문으로 변경함&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>Mysql doc을 보고 작성했으며, ANSI Isolation level이 궁금하다면 &lt;a class="link" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-95-51.pdf" target="_blank" rel="noopener"
+>참고&lt;/a>&lt;/p>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_isolation_level&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_serializable&lt;/p></description></item><item><title>9-Record Locks</title><link>https://sungho94.me/p/9-record-locks/</link><pubDate>Sat, 02 Mar 2024 22:41:04 +0000</pubDate><guid>https://sungho94.me/p/9-record-locks/</guid><description>&lt;ul>
+&lt;li>record의 index에 거는 lock&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>primary index가 없는 테이블에도 가능&lt;br>
+primary index가 없더라도 mysql에서는 hidden clustered index를 생성하기 때문&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>Mysql Doc에는 row락이라는 용어가 등장하지 않음,&lt;br>
+스택오버플로우에는 record lock과 row lock이 동일 하다는 이야기가 있음&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/74967004/row-level-locks-vs-index-record-locks" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/74967004/row-level-locks-vs-index-record-locks&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>8-Intention shared lock, exclusive lock</title><link>https://sungho94.me/p/8-intention-shared-lock-exclusive-lock/</link><pubDate>Sat, 02 Mar 2024 22:41:03 +0000</pubDate><guid>https://sungho94.me/p/8-intention-shared-lock-exclusive-lock/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>IS, IX lock과 S,X Lock과의 차이는 테이블까지 락이 걸림&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>IS, IX lock을 걸면 해당 테이블에도 락이 걸림&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>해당 테이블에 대해 다른 트래잭션에서 같은 테이블의 다른 row에 IS,IX락은 걸 수 있지만, 같은 테이블에 대해 S,X Lock을 걸 수 없음(실험완료)&lt;/p>
+&lt;ul>
+&lt;li>S,X와 같이, IS가 걸려있으면 해당 테이블에 대해 S락은 가능, X락은 불가&lt;/li>
+&lt;li>S,X와 같이, IX가 걸려있으면 해당 테이블에 대해 S,X락 둘다 불가&lt;/li>
+&lt;li>읽기나 쓰기 도중 테이블이 변경되는것을 막기 위함이라고 추측함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>SELECT ... FOR SHARE&lt;/code>로 S Lock을, &lt;code>SELECT ... FOR UPDATE&lt;/code>로 X락을 걸 수 있음&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;ul>
+&lt;li>IS lock추가&lt;br>
+- select .. lock in share mode ;&lt;br>
+- select .. for share ;&lt;br>
+- 현재(8.0 기준) for share가 lock in share mode를 대체 하려하나 하위호환성 보장을 위해 lock in share mode를 유지하는중&lt;br>
+- 그러나, for share를 사용하면 OF table_name, NOWAIT, and SKIP LOCKED를 사용할 수 있음&lt;/li>
+&lt;/ul>
+&lt;p>SELECT &amp;hellip; FOR SHARE is a replacement for SELECT &amp;hellip; LOCK IN SHARE MODE, but LOCK IN SHARE MODE remains available for backward compatibility. The statements are equivalent. However, FOR SHARE supports OF table_name, NOWAIT, and SKIP LOCKED options. See Locking Read Concurrency with NOWAIT and SKIP LOCKED.&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_shared_lock&lt;/p>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>7-Shared Lock(S-lock)</title><link>https://sungho94.me/p/7-shared-locks-lock/</link><pubDate>Sat, 02 Mar 2024 22:41:02 +0000</pubDate><guid>https://sungho94.me/p/7-shared-locks-lock/</guid><description>&lt;ul>
+&lt;li>특정 행을 읽기위해 거는 락&lt;/li>
+&lt;li>어떤 object에 S-lock이 걸려있다면 다른 트랜잭션에서 읽기는 가능하지만 변경은 불가능함&lt;/li>
+&lt;li>S-lock이 걸려있는 object에 S-lock를 또 걸 수 있지만 X-lock은 걸 수 없음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>6-Exclusive Lock(X-Lock)</title><link>https://sungho94.me/p/6-exclusive-lockx-lock/</link><pubDate>Sat, 02 Mar 2024 22:41:01 +0000</pubDate><guid>https://sungho94.me/p/6-exclusive-lockx-lock/</guid><description>&lt;p>1- X-Lock이 걸린 객체에 대해 다른 트랜잭션에서 읽기, 쓰기 불가능&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>X-Lock이 걸린 객체에 대해 다른 객체에서 S-Lock, X-Lock 걸수 없음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>변경 또는 삭제를 위해 락을 걸떄 활용&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Mysql의 Repeatable-Read는 Constent Read 기술을 사용해여 X-Lock걸린 row를 읽도록 함으로써 효율을 높임&lt;/p>
+&lt;ul>
+&lt;li>X-Lock이 걸리기 전의 값을 읽음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>5-Optimistic Lock</title><link>https://sungho94.me/p/5-optimistic-lock/</link><pubDate>Fri, 01 Mar 2024 22:41:07 +0000</pubDate><guid>https://sungho94.me/p/5-optimistic-lock/</guid><description>&lt;ul>
+&lt;li>CAS(compare and Set)이라고도 함&lt;/li>
+&lt;li>데이터베이스 수준이 아닌 어플리케이션 수준에서 자원을 관리&lt;/li>
+&lt;li>record에 version관련 컬럼을 추가하여 자원을 관리&lt;/li>
+&lt;li>변경이 발생할때마다 version값에 1을 추가
+&lt;ul>
+&lt;li>0,1으로 하면 안됨
+&lt;ul>
+&lt;li>변경이 두번 발생하면 0,1,0이 되버리기 때문에 오류가 발생함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>장점
+&lt;ul>
+&lt;li>데이터베이스에서 lock을 걸지 않기 때문에 pessimistic lock보다 데이터 베이스 부하가 적음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://en.wikipedia.org/wiki/Optimistic" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Optimistic&lt;/a>_concurrency_control&lt;/p></description></item><item><title>4-Consistent Read(일관된 읽기)</title><link>https://sungho94.me/p/4-consistent-read%EC%9D%BC%EA%B4%80%EB%90%9C-%EC%9D%BD%EA%B8%B0/</link><pubDate>Fri, 01 Mar 2024 22:41:05 +0000</pubDate><guid>https://sungho94.me/p/4-consistent-read%EC%9D%BC%EA%B4%80%EB%90%9C-%EC%9D%BD%EA%B8%B0/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>첫번째 읽을때 스냅샷을 생성함으로써, 다른 트랜잭션에서 발생한 변경과는 무관하게, 스냅샷을 생성했을 때의 데이터를 읽을수 있는 것을 말함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>다른 트랜잭션에서 데이터를 변경해도, undo log에 기록되어 변경전 데이터를 읽을 수 있음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>이로인해 동시성 문제를 해결&lt;/p>
+&lt;ul>
+&lt;li>undo log를 사용하지 않는다면, 어떤 row를 읽은 트랜잭션이 있다면 해당 트랜잭션이 끝날때 까지 해당 row를 접근하지 못하게 해야 일관된 읽기를 달성할 수 있음&lt;/li>
+&lt;li>하지만 undo log를 사용함으로 각각의 트랜잭션에서는 데이터를 자유롭게 변경해도, 변경전 데이터가 undo log에 있으므로, 변경된 데이터에 대해서는 undo log를 읽어와 일관된 읽기를 달성할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>REPEATABLE READ와 READ COMMITTED에서 기본으로 사용됨&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p> ALTER TABLE문과 DROP TABLE문에서는 작동하지 않음&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_consistent_read&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-consistent-read.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-consistent-read.html&lt;/a>&lt;/p></description></item><item><title>3-Critical section(임계영역)</title><link>https://sungho94.me/p/3-critical-section%EC%9E%84%EA%B3%84%EC%98%81%EC%97%AD/</link><pubDate>Fri, 01 Mar 2024 22:41:04 +0000</pubDate><guid>https://sungho94.me/p/3-critical-section%EC%9E%84%EA%B3%84%EC%98%81%EC%97%AD/</guid><description>&lt;ul>
+&lt;li>동시성을 가지는 작업들이 공유하는 자원&lt;/li>
+&lt;li>여러 작업에서 하나의 자원에 대해 동시에 접근하면, 예기치 못한 동작이나 오류가 발생할 수 있음&lt;/li>
+&lt;li>여러 작업에서 하나의 자원을 동시에 엑세스를 방지하도록 보호해야함&lt;/li>
+&lt;li>엑세스를 방지해야하는 자원을 임계영역이라고 부름&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://en.wikipedia.org/wiki/Critical" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Critical&lt;/a>_section&lt;/p>
+&lt;p>#Concurrency&lt;/p></description></item><item><title>2-Semaphore</title><link>https://sungho94.me/p/2-semaphore/</link><pubDate>Fri, 01 Mar 2024 22:41:03 +0000</pubDate><guid>https://sungho94.me/p/2-semaphore/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>임계영역을 보호하는 방법&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>여러 스레드의 임계영역에 대한 엑세스를 제어&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Mutex와의 차이점은 Mutex는 하나의 자원에 대한 엑세스를 제어하는 반면, Semaphore는 여러자원에 대한 엑세스를 제어&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>화장실이 3개이고 키도 3개일때&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>키가 하나도 없다면 화장실 이용불가&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>키가 1개 있다면 화장실 이용가능&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>키가 2개 있어도 화장실 이용가능&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>but, 어느 화장실 칸이 비었는지 모르기에 추가적인 정보가 더 필요함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a class="link" href="https://barrgroup.com/embedded-systems/how-to/rtos-mutex-semaphore" target="_blank" rel="noopener"
+>추가적인 정보가 궁금하다면 여기&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://ko.wikipedia.org/wiki/%EC%8B%9D%EC%82%AC%ED%95%98%EB%8A%94_%EC%B2%A0%ED%95%99%EC%9E%90%EB%93%A4_%EB%AC%B8%EC%A0%9C" target="_blank" rel="noopener"
+>식사하는 철학자들 문제&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/a/2332868/22483906" target="_blank" rel="noopener"
+>https://stackoverflow.com/a/2332868/22483906&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/2350544/in-what-situation-do-you-use-a-semaphore-over-a-mutex-in-c/2350628#2350628" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/2350544/in-what-situation-do-you-use-a-semaphore-over-a-mutex-in-c/2350628#2350628&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/34519/what-is-a-semaphore/40238#40238" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/34519/what-is-a-semaphore/40238#40238&lt;/a>&lt;/p>
+&lt;p>#Concurrency&lt;/p></description></item><item><title>1-Mutex(Lock)</title><link>https://sungho94.me/p/1-mutexlock/</link><pubDate>Fri, 01 Mar 2024 22:41:02 +0000</pubDate><guid>https://sungho94.me/p/1-mutexlock/</guid><description>&lt;ul>
+&lt;li>&lt;strong>Mut&lt;/strong>ual &lt;strong>ex&lt;/strong>clusion의 약자&lt;/li>
+&lt;li>프로세스 간 동기화에 사용할 수도 있는 동기화 기본 형식입니다.&lt;/li>
+&lt;li>둘 이상의 스레드가 동시에 공유 리소스에 액세스해야 하는 경우 시스템은 한 번에 하나의 스레드만 리소스를 사용하도록 하기 위한 동기화 메커니즘&lt;/li>
+&lt;li>공유 리소스에 대한 단독 액세스 권한을 하나의 스레드에만 부여하는 동기화 기본 형식입니다.&lt;/li>
+&lt;li>스레드가 뮤텍스를 획득하면 첫 번째 스레드가 뮤텍스를 해제할 때까지 해당 뮤텍스를 획득하려는 두 번째 스레드가 일시 중단됩니다.&lt;/li>
+&lt;/ul>
+&lt;h3 id="화장실-비유">화장실 비유
+&lt;/h3>&lt;ul>
+&lt;li>화장실에 가고싶은데 키가 하나밖에 없는경우&lt;/li>
+&lt;li>키가 있어야만 화장실에 갈 수 있음&lt;/li>
+&lt;li>화장실에 아무도 없다면 키를 가져갈 수 있음&lt;/li>
+&lt;li>화장실에 사람이 있다면, 사람이 나와 키를 줄때까지 기다려야함&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Mutex와 Lock은 동일한 개념임&lt;br>
+Mutex는 Lock보다는 시스템 전체에 적용될 수 있음&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://learn.microsoft.com/ko-kr/dotnet/api/system.threading.mutex?view=net-7.0#remarks" target="_blank" rel="noopener"
+>https://learn.microsoft.com/ko-kr/dotnet/api/system.threading.mutex?view=net-7.0#remarks&lt;/a>&lt;br>
+&lt;a class="link" href="https://en.wikipedia.org/wiki/Lock" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Lock&lt;/a>_(computer_science)&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/2332765/what-is-the-difference-between-lock-mutex-and-semaphore" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/2332765/what-is-the-difference-between-lock-mutex-and-semaphore&lt;/a>&lt;/p></description></item><item><title>0-동시성(Concurrency)</title><link>https://sungho94.me/p/0-%EB%8F%99%EC%8B%9C%EC%84%B1concurrency/</link><pubDate>Fri, 01 Mar 2024 22:41:01 +0000</pubDate><guid>https://sungho94.me/p/0-%EB%8F%99%EC%8B%9C%EC%84%B1concurrency/</guid><description>&lt;h2 id="개념">개념
+&lt;/h2>&lt;ul>
+&lt;li>프로그램, 알고리즘, 또는 문제의 부분이나 단위 등이, 결과에 영향을 주지 않고 특정한 순서없이 실행되거나 부분적인 순서만을 가지고 실행될 수 있는 성질 &lt;a class="link" href="https://en.wikipedia.org/wiki/Concurrency_%5c%28computer_science%5c%29" target="_blank" rel="noopener"
+>링크&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>하나의 작업을 정말 빠르게 처리하면 되지 않을까?&lt;/p>
+&lt;ul>
+&lt;li>대부분의 서비스에서는 cpu bound보다는 io bound가 많은 일을 처리하기에 동시성이 중요&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>동시성은 한번에 많은일을 처리하는것,&lt;br>
+병렬성은 한번에 많은 일을 하는것을 의미&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="왜-중요한가">왜 중요한가?
+&lt;/h2>&lt;ul>
+&lt;li>한번에 여러가지 일을 처리하니 한번에 많은일을 처리할 수 있음
+&lt;ul>
+&lt;li>성능이 증대됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="but-무결성의-문제">But, 무결성의 문제
+&lt;/h2>&lt;ul>
+&lt;li>&lt;strong>하나의 자원을 가지고 하나이상의 작업이 수행될때 자원의 무결성의 문제&lt;/strong>&lt;/li>
+&lt;li>Lost Update Problem(write-write conflict)
+&lt;ul>
+&lt;li>하나의 로우에 동시에 여러번 변경이 발생했을 때 발생하는 문제&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218230909.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Unrepeatable Read Problem
+&lt;ul>
+&lt;li>다른 트랜잭션에서 변경이 되어, 같은 조회 쿼리에서 다른 데이터가 오는 현상&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218231144.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Temporary Update Problem( dirty read problem)
+&lt;ul>
+&lt;li>커밋되지 않은 데이터를 읽어서 발생하는 문제&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218231800.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Phantom Read Problem
+&lt;ul>
+&lt;li>데이터가 삭제되어 같은 트랜잭션에서 데이터를 못가져오는 문제&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218231610.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="해결책">해결책
+&lt;/h2>&lt;ul>
+&lt;li>동시성 문제는 어떻게 동시에 처리하지 않을까에 대한 고민&lt;/li>
+&lt;li>추상화한것들 어떻게 구체화 할것인가&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>개념&lt;/p>
+&lt;ul>
+&lt;li>critical section&lt;/li>
+&lt;li>mutex&lt;/li>
+&lt;li>semaphore&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>JAVA에서 코드레벨 lock &lt;a class="link" href="https://www.baeldung.com/java-mutex" target="_blank" rel="noopener"
+>참고자료&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>synchronized&lt;/li>
+&lt;li>lock&lt;/li>
+&lt;li>Semaphore&lt;/li>
+&lt;li>Guava’s  Monitor&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>데이터베이스에서 동시성 문제 처리&lt;/p>
+&lt;ul>
+&lt;li>lock mode
+&lt;ul>
+&lt;li>Shared Lock&lt;/li>
+&lt;li>Exclusive Lock&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>lock type
+&lt;ul>
+&lt;li>row lock&lt;/li>
+&lt;li>Record Lock&lt;/li>
+&lt;li>Gap Lock&lt;/li>
+&lt;li>Next-key Lock&lt;/li>
+&lt;li>auto increment lock&lt;/li>
+&lt;li>table lock&lt;/li>
+&lt;li>insert intention lock&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>isolation level&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Named Lock&lt;/p>
+&lt;ul>
+&lt;li>redis&lt;/li>
+&lt;li>database&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://medium.com/@bindubc/distributed-system-concurrency-problem-in-relational-database-59866069ca7c" target="_blank" rel="noopener"
+>https://medium.com/@bindubc/distributed-system-concurrency-problem-in-relational-database-59866069ca7c&lt;/a>&lt;/p></description></item></channel></rss>

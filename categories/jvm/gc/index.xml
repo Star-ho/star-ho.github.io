@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>JVM/GC on Sungho's Dev BLog</title><link>https://sungho94.me/categories/jvm/gc/</link><description>Recent content in JVM/GC on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Thu, 22 Feb 2024 23:19:00 +0000</lastBuildDate><atom:link href="https://sungho94.me/categories/jvm/gc/index.xml" rel="self" type="application/rss+xml"/><item><title>2-Garbage Collection Types</title><link>https://sungho94.me/p/2-garbage-collection-types/</link><pubDate>Thu, 22 Feb 2024 23:19:00 +0000</pubDate><guid>https://sungho94.me/p/2-garbage-collection-types/</guid><description>&lt;h2 id="serial-gc">Serial GC
+&lt;/h2>&lt;ul>
+&lt;li>CPU 코어나 메모리가 적을 때 유용&lt;/li>
+&lt;li>하나의 서버에 여러 jvm이 실행되는 환경에서 유용&lt;/li>
+&lt;li>major GC와 minor GC가 serially하게 적용됨&lt;/li>
+&lt;li>mark-compact-swap 방식을 사용&lt;/li>
+&lt;li>오래된 메모리를 heap의 시작점에 두고, 새로 생성된 메모리를 heap의 마지막에 두어 새로 생성된 메모리가 연속적으로 할당되게함&lt;/li>
+&lt;li>-XX:+UseSerialGC 로 사용가능&lt;/li>
+&lt;/ul>
+&lt;h2 id="parallel-gc">Parallel GC
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>사용하는 알고리즘은 Serial GC와 같으나, 여러 스레드를 사용함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>CPU코어가 1개 이상일때 많을때 유용함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>CPU코어가 N개일때 N개의 garbage Collector를 사용&lt;/p>
+&lt;ul>
+&lt;li>옵션으로 garbage Collector개수 설정 가능&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>CPU코어가 1개인 환경에서는 Parallel GC를 사용하더라도 해당 Serial GC가 사용됨&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>ParallelGC는 2가지 가 있음&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="parallelgc">ParallelGC
+&lt;/h3>&lt;ul>
+&lt;li>Old영역은 싱글스레드, Young 영역은 멀티스레드로 동작&lt;/li>
+&lt;li>Old영역의 compact도 싱글스레드로 동작&lt;/li>
+&lt;li>&lt;code>-XX:+UseParallelGC&lt;/code>로 사용가능&lt;/li>
+&lt;/ul>
+&lt;h3 id="paralleloldgc">ParallelOldGC
+&lt;/h3>&lt;ul>
+&lt;li>Old영역, Young영역 둘다 멀티스레드로 동작&lt;/li>
+&lt;li>compact도 멀티스레드로 동작&lt;/li>
+&lt;li>&lt;code>-XX:+UseParallelOldGC&lt;/code>로 사용가능&lt;/li>
+&lt;/ul>
+&lt;h2 id="the-concurrent-mark-sweep-cms-collector">The Concurrent Mark Sweep (CMS) Collector
+&lt;/h2>&lt;ul>
+&lt;li>tenured영역을 collect하는 GC&lt;/li>
+&lt;li>GC를 애플리케이션 스레드와 동시에 수행하여 애플리케이션의 일시중단 시간을 최소화 하려함&lt;/li>
+&lt;li>live객체를 이동, 복사하거나 압축하지 않음&lt;/li>
+&lt;li>조각화가 문제가 되는경우 더 큰 힙을 할당해야함&lt;/li>
+&lt;li>&lt;code>-XX:+UseConcMarkSweepGC&lt;/code>로 사용가능&lt;/li>
+&lt;li>&lt;em>거의 사용되지 않음&lt;/em>&lt;/li>
+&lt;/ul>
+&lt;h2 id="g1-gc">G1 GC
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240304223056.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>아래와 같이 바둑판 영역에 객체를 할당하고 GC를 실행함&lt;/li>
+&lt;li>해당 영역에 데이터가 꽉 차면 다른 영역에 객체를 할당하고 gc를 실행함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://d2.naver.com/helloworld/1329" target="_blank" rel="noopener"
+>https://d2.naver.com/helloworld/1329&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html" target="_blank" rel="noopener"
+>https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html&lt;/a>&lt;/p></description></item><item><title>1-Garbage Collection Process</title><link>https://sungho94.me/p/1-garbage-collection-process/</link><pubDate>Thu, 22 Feb 2024 23:15:48 +0000</pubDate><guid>https://sungho94.me/p/1-garbage-collection-process/</guid><description>&lt;ul>
+&lt;li>앞의 Garbage Collection Concept에서는 heap이 나누어져 저장되는 것을 이해함&lt;/li>
+&lt;li>여기서는 나누어져 저장되는 것들의 상호작용에 대해 알아봄&lt;/li>
+&lt;/ul>
+&lt;h3 id="1-object-allocation">1. Object Allocation
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222231607.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>모든 새 객체들은 Eden 영역에 할당됨&lt;/li>
+&lt;li>애플리케이션을 처음 시작한다면 두 survivor영역은 비어있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="2-filling-the-eden-space">2. Filling the Eden Space
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222232133.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>Eden 영역이 꽉 찬다면, minor GC가 실행됨&lt;/li>
+&lt;/ul>
+&lt;h3 id="3-copying-referenced-objects">3. Copying Referenced Objects
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222232238.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>Referenced 객체는 S0 servivor 영역으로 이동됨&lt;/li>
+&lt;li>Unreferenced 객체는 삭제됨&lt;/li>
+&lt;/ul>
+&lt;h3 id="4-object-aging">4. Object Aging
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222232408.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>다음 miner GC때 3의 동작이 한번 더 발생됨&lt;/li>
+&lt;li>Referenced 객체는 suvivor 영역으로 이동하고, Unreferenced 객체는 삭제됨&lt;/li>
+&lt;li>3과 다른점은 S0에 존재했던 객체들이 S1영역 으로 간다는 것&lt;/li>
+&lt;li>S0에서 S1으로 이동한 객체는 이동하면서 1살을 더 먹음&lt;/li>
+&lt;li>miner GC가 발생하므로서 Eden과 S0은 비워지고 S1에만 객체가 존재함&lt;/li>
+&lt;/ul>
+&lt;h3 id="5-additional-aging">5. Additional Aging
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222233018.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>다음 minor GC때 4의 과정이 반복되며 나이를 먹음&lt;/li>
+&lt;li>S1에 있던 Referenced 객체들이 S0으로 이동하며 나이를 먹고, Eden과 S2 영역은 비워짐&lt;/li>
+&lt;/ul>
+&lt;h3 id="6-promotion---1">6. Promotion - 1
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222233216.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>계속 minor gc가 발생하고, 특정 임계값(예제에서는 8)을 넘은 객체들은 Old Generation(Tenured)영역으로 이동함&lt;/li>
+&lt;/ul>
+&lt;h3 id="promotion--2">Promotion -2
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222233418.png"
+loading="lazy"
+alt="center|400"
+>&lt;/p>
+&lt;ul>
+&lt;li>minor GC가 계속 발생하면서 Old Generation으로 객체가 계속 승격됨&lt;/li>
+&lt;/ul>
+&lt;h3 id="gc-process-summary">GC Process Summary
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222233605.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>결국에는 Old Generation에도 객체가 꽉차고 major GC가 발생함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://d2.naver.com/helloworld/1329" target="_blank" rel="noopener"
+>https://d2.naver.com/helloworld/1329&lt;/a>&lt;br>
+&lt;a class="link" href="https://d2.naver.com/helloworld/0128759" target="_blank" rel="noopener"
+>https://d2.naver.com/helloworld/0128759&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html" target="_blank" rel="noopener"
+>https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://developers.redhat.com/articles/2021/08/20/stages-and-levels-java-garbage-collection#generational" target="_blank" rel="noopener"
+>https://developers.redhat.com/articles/2021/08/20/stages-and-levels-java-garbage-collection#generational&lt;/a>_garbage_collection&lt;br>
+&lt;a class="link" href="https://developers.redhat.com/articles/2021/09/09/how-jvm-uses-and-allocates-memory#how" target="_blank" rel="noopener"
+>https://developers.redhat.com/articles/2021/09/09/how-jvm-uses-and-allocates-memory#how&lt;/a>_to_check_the_thread_stack_size&lt;/p></description></item><item><title>Full garbage collection</title><link>https://sungho94.me/p/full-garbage-collection/</link><pubDate>Thu, 22 Feb 2024 23:11:30 +0000</pubDate><guid>https://sungho94.me/p/full-garbage-collection/</guid><description>&lt;ul>
+&lt;li>Garbage Collection 파트에서 Full garbage collection에 대한 추가 설명&lt;/li>
+&lt;li>직접 실험해보면서 체크필요&lt;/li>
+&lt;/ul>
+&lt;p>#wait-to-update&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html" target="_blank" rel="noopener"
+>https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://dzone.com/articles/minor-gc-vs-major-gc-vs-full" target="_blank" rel="noopener"
+>https://dzone.com/articles/minor-gc-vs-major-gc-vs-full&lt;/a>&lt;/p></description></item><item><title>0-Garbage Collection Concept</title><link>https://sungho94.me/p/0-garbage-collection-concept/</link><pubDate>Mon, 19 Feb 2024 13:24:16 +0000</pubDate><guid>https://sungho94.me/p/0-garbage-collection-concept/</guid><description>&lt;ul>
+&lt;li>메모리 관리 기법중 하나로 프로그램이 동적으로 할당했던 메모리 영역 중에서 필요없게된 영역을 해제하는 기능&lt;/li>
+&lt;li>Reference counting이 0이되면 삭제함&lt;/li>
+&lt;/ul>
+&lt;h2 id="garbage-collection-과정">Garbage Collection 과정
+&lt;/h2>&lt;h3 id="step-1-marking">Step 1. Marking
+&lt;/h3>&lt;ul>
+&lt;li>Garbage Collector가 메모리 조각중에서 사용되고 있는 것과 사용되지 않는것을 찾아 marking하는 단계&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222132054.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;li>그림에서 참조된 객체는 blue, 참조되지 않은 객체는 주황색임&lt;/li>
+&lt;li>marking단계에서는 삭제를 하기 위한 객체를 찾는 과정&lt;/li>
+&lt;li>시스템을 모두 스캔해야 하는 경우 시간이 많이 소요될 수 있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="step-2-normal-deletion">Step 2. Normal Deletion
+&lt;/h3>&lt;ul>
+&lt;li>Step 1에서 찾은 객체를 삭제하는 단계&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222132435.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;li>memory allocator는 새 객체를 할당 할 수 있는 여유 공간 블록에 대한 참조를 보유
+&lt;ul>
+&lt;li>memory allocator는 비어있는 공간에 대한 참조를 가지고, 할당이 필요한 비어있는 공간을 검색&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="step-2a-deletion-with-compacting">Step 2a. Deletion with Compacting
+&lt;/h3>&lt;ul>
+&lt;li>추가적인 성능 향상을 위해, 참조되지 않는 객체를 삭제하면서 남아있는 참조 객체를 압축할 수 있음&lt;/li>
+&lt;li>참조된 객체를 함께 이동함으로써, 메모리 할당은 더 빠르고 쉬워짐&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222133340.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;li>Memory Allocator는 비어있는 공간에 대한 첫번째 참조를 가지고, 메모리를 순차적으로 할당&lt;/li>
+&lt;/ul>
+&lt;h2 id="generation-garbage-collection">Generation Garbage Collection
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222224100.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>JVM의 모든 객체를 marking하고 compact하는것은 비효율적임&lt;/li>
+&lt;li>시간이 지날수록 객체의 숫자는 늘어가며 이에따라 garbage collection의 시간은 증가할것임&lt;/li>
+&lt;li>하지만 대부분의 객체의 수명은 짧기에 Generation Garbage Collection을 사용함
+&lt;ul>
+&lt;li>경험적으로 증명됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>위의 그래프에서 알 수 있듯이 대부분의 객체의 수명은 짧고, 시간이 지남에 따라 객체의 숫자가 줄어든다는 것을 파악할 수 있음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240222224505.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>JVM heap은 위와 같이 3가지 구역(Young, Old, Permanent)으로 나뉨&lt;/li>
+&lt;li>Yong Generation
+&lt;ul>
+&lt;li>새로운 객체가 할당되고, aged되는 곳&lt;/li>
+&lt;li>Yong Generation이 가득차면 minor gc가 발생함&lt;/li>
+&lt;li>minor gc는 객체의 사망률이 높을때 최적화됨&lt;/li>
+&lt;li>dead object는 빠르게 수거됨&lt;/li>
+&lt;li>살아남은 일부 객체는 Old Generation으로 이동함&lt;/li>
+&lt;li>minor gc가 발생할때 Stop-the-world가 발생함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Stop-the-world가 발생하면 모든 어플리케이션의 쓰레드가 중지됨&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>
+&lt;p>Old Generation&lt;/p>
+&lt;ul>
+&lt;li>오래 살아남은 객체가 저장되는곳&lt;/li>
+&lt;li>Yong Generation에는 임계값이 존재하고 임계값을 넘어서 생존하는 경우 Old Generation으로 이동함&lt;/li>
+&lt;li>언젠간 Old Generation에도 Garbage Collection이 발생해야 하고 이것을 major GC로 명명함&lt;/li>
+&lt;li>major gc에서도 Stop-the-world가 발생함&lt;/li>
+&lt;li>major gc는 모든 살아있는 객체를 대상으로 하기에 느림&lt;/li>
+&lt;li>반응형 애플리케이션에서는 major gc가 최소한으로 발생해야함&lt;/li>
+&lt;li>major gc는 Old Generation에서 사용하는 garbage collector 종류에 따라 Stop-the-world의 시간이 결정됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Permanent Generation&lt;/p>
+&lt;ul>
+&lt;li>JVM의 class와 Method를 describe하기 위한 메타데이터가 저장됨&lt;/li>
+&lt;li>Permanent Generation는 어플리케이션에서 사용중인 클래스를 기반으로 런타임에 JVM에 의해 채워짐&lt;/li>
+&lt;li>Java SE 라이브러리 클래스 및 메서드가 채워질 수 있음&lt;/li>
+&lt;li>JVM이 더 이상 필요없다고 판단하거나, 다른 클래스를 위한 공간이 필요할경우 unload될 수 있음&lt;/li>
+&lt;li>Permanent Generation은 full garbage collection에 포함됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>full garbage collection이란?&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://d2.naver.com/helloworld/1329" target="_blank" rel="noopener"
+>https://d2.naver.com/helloworld/1329&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html" target="_blank" rel="noopener"
+>https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html&lt;/a>&lt;/p></description></item></channel></rss>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Lock on Sungho's Dev BLog</title><link>https://sungho94.me/tags/lock/</link><description>Recent content in Lock on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Fri, 01 Mar 2024 22:41:07 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/lock/index.xml" rel="self" type="application/rss+xml"/><item><title>5-Optimistic Lock</title><link>https://sungho94.me/p/5-optimistic-lock/</link><pubDate>Fri, 01 Mar 2024 22:41:07 +0000</pubDate><guid>https://sungho94.me/p/5-optimistic-lock/</guid><description>&lt;ul>
+&lt;li>CAS(compare and Set)이라고도 함&lt;/li>
+&lt;li>데이터베이스 수준이 아닌 어플리케이션 수준에서 자원을 관리&lt;/li>
+&lt;li>record에 version관련 컬럼을 추가하여 자원을 관리&lt;/li>
+&lt;li>변경이 발생할때마다 version값에 1을 추가
+&lt;ul>
+&lt;li>0,1으로 하면 안됨
+&lt;ul>
+&lt;li>변경이 두번 발생하면 0,1,0이 되버리기 때문에 오류가 발생함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>장점
+&lt;ul>
+&lt;li>데이터베이스에서 lock을 걸지 않기 때문에 pessimistic lock보다 데이터 베이스 부하가 적음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://en.wikipedia.org/wiki/Optimistic" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Optimistic&lt;/a>_concurrency_control&lt;/p></description></item><item><title>1-Mutex(Lock)</title><link>https://sungho94.me/p/1-mutexlock/</link><pubDate>Fri, 01 Mar 2024 22:41:02 +0000</pubDate><guid>https://sungho94.me/p/1-mutexlock/</guid><description>&lt;ul>
+&lt;li>&lt;strong>Mut&lt;/strong>ual &lt;strong>ex&lt;/strong>clusion의 약자&lt;/li>
+&lt;li>프로세스 간 동기화에 사용할 수도 있는 동기화 기본 형식입니다.&lt;/li>
+&lt;li>둘 이상의 스레드가 동시에 공유 리소스에 액세스해야 하는 경우 시스템은 한 번에 하나의 스레드만 리소스를 사용하도록 하기 위한 동기화 메커니즘&lt;/li>
+&lt;li>공유 리소스에 대한 단독 액세스 권한을 하나의 스레드에만 부여하는 동기화 기본 형식입니다.&lt;/li>
+&lt;li>스레드가 뮤텍스를 획득하면 첫 번째 스레드가 뮤텍스를 해제할 때까지 해당 뮤텍스를 획득하려는 두 번째 스레드가 일시 중단됩니다.&lt;/li>
+&lt;/ul>
+&lt;h3 id="화장실-비유">화장실 비유
+&lt;/h3>&lt;ul>
+&lt;li>화장실에 가고싶은데 키가 하나밖에 없는경우&lt;/li>
+&lt;li>키가 있어야만 화장실에 갈 수 있음&lt;/li>
+&lt;li>화장실에 아무도 없다면 키를 가져갈 수 있음&lt;/li>
+&lt;li>화장실에 사람이 있다면, 사람이 나와 키를 줄때까지 기다려야함&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Mutex와 Lock은 동일한 개념임&lt;br>
+Mutex는 Lock보다는 시스템 전체에 적용될 수 있음&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://learn.microsoft.com/ko-kr/dotnet/api/system.threading.mutex?view=net-7.0#remarks" target="_blank" rel="noopener"
+>https://learn.microsoft.com/ko-kr/dotnet/api/system.threading.mutex?view=net-7.0#remarks&lt;/a>&lt;br>
+&lt;a class="link" href="https://en.wikipedia.org/wiki/Lock" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Lock&lt;/a>_(computer_science)&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/2332765/what-is-the-difference-between-lock-mutex-and-semaphore" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/2332765/what-is-the-difference-between-lock-mutex-and-semaphore&lt;/a>&lt;/p></description></item></channel></rss>

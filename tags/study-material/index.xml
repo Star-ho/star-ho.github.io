@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Study-Material on Sungho's Dev BLog</title><link>https://sungho94.me/tags/study-material/</link><description>Recent content in Study-Material on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Tue, 27 Feb 2024 18:04:24 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/study-material/index.xml" rel="self" type="application/rss+xml"/><item><title>java튜토리얼</title><link>https://sungho94.me/p/java%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC/</link><pubDate>Tue, 27 Feb 2024 18:04:24 +0000</pubDate><guid>https://sungho94.me/p/java%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC/</guid><description>&lt;p>&lt;a class="link" href="https://docs.oracle.com/javase/tutorial/" target="_blank" rel="noopener"
+>https://docs.oracle.com/javase/tutorial/&lt;/a>&lt;/p></description></item><item><title>컴퓨터과학 스스로 학습하기</title><link>https://sungho94.me/p/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B3%BC%ED%95%99-%EC%8A%A4%EC%8A%A4%EB%A1%9C-%ED%95%99%EC%8A%B5%ED%95%98%EA%B8%B0/</link><pubDate>Tue, 06 Feb 2024 23:14:22 +0000</pubDate><guid>https://sungho94.me/p/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B3%BC%ED%95%99-%EC%8A%A4%EC%8A%A4%EB%A1%9C-%ED%95%99%EC%8A%B5%ED%95%98%EA%B8%B0/</guid><description>&lt;p>&lt;a class="link" href="https://teachyourselfcs.com/" target="_blank" rel="noopener"
+>https://teachyourselfcs.com/&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/minnsane/TeachYourselfCS-KR" target="_blank" rel="noopener"
+>https://github.com/minnsane/TeachYourselfCS-KR&lt;/a>&lt;br>
+&lt;a class="link" href="https://missing.csail.mit.edu/" target="_blank" rel="noopener"
+>https://missing.csail.mit.edu/&lt;/a>&lt;/p></description></item><item><title>리눅스 커널 doc</title><link>https://sungho94.me/p/%EB%A6%AC%EB%88%85%EC%8A%A4-%EC%BB%A4%EB%84%90-doc/</link><pubDate>Fri, 22 Dec 2023 22:23:46 +0000</pubDate><guid>https://sungho94.me/p/%EB%A6%AC%EB%88%85%EC%8A%A4-%EC%BB%A4%EB%84%90-doc/</guid><description>&lt;p>&lt;a class="link" href="https://www.kernel.org/doc/" target="_blank" rel="noopener"
+>https://www.kernel.org/doc/&lt;/a>&lt;/p></description></item><item><title>개발관련 유튜브</title><link>https://sungho94.me/p/%EA%B0%9C%EB%B0%9C%EA%B4%80%EB%A0%A8-%EC%9C%A0%ED%8A%9C%EB%B8%8C/</link><pubDate>Thu, 19 Oct 2023 23:28:30 +0000</pubDate><guid>https://sungho94.me/p/%EA%B0%9C%EB%B0%9C%EA%B4%80%EB%A0%A8-%EC%9C%A0%ED%8A%9C%EB%B8%8C/</guid><description>&lt;p>cs설명이 잘되어 있음&lt;br>
+&lt;a class="link" href="https://www.youtube.com/watch?v=mb-QHxVfmcs" target="_blank" rel="noopener"
+>https://www.youtube.com/watch?v=mb-QHxVfmcs&lt;/a>&lt;/p>
+&lt;p>#Study-Material&lt;/p></description></item><item><title>System Design Case Studies</title><link>https://sungho94.me/p/system-design-case-studies/</link><pubDate>Sat, 07 Oct 2023 16:58:52 +0000</pubDate><guid>https://sungho94.me/p/system-design-case-studies/</guid><description>&lt;p>Design Instagram : &lt;a class="link" href="https://bit.ly/3BFeHlh" target="_blank" rel="noopener"
+>https://bit.ly/3BFeHlh&lt;/a>&lt;br>
+Design Messenger App : &lt;a class="link" href="https://bit.ly/3DoAAXi" target="_blank" rel="noopener"
+>https://bit.ly/3DoAAXi&lt;/a>&lt;br>
+Design Linkedin : &lt;a class="link" href="https://bit.ly/3OjXy7c" target="_blank" rel="noopener"
+>https://bit.ly/3OjXy7c&lt;/a>&lt;br>
+Design Google Maps : &lt;a class="link" href="https://bit.ly/3BDdTwn" target="_blank" rel="noopener"
+>https://bit.ly/3BDdTwn&lt;/a>&lt;br>
+Design Telegram : &lt;a class="link" href="https://bit.ly/42N5LW2" target="_blank" rel="noopener"
+>https://bit.ly/42N5LW2&lt;/a>&lt;br>
+Design Snapchat : &lt;a class="link" href="https://bit.ly/3pRP3pW" target="_blank" rel="noopener"
+>https://bit.ly/3pRP3pW&lt;/a>&lt;br>
+Design One Drive : &lt;a class="link" href="https://bit.ly/438bAwZ" target="_blank" rel="noopener"
+>https://bit.ly/438bAwZ&lt;/a>&lt;br>
+Design BookmyShow : &lt;a class="link" href="https://bit.ly/3FDFMWF" target="_blank" rel="noopener"
+>https://bit.ly/3FDFMWF&lt;/a>&lt;br>
+Design Quora : &lt;a class="link" href="https://bit.ly/3FeD9dL" target="_blank" rel="noopener"
+>https://bit.ly/3FeD9dL&lt;/a>&lt;br>
+Design Foursquare : &lt;a class="link" href="https://bit.ly/3VMYh1O" target="_blank" rel="noopener"
+>https://bit.ly/3VMYh1O&lt;/a>&lt;br>
+Design Tiny URL : &lt;a class="link" href="https://bit.ly/3o58M57" target="_blank" rel="noopener"
+>https://bit.ly/3o58M57&lt;/a>&lt;br>
+Design Flipkart : &lt;a class="link" href="https://bit.ly/3iS1a2P" target="_blank" rel="noopener"
+>https://bit.ly/3iS1a2P&lt;/a>&lt;br>
+Design Tinder : &lt;a class="link" href="https://bit.ly/3Mcyj3X" target="_blank" rel="noopener"
+>https://bit.ly/3Mcyj3X&lt;/a>&lt;br>
+Design Google Drive : &lt;a class="link" href="https://bit.ly/3uXdQZ7" target="_blank" rel="noopener"
+>https://bit.ly/3uXdQZ7&lt;/a>&lt;br>
+Design Twitter : &lt;a class="link" href="https://bit.ly/3qIG9Ih" target="_blank" rel="noopener"
+>https://bit.ly/3qIG9Ih&lt;/a>&lt;br>
+Design Ticketmaster: &lt;a class="link" href="https://bit.ly/3HKLbOg" target="_blank" rel="noopener"
+>https://bit.ly/3HKLbOg&lt;/a>&lt;br>
+Design Quora : &lt;a class="link" href="https://bit.ly/3FeD9dL" target="_blank" rel="noopener"
+>https://bit.ly/3FeD9dL&lt;/a>&lt;br>
+Design Flipkart : &lt;a class="link" href="https://bit.ly/3iS1a2P" target="_blank" rel="noopener"
+>https://bit.ly/3iS1a2P&lt;/a>&lt;br>
+Design Flickr : &lt;a class="link" href="https://bit.ly/3uCGkXJ" target="_blank" rel="noopener"
+>https://bit.ly/3uCGkXJ&lt;/a>&lt;br>
+Design TikTok : &lt;a class="link" href="https://bit.ly/3UUlKxP" target="_blank" rel="noopener"
+>https://bit.ly/3UUlKxP&lt;/a>&lt;br>
+Design Netflix : &lt;a class="link" href="https://bit.ly/3GrAUG1" target="_blank" rel="noopener"
+>https://bit.ly/3GrAUG1&lt;/a>&lt;br>
+Design Foursquare : &lt;a class="link" href="https://bit.ly/3VMYh1O" target="_blank" rel="noopener"
+>https://bit.ly/3VMYh1O&lt;/a>&lt;br>
+Design Uber : &lt;a class="link" href="https://bit.ly/3fyvnlT" target="_blank" rel="noopener"
+>https://bit.ly/3fyvnlT&lt;/a>&lt;br>
+Design Youtube : &lt;a class="link" href="https://bit.ly/3dFyvvy" target="_blank" rel="noopener"
+>https://bit.ly/3dFyvvy&lt;/a>&lt;br>
+Design Reddit : &lt;a class="link" href="https://bit.ly/3OgGJrL" target="_blank" rel="noopener"
+>https://bit.ly/3OgGJrL&lt;/a>&lt;br>
+Design Facebook’s Newsfeed : &lt;a class="link" href="https://bit.ly/3RldaW7" target="_blank" rel="noopener"
+>https://bit.ly/3RldaW7&lt;/a>&lt;br>
+Design Amazon Prime Video : &lt;a class="link" href="https://bit.ly/3hVpWP4" target="_blank" rel="noopener"
+>https://bit.ly/3hVpWP4&lt;/a>&lt;br>
+Design Web Crawler : &lt;a class="link" href="https://bit.ly/3DPZTBB" target="_blank" rel="noopener"
+>https://bit.ly/3DPZTBB&lt;/a>&lt;br>
+Design API Rate Limiter : &lt;a class="link" href="https://bit.ly/3BIVuh7" target="_blank" rel="noopener"
+>https://bit.ly/3BIVuh7&lt;/a>&lt;br>
+Design Dropbox : &lt;a class="link" href="https://bit.ly/3SnhncU" target="_blank" rel="noopener"
+>https://bit.ly/3SnhncU&lt;/a>&lt;br>
+Design Yelp : &lt;a class="link" href="https://bit.ly/3E7IgO5" target="_blank" rel="noopener"
+>https://bit.ly/3E7IgO5&lt;/a>&lt;br>
+Design Whatspp : &lt;a class="link" href="https://bit.ly/3M2GOhP" target="_blank" rel="noopener"
+>https://bit.ly/3M2GOhP&lt;/a>&lt;br>
+Design URL shortener : &lt;a class="link" href="https://bit.ly/3xP078x" target="_blank" rel="noopener"
+>https://bit.ly/3xP078x&lt;/a>&lt;br>
+Design Bookmyshow : &lt;a class="link" href="https://bit.ly/3FDFMWF" target="_blank" rel="noopener"
+>https://bit.ly/3FDFMWF&lt;/a>&lt;/p>
+&lt;p>#Study-Material&lt;/p></description></item><item><title>MSA 관련 유튜브</title><link>https://sungho94.me/p/msa-%EA%B4%80%EB%A0%A8-%EC%9C%A0%ED%8A%9C%EB%B8%8C/</link><pubDate>Tue, 03 Oct 2023 09:57:56 +0000</pubDate><guid>https://sungho94.me/p/msa-%EA%B4%80%EB%A0%A8-%EC%9C%A0%ED%8A%9C%EB%B8%8C/</guid><description>&lt;p>&lt;a class="link" href="https://www.youtube.com/watch?v=8BJUrHNFACA" target="_blank" rel="noopener"
+>https://www.youtube.com/watch?v=8BJUrHNFACA&lt;/a>&lt;/p></description></item><item><title>공부할자료</title><link>https://sungho94.me/p/%EA%B3%B5%EB%B6%80%ED%95%A0%EC%9E%90%EB%A3%8C/</link><pubDate>Thu, 28 Sep 2023 17:55:29 +0000</pubDate><guid>https://sungho94.me/p/%EA%B3%B5%EB%B6%80%ED%95%A0%EC%9E%90%EB%A3%8C/</guid><description>&lt;p>spring&lt;br>
+&lt;a class="link" href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener"
+>https://spring.io/projects/spring-boot&lt;/a>&lt;/p>
+&lt;p>kotlin + coroutine&lt;br>
+&lt;a class="link" href="https://spring.io/projects/spring-boot" target="_blank" rel="noopener"
+>https://spring.io/projects/spring-boot&lt;/a>&lt;/p>
+&lt;p>java + gc&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/en/java/" target="_blank" rel="noopener"
+>https://docs.oracle.com/en/java/&lt;/a>&lt;/p>
+&lt;p>mysql&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/doc/" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/&lt;/a>&lt;/p>
+&lt;p>elasticsearch&lt;br>
+&lt;a class="link" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html" target="_blank" rel="noopener"
+>https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html&lt;/a>&lt;/p>
+&lt;p>redis&lt;br>
+&lt;a class="link" href="https://redis.io/docs/" target="_blank" rel="noopener"
+>https://redis.io/docs/&lt;/a>&lt;/p>
+&lt;p>test&lt;br>
+junit&lt;/p>
+&lt;p>trouble shooting&lt;br>
+대용량 트래픽&lt;/p>
+&lt;p>시스템 디자인&lt;br>
+&lt;a class="link" href="https://www.enjoyalgorithms.com/system-design/" target="_blank" rel="noopener"
+>https://www.enjoyalgorithms.com/system-design/&lt;/a>&lt;br>
+&lt;a class="link" href="https://learn.microsoft.com/en-us/azure/architecture/changelog" target="_blank" rel="noopener"
+>https://learn.microsoft.com/en-us/azure/architecture/changelog&lt;/a>&lt;br>
+&lt;a class="link" href="https://microservices.io/patterns/index.html" target="_blank" rel="noopener"
+>https://microservices.io/patterns/index.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://microservices.io/" target="_blank" rel="noopener"
+>https://microservices.io&lt;/a>&lt;/p>
+&lt;p>#Study-Material&lt;/p></description></item><item><title>dev handbook</title><link>https://sungho94.me/p/dev-handbook/</link><pubDate>Sun, 17 Sep 2023 22:47:35 +0000</pubDate><guid>https://sungho94.me/p/dev-handbook/</guid><description>&lt;p>&lt;a class="link" href="https://developerhandbook.stakater.com/content/java-backend/wf-engine.html" target="_blank" rel="noopener"
+>https://developerhandbook.stakater.com/content/java-backend/wf-engine.html&lt;/a>&lt;/p>
+&lt;p>#Study-Material&lt;/p></description></item><item><title>유쾌한 스프링방 콘서트</title><link>https://sungho94.me/p/%EC%9C%A0%EC%BE%8C%ED%95%9C-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B0%A9-%EC%BD%98%EC%84%9C%ED%8A%B8/</link><pubDate>Sun, 17 Sep 2023 22:39:40 +0000</pubDate><guid>https://sungho94.me/p/%EC%9C%A0%EC%BE%8C%ED%95%9C-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B0%A9-%EC%BD%98%EC%84%9C%ED%8A%B8/</guid><description>&lt;p>유스콘'23이 끝난 지 벌써 3주가 지났다는 것이 믿어지시나요? 드디어 온라인 다시 보기 영상을 공개합니다. 온라인 영상 공개에 맞춰 후기 작성 이벤트를 조금 더 연장할 예정입니다.&lt;/p>
+&lt;p>유스콘'23에 대한 후기를 작성해 주세요. 작성한 후기는 발표자에게 전달되며 보다 나은 행사가 될 수 있도록 최선을 다하겠습니다. :) 후기를 남겨 주신 분들 중 추첨을 통해 상품도 드립니다. (9월 20일 수요일 마감)&lt;br>
+&lt;a class="link" href="https://forms.gle/ecsPknq5X8UEjLsy5" target="_blank" rel="noopener"
+>https://forms.gle/ecsPknq5X8UEjLsy5&lt;/a>&lt;/p>
+&lt;p>[유스콘’23 자세히 보기]&lt;br>
+&lt;a class="link" href="https://frost-witch-afb.notion.site/YOUTHCON-23-a026c94d997e46db9396283ed869a922" target="_blank" rel="noopener"
+>https://frost-witch-afb.notion.site/YOUTHCON-23-a026c94d997e46db9396283ed869a922&lt;/a>&lt;/p>
+&lt;p>[트랙 1]&lt;br>
+&lt;a class="link" href="https://woowahan.zoom.us/rec/share/MwZWEwiJXclNHRgU72M7c7VGXKgbIKMPJOdzO6gEu0olAfHJT5RbqhI0ZYRygJJD.TrHrSPz4F4NQYK" target="_blank" rel="noopener"
+>https://woowahan.zoom.us/rec/share/MwZWEwiJXclNHRgU72M7c7VGXKgbIKMPJOdzO6gEu0olAfHJT5RbqhI0ZYRygJJD.TrHrSPz4F4NQYK&lt;/a>_b&lt;br>
+암호: R*yL6P2+&lt;br>
+만료일: 2023-10-31&lt;/p>
+&lt;p>[트랙 2 Hands-On Lab]&lt;br>
+&lt;a class="link" href="https://woowahan.zoom.us/rec/share/-7KQzHpZckcCYhpFUVlS9JZHBm8QTVw82cIcCiUOtYp-mzc" target="_blank" rel="noopener"
+>https://woowahan.zoom.us/rec/share/-7KQzHpZckcCYhpFUVlS9JZHBm8QTVw82cIcCiUOtYp-mzc&lt;/a>_jM3Fvj2ufyOnPPuF.pL2ThWDnFyTPTSnN&lt;br>
+암호: 95p?n^MG&lt;br>
+만료일: 2023-10-31&lt;/p>
+&lt;p>[트랙 2 발표]&lt;br>
+&lt;a class="link" href="https://woowahan.zoom.us/rec/share/RSESAlWFjfpe0NQEV99k" target="_blank" rel="noopener"
+>https://woowahan.zoom.us/rec/share/RSESAlWFjfpe0NQEV99k&lt;/a>_DU-iBSNkvS4F2wR6x8xUnieW3dbXZ75Q64r18DyOluV.O2f76ErzIrT0KtTk&lt;br>
+암호: 0.^Nq..A&lt;br>
+만료일: 2023-10-31&lt;/p>
+&lt;p>#Spring&lt;/p></description></item><item><title>우형 프리코스 github</title><link>https://sungho94.me/p/%EC%9A%B0%ED%98%95-%ED%94%84%EB%A6%AC%EC%BD%94%EC%8A%A4-github/</link><pubDate>Sun, 17 Sep 2023 22:29:23 +0000</pubDate><guid>https://sungho94.me/p/%EC%9A%B0%ED%98%95-%ED%94%84%EB%A6%AC%EC%BD%94%EC%8A%A4-github/</guid><description>&lt;p>&lt;a class="link" href="https://github.com/woowacourse-precourse" target="_blank" rel="noopener"
+>https://github.com/woowacourse-precourse&lt;/a>&lt;/p>
+&lt;p>#Study-Material&lt;/p></description></item></channel></rss>

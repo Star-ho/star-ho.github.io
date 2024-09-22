@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Virtual-Thread on Sungho's Dev BLog</title><link>https://sungho94.me/tags/virtual-thread/</link><description>Recent content in Virtual-Thread on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sun, 31 Mar 2024 22:41:00 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/virtual-thread/index.xml" rel="self" type="application/rss+xml"/><item><title>15 - 가상스레드 vs 리액티브 스트림즈 vs 코루틴</title><link>https://sungho94.me/p/15-%EA%B0%80%EC%83%81%EC%8A%A4%EB%A0%88%EB%93%9C-vs-%EB%A6%AC%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%8A%A4%ED%8A%B8%EB%A6%BC%EC%A6%88-vs-%EC%BD%94%EB%A3%A8%ED%8B%B4/</link><pubDate>Sun, 31 Mar 2024 22:41:00 +0000</pubDate><guid>https://sungho94.me/p/15-%EA%B0%80%EC%83%81%EC%8A%A4%EB%A0%88%EB%93%9C-vs-%EB%A6%AC%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%8A%A4%ED%8A%B8%EB%A6%BC%EC%A6%88-vs-%EC%BD%94%EB%A3%A8%ED%8B%B4/</guid><description>&lt;p>가상쓰레드, 리액티브 스트림즈, 코루틴 이 세가지 프로젝트는 모두 Blocking I/O로 인한 병목을 줄이기 위해 nonBlocking I/O를 사용할 목적으로 쓰이고 있습니다.&lt;/p>
+&lt;p>기존에는 리액티브 스트림즈, 코루틴으로 nonBlocking I/O를 사용했다면, 작년 가상쓰레드가 나온 이후, 과연 어떻게될 지에 대해 개인적인 의견 및 정보들을 작성하려 합니다.&lt;/p>
+&lt;p>우선 세가지 프로젝트의 목표에 대해 이야기 하려합니다.&lt;/p>
+&lt;h2 id="리액티브-스트림즈httpswwwreactive-streamsorg">&lt;a class="link" href="https://www.reactive-streams.org/" target="_blank" rel="noopener"
+>리액티브 스트림즈&lt;/a>
+&lt;/h2>&lt;p>&lt;code>The main goal of Reactive Streams is to govern the exchange of stream data across an asynchronous boundary—think passing elements on to another thread or thread-pool—while ensuring that the receiving side is not forced to buffer arbitrary amounts of data. In other words, back pressure is an integral part of this model in order to allow the queues which mediate between threads to be bounded. The benefits of asynchronous processing would be negated if the communication of back pressure were synchronous (see also the [Reactive Manifesto](http://reactivemanifesto.org/)), therefore care has to be taken to mandate fully non-blocking and asynchronous behavior of all aspects of a Reactive Streams implementation.&lt;/code>&lt;/p>
+&lt;p>간단히 요약해보자면&lt;br>
+&lt;code>비동기 뿐만이 아닌, 쓰레드간 element들을 교환하여 백프레셔를 지원하여 수신측에서 리소스를 지원한다&lt;/code>&lt;br>
+입니다&lt;/p>
+&lt;p>리액티브 스트림즈트는 비동기 뿐만이 아닌, 배압까지 신경쓰고 있는 것을 알 수 있습니다&lt;/p>
+&lt;h2 id="코루틴httpsgithubcomkotlinkeepblobmasterproposalscoroutinesmd">&lt;a class="link" href="https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md" target="_blank" rel="noopener"
+>코루틴&lt;/a>
+&lt;/h2>&lt;p>&lt;code>No dependency on a particular implementation of Futures or other such rich library; &lt;/code>Cover equally the &amp;ldquo;async/await&amp;rdquo; use case and &amp;ldquo;generator blocks&amp;rdquo;;&lt;code> &lt;/code>Make it possible to utilize Kotlin coroutines as wrappers for different existing asynchronous APIs (such as Java NIO, different implementations of Futures, etc).`&lt;/p>
+&lt;p>코루틴의 목표는&lt;code>Futures와 다른 라이브러리 의존 없이, 비동기 api의 래퍼를 제공&lt;/code>하는것 입니다&lt;/p>
+&lt;h2 id="가상-스레드httpsopenjdkorgjeps444">&lt;a class="link" href="https://openjdk.org/jeps/444" target="_blank" rel="noopener"
+>가상 스레드&lt;/a>
+&lt;/h2>&lt;p>&lt;code>Enable server applications written in the simple thread-per-request style to scale with near-optimal hardware utilization.&lt;/code>&lt;br>
+&lt;code>Enable existing code that uses the java.lang.Thread API to adopt virtual threads with minimal change.&lt;/code>&lt;br>
+&lt;code>Enable easy troubleshooting, debugging, and profiling of virtual threads with existing JDK tools.&lt;/code>&lt;/p>
+&lt;p>가상스레드의 목표는 &lt;code>최소한의 변경으로, 현재 서버 애플리케이션이 작성된 요청당 스레드 모델의 최적화된 하드웨어 사용&lt;/code>이라는 것을 알 수 있습니다.&lt;br>
+&lt;br>
+추가로 Improving scalability with the asynchronous style을 살펴보면 reactive에 대한 내용이 더 나온다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Some&lt;/span> &lt;span class="n">developers&lt;/span> &lt;span class="n">wishing&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">utilize&lt;/span> &lt;span class="n">hardware&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">its&lt;/span> &lt;span class="n">fullest&lt;/span> &lt;span class="n">have&lt;/span> &lt;span class="n">given&lt;/span> &lt;span class="n">up&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">per&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">request&lt;/span> &lt;span class="n">style&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">favor&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">sharing&lt;/span> &lt;span class="n">style&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">Instead&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">handling&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">request&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">one&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">from&lt;/span> &lt;span class="n">start&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">finish&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">code&lt;/span> &lt;span class="n">returns&lt;/span> &lt;span class="n">its&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">pool&lt;/span> &lt;span class="n">when&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">waits&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">another&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="n">operation&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">complete&lt;/span> &lt;span class="n">so&lt;/span> &lt;span class="n">that&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">can&lt;/span> &lt;span class="n">service&lt;/span> &lt;span class="n">other&lt;/span> &lt;span class="n">requests&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">This&lt;/span> &lt;span class="n">fine&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">grained&lt;/span> &lt;span class="n">sharing&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">threads&lt;/span> &lt;span class="err">—&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">which&lt;/span> &lt;span class="n">code&lt;/span> &lt;span class="n">holds&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">only&lt;/span> &lt;span class="k">while&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">performs&lt;/span> &lt;span class="n">calculations&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="k">while&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">waits&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="err">—&lt;/span> &lt;span class="n">allows&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">high&lt;/span> &lt;span class="n">number&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">concurrent&lt;/span> &lt;span class="n">operations&lt;/span> &lt;span class="n">without&lt;/span> &lt;span class="n">consuming&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">high&lt;/span> &lt;span class="n">number&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">threads&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">While&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">removes&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">limitation&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">throughput&lt;/span> &lt;span class="n">imposed&lt;/span> &lt;span class="n">by&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">scarcity&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="ne">OS&lt;/span> &lt;span class="n">threads&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">comes&lt;/span> &lt;span class="n">at&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">high&lt;/span> &lt;span class="n">price&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">It&lt;/span> &lt;span class="n">requires&lt;/span> &lt;span class="n">what&lt;/span> &lt;span class="n">is&lt;/span> &lt;span class="n">known&lt;/span> &lt;span class="n">as&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">_asynchronous_&lt;/span> &lt;span class="n">programming&lt;/span> &lt;span class="n">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">employing&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">separate&lt;/span> &lt;span class="n">set&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="n">methods&lt;/span> &lt;span class="n">that&lt;/span> &lt;span class="k">do&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">wait&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="n">operations&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">complete&lt;/span> &lt;span class="n">but&lt;/span> &lt;span class="n">rather&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">later&lt;/span> &lt;span class="n">on&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="k">signal&lt;/span> &lt;span class="n">their&lt;/span> &lt;span class="n">completion&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">callback&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">Without&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">dedicated&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">developers&lt;/span> &lt;span class="n">must&lt;/span> &lt;span class="k">break&lt;/span> &lt;span class="n">down&lt;/span> &lt;span class="n">their&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">logic&lt;/span> &lt;span class="n">into&lt;/span> &lt;span class="n">small&lt;/span> &lt;span class="n">stages&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">typically&lt;/span> &lt;span class="n">written&lt;/span> &lt;span class="n">as&lt;/span> &lt;span class="n">lambda&lt;/span> &lt;span class="n">expressions&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">then&lt;/span> &lt;span class="n">compose&lt;/span> &lt;span class="n">them&lt;/span> &lt;span class="n">into&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">sequential&lt;/span> &lt;span class="n">pipeline&lt;/span> &lt;span class="n">with&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">API&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">see&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">CompletableFuture&lt;/span>&lt;span class="p">](&lt;/span>&lt;span class="n">https&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">oracle&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">en&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">javase&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">21&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">base&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">util&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">concurrent&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">CompletableFuture&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">example&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">or&lt;/span> &lt;span class="n">so&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">called&lt;/span> &lt;span class="s2">&amp;#34;reactive&amp;#34;&lt;/span> &lt;span class="n">frameworks&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">They&lt;/span> &lt;span class="n">thus&lt;/span> &lt;span class="n">forsake&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">language&lt;/span>&lt;span class="s1">&amp;#39;s basic sequential composition operators, such as loops and `try/catch` blocks.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">In&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">asynchronous&lt;/span> &lt;span class="n">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">each&lt;/span> &lt;span class="n">stage&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">request&lt;/span> &lt;span class="n">might&lt;/span> &lt;span class="n">execute&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">different&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">every&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">runs&lt;/span> &lt;span class="n">stages&lt;/span> &lt;span class="n">belonging&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">different&lt;/span> &lt;span class="n">requests&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">interleaved&lt;/span> &lt;span class="n">fashion&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">This&lt;/span> &lt;span class="n">has&lt;/span> &lt;span class="n">deep&lt;/span> &lt;span class="n">implications&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">understanding&lt;/span> &lt;span class="n">program&lt;/span> &lt;span class="n">behavior&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">Stack&lt;/span> &lt;span class="n">traces&lt;/span> &lt;span class="n">provide&lt;/span> &lt;span class="n">no&lt;/span> &lt;span class="n">usable&lt;/span> &lt;span class="n">context&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">debuggers&lt;/span> &lt;span class="n">cannot&lt;/span> &lt;span class="n">step&lt;/span> &lt;span class="n">through&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">logic&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">profilers&lt;/span> &lt;span class="n">cannot&lt;/span> &lt;span class="n">associate&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">operation&lt;/span>&lt;span class="s1">&amp;#39;s cost with its caller. Composing lambda expressions is manageable when using Java&amp;#39;&lt;/span>&lt;span class="n">s&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">stream&lt;/span> &lt;span class="n">API&lt;/span>&lt;span class="p">](&lt;/span>&lt;span class="n">https&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">oracle&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">en&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">javase&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">21&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">base&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">util&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">stream&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">package&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">summary&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">process&lt;/span> &lt;span class="n">data&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">short&lt;/span> &lt;span class="n">pipeline&lt;/span> &lt;span class="n">but&lt;/span> &lt;span class="n">problematic&lt;/span> &lt;span class="n">when&lt;/span> &lt;span class="n">all&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">code&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">application&lt;/span> &lt;span class="n">must&lt;/span> &lt;span class="n">be&lt;/span> &lt;span class="n">written&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">this&lt;/span> &lt;span class="n">way&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">This&lt;/span> &lt;span class="n">programming&lt;/span> &lt;span class="n">style&lt;/span> &lt;span class="n">is&lt;/span> &lt;span class="n">at&lt;/span> &lt;span class="n">odds&lt;/span> &lt;span class="n">with&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">Java&lt;/span> &lt;span class="n">Platform&lt;/span> &lt;span class="n">because&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="s1">&amp;#39;s unit of concurrency — the asynchronous pipeline — is no longer the platform&amp;#39;&lt;/span>&lt;span class="n">s&lt;/span> &lt;span class="n">unit&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">concurrency&lt;/span>&lt;span class="o">.&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>리액티브 스타일의 어려운점(코드 스타일, 스택 트레이스, 디버깅 등)을 언급하는 부분이 있다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">Typically, a virtual thread will unmount when it blocks on I/O or some other blocking operation in the JDK, such as `BlockingQueue.take()`. When the blocking operation is ready to complete (e.g., bytes have been received on a socket), it submits the virtual thread back to the scheduler, which will mount the virtual thread on a carrier to resume execution.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>추가로 virtual Thread는 Blocking작업을 해당 스레드 unmount를 통해 Blocking을 회피할 수 있는것도 알 수 있다.&lt;/p>
+&lt;h2 id="결론">결론
+&lt;/h2>&lt;p>이를보면 가상 스레드가 리액티브 스트림즈를 대체하는 Blocking I/O로 인한 병목을 줄이는 기능을 하지않을까 싶다.&lt;/p>
+&lt;p>java reactor에서 virtual thread를 사용하는 scheduler를 추가하며 vitual thread를 지원한다.&lt;br>
+지원한다고 해도 reactive streams의 단점이 뚜렸다하기에 reactive streams의 추가적인 기능인 배압을 사용하지 않는 이상, virtual thread를 사용하는게 더 나을거란 생각이다.&lt;/p>
+&lt;p>coroutine에서도 가상스레드를 지원하지만, Coroutine 또한 코드의 변경이 필요하기에, 가상스레드가 더 나을거라 생각된다&lt;/p>
+&lt;p>개인적으로 리액티브 스트림즈 구현체인 리액터를 사용하면서 어려운점이 많았기에 얼른 가상스레드를 사용하고 싶다.&lt;br>
+하지만 가상스레드가 나왔지만, 데이터베이스 드라이버 같은 외부 라이브러리의 수정이 완성되지 않아 업무 프로젝트에는 사용하기 어려운점이 아쉽다.&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.reactive-streams.org/" target="_blank" rel="noopener"
+>https://www.reactive-streams.org/&lt;/a>&lt;br>
+&lt;a class="link" href="https://openjdk.org/jeps/444" target="_blank" rel="noopener"
+>https://openjdk.org/jeps/444&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md" target="_blank" rel="noopener"
+>https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md&lt;/a>&lt;br>
+&lt;a class="link" href="https://blog.honeybomb.kr/9" target="_blank" rel="noopener"
+>https://blog.honeybomb.kr/9&lt;/a>&lt;br>
+&lt;a class="link" href="https://perfectacle.github.io/2023/07/10/java-virtual-thread-vs-kotlin-coroutine/" target="_blank" rel="noopener"
+>https://perfectacle.github.io/2023/07/10/java-virtual-thread-vs-kotlin-coroutine/&lt;/a>&lt;/p></description></item><item><title>13-Virtual Thread 1</title><link>https://sungho94.me/p/13-virtual-thread-1/</link><pubDate>Tue, 05 Mar 2024 22:41:00 +0000</pubDate><guid>https://sungho94.me/p/13-virtual-thread-1/</guid><description>&lt;h2 id="정의">정의
+&lt;/h2>&lt;ul>
+&lt;li>처리량이 많은 동시성 애플리케이션을 작성, 유지관리 및 관찰는데 드는 수고를 획기적으로 줄여주는 경량쓰레드임
+&lt;ul>
+&lt;li>jep-444&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="platform-thread">Platform Thread
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231223233300.png"
+loading="lazy"
+alt="Pasted image 20231223233300"
+>&lt;/p>
+&lt;ul>
+&lt;li>기존 Java의 Thread 모델&lt;/li>
+&lt;li>하나의 java쓰레드에 OS Thread를 할당해서 사용&lt;/li>
+&lt;li>새로운 쓰레드가 필요하면 os에 요청해서 가져옴&lt;/li>
+&lt;/ul>
+&lt;h2 id="virtual-thread">Virtual Thread
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231223233244.png"
+loading="lazy"
+alt="Pasted image 20231223233244"
+>&lt;/p>
+&lt;ul>
+&lt;li>Virtual Thread의 쓰레드 모델&lt;/li>
+&lt;li>Virtual Thread 생성시 OS에 요청해서 생성하지 않고. java library에서 생성&lt;/li>
+&lt;li>실제 OS쓰레드에는 Carrier Thread가 매핑이 되고, Carrier Thread를 가지고 있는 Virtual Thread가 현재 실행되고 있는 쓰레드임
+&lt;ul>
+&lt;li>Carrier Thread가 없는 Virtual Thread는 동작중이지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>쓰레드 관리를 JVM에서 함
+&lt;ul>
+&lt;li>컨텍스트 스위칭 처리를 OS단이 아닌 JVM내에서 처리함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="비교">비교
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231223233119.png"
+loading="lazy"
+alt="Pasted image 20231223233119"
+>&lt;/p>
+&lt;h3 id="유의사항">유의사항
+&lt;/h3>&lt;ul>
+&lt;li>CPU bound한 상황에서는 Platform Thread가 더 나은 성능을 보여줌&lt;/li>
+&lt;li>정말 스트리밍 데이터를 사용한다면 reactor를 고려하자&lt;/li>
+&lt;li>syncronized 또는 JNI call 시 carrier thread에 블로킹(pinning)이 발생
+&lt;ul>
+&lt;li>syncronized을 reenterantLock으로 변경&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>thread local데이터를 Heap에 저장하므로 무분별하게 사용시 OOM발생 가능성이 있음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://techblog.woowahan.com/15398/" target="_blank" rel="noopener"
+>https://techblog.woowahan.com/15398/&lt;/a>&lt;br>
+&lt;a class="link" href="https://tech.kakao.com/2023/12/22/techmeet-virtualthread/" target="_blank" rel="noopener"
+>https://tech.kakao.com/2023/12/22/techmeet-virtualthread/&lt;/a>&lt;br>
+&lt;a class="link" href="https://medium.com/deno-the-complete-reference/springboot-virtual-threads-vs-webflux-performance-comparison-for-jwt-verify-and-mysql-query-ff94cf251c2c" target="_blank" rel="noopener"
+>https://medium.com/deno-the-complete-reference/springboot-virtual-threads-vs-webflux-performance-comparison-for-jwt-verify-and-mysql-query-ff94cf251c2c&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.diva-portal.org/smash/get/diva2:1763111/FULLTEXT01.pdf" target="_blank" rel="noopener"
+>https://www.diva-portal.org/smash/get/diva2:1763111/FULLTEXT01.pdf&lt;/a>&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/core/virtual-threads.html#GUID-2BCFC2DD-7D84-4B0C-9222-97F9C7C6C521" target="_blank" rel="noopener"
+>https://docs.oracle.com/en/java/javase/20/core/virtual-threads.html#GUID-2BCFC2DD-7D84-4B0C-9222-97F9C7C6C521&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/brettwooldridge/HikariCP/issues/2151" target="_blank" rel="noopener"
+>https://github.com/brettwooldridge/HikariCP/issues/2151&lt;/a>&lt;br>
+&lt;a class="link" href="https://perfectacle.github.io/2022/12/29/look-over-java-virtual-threads/" target="_blank" rel="noopener"
+>https://perfectacle.github.io/2022/12/29/look-over-java-virtual-threads/&lt;/a>&lt;/p>
+&lt;h3 id="deep-dive-link">deep-dive-link
+&lt;/h3>&lt;p>&lt;a class="link" href="https://blog.rockthejvm.com/ultimate-guide-to-java-virtual-threads/" target="_blank" rel="noopener"
+>https://blog.rockthejvm.com/ultimate-guide-to-java-virtual-threads/&lt;/a>&lt;br>
+&lt;a class="link" href="https://openjdk.org/jeps/425" target="_blank" rel="noopener"
+>https://openjdk.org/jeps/425&lt;/a>&lt;br>
+&lt;a class="link" href="https://softwaremill.com/what-is-blocking-in-loom/" target="_blank" rel="noopener"
+>https://softwaremill.com/what-is-blocking-in-loom/&lt;/a>&lt;br>
+&lt;a class="link" href="https://wiki.openjdk.org/display/loom/Main" target="_blank" rel="noopener"
+>https://wiki.openjdk.org/display/loom/Main&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/74581601/how-does-a-java-virtual-thread-know-when-the-thread-is-waiting" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/74581601/how-does-a-java-virtual-thread-know-when-the-thread-is-waiting&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/70174468/project-loom-what-happens-when-virtual-thread-makes-a-blocking-system-call" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/70174468/project-loom-what-happens-when-virtual-thread-makes-a-blocking-system-call&lt;/a>&lt;br>
+#need-to-deep-dive&lt;/p></description></item></channel></rss>

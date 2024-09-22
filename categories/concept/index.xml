@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Concept on Sungho's Dev BLog</title><link>https://sungho94.me/categories/concept/</link><description>Recent content in Concept on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sun, 30 Jun 2024 23:17:10 +0000</lastBuildDate><atom:link href="https://sungho94.me/categories/concept/index.xml" rel="self" type="application/rss+xml"/><item><title>객체지향 프로그래밍 - Object Oriented Programming</title><link>https://sungho94.me/p/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-object-oriented-programming/</link><pubDate>Sun, 30 Jun 2024 23:17:10 +0000</pubDate><guid>https://sungho94.me/p/%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-object-oriented-programming/</guid><description>&lt;h2 id="개념">개념
+&lt;/h2>&lt;ul>
+&lt;li>프로그래밍 패러다임의 한 종류로, 객체간의 상호작용을 통해 로직을 구성하는 방법&lt;/li>
+&lt;li>객체간의 상호작용은 인간 세계의 상호작용을 바탕으로 하기에 이해하기 쉬움&lt;/li>
+&lt;/ul>
+&lt;h2 id="특징">특징
+&lt;/h2>&lt;h3 id="캡슐화">캡슐화
+&lt;/h3>&lt;ul>
+&lt;li>서로 연관되어있는 속성과 기능들을 하나의 캡슐로 만들어 외부로 부터 보호하는것
+&lt;ul>
+&lt;li>데이터 보호 - 외부로부터 클래시에 정의된 속성과 기능들을 보호&lt;/li>
+&lt;li>데이터 은닉 - 내부의 동작을 감추고 외부에는 필요한 부분만 노출&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="추상화">추상화
+&lt;/h3>&lt;ul>
+&lt;li>중요한 부분을 강조하기 위해 불필요한 세부사항을 제거하고, 본질적이고 공통적인 부분만 추출하여 표현하는 것&lt;/li>
+&lt;/ul>
+&lt;h3 id="상속">상속
+&lt;/h3>&lt;ul>
+&lt;li>상위 클래스로부터 확장된 여러 개의 하위 클래스들이 모두 상위 클래스의 속성과 기능들을 간편하게 사용할 수 있도록 하는것
+&lt;ul>
+&lt;li>속성보다는 하는 행위가 같아야지 덜 복잡함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="다형성">다형성
+&lt;/h3>&lt;ul>
+&lt;li>어떤 객체의 속성이나 기능이 상황에 따라 여러 가지 형태를 가질 수 있는 성질
+&lt;ul>
+&lt;li>메서드 오버라이딩, 메서드 오버로딩&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="원칙">원칙
+&lt;/h2>&lt;h3 id="단일-책임-원칙-single-responsiblity-principle">단일 책임 원칙 (Single Responsiblity Principle)
+&lt;/h3>&lt;ul>
+&lt;li>하나의 객체는 하나의 책임만 가져야함&lt;/li>
+&lt;li>변경의 이유도 하나여야함&lt;/li>
+&lt;/ul>
+&lt;h3 id="개방-폐쇄-원칙-open-closed-principle">개방-폐쇄 원칙 (Open Closed Principle)
+&lt;/h3>&lt;ul>
+&lt;li>변경에는 닫혀있고, 확장에는 열려있어야함&lt;/li>
+&lt;/ul>
+&lt;h3 id="리스코프-치환-원칙-liskov-substitution-principle">리스코프 치환 원칙 (Liskov Substitution Principle)
+&lt;/h3>&lt;ul>
+&lt;li>프로그램의 정확성을 깨뜨리지 않으면서 하위 타입의 인스턴스로 바꿀 수 있어야 함&lt;/li>
+&lt;/ul>
+&lt;h3 id="인터페이스-분리-원칙-interface-segregation-principle">인터페이스 분리 원칙 (Interface Segregation Principle)
+&lt;/h3>&lt;ul>
+&lt;li>필요한 인터페이스만 상속받아야함
+&lt;ul>
+&lt;li>특정 클라이언트를 위한 인터페이스 여러개가 범용 인터페이스 하나보다 낫다&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="의존-역전-원칙-dependency-inversion-principle">의존 역전 원칙 (Dependency Inversion Principle)
+&lt;/h3>&lt;ul>
+&lt;li>구체화된것 보다는 추상적인것을 의존해야함&lt;/li>
+&lt;/ul>
+&lt;p>어떤 코드가 변경되었을때 변경되는 정도&lt;br>
+결합도&lt;br>
+응집도&lt;/p>
+&lt;p>관심사의 분리&lt;br>
+&lt;a class="link" href="https://www.cs.utexas.edu/users/EWD/transcriptions/EWD04xx/EWD447.html" target="_blank" rel="noopener"
+>https://www.cs.utexas.edu/users/EWD/transcriptions/EWD04xx/EWD447.html&lt;/a>&lt;br>
+It is what I sometimes have called &amp;ldquo;the separation of concerns&amp;rdquo;, which, even if not perfectly possible, is yet the only available technique for effective ordering of one&amp;rsquo;s thoughts, that I know of. This is what I mean by &amp;ldquo;focussing one&amp;rsquo;s attention upon some aspect&amp;rdquo;: it does not mean ignoring the other aspects, it is just doing justice to the fact that from this aspect&amp;rsquo;s point of view, the other is irrelevant. It is being one- and multiple-track minded simultaneously.&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.codestates.com/blog/content/%EA%B0%9D%EC%B2%B4-%EC%A7%80%ED%96%A5-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-%ED%8A%B9%EC%A7%95" target="_blank" rel="noopener"
+>https://www.codestates.com/blog/content/%EA%B0%9D%EC%B2%B4-%EC%A7%80%ED%96%A5-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-%ED%8A%B9%EC%A7%95&lt;/a>&lt;/p>
+&lt;p>#argent&lt;/p></description></item><item><title>인증, 인가</title><link>https://sungho94.me/p/%EC%9D%B8%EC%A6%9D-%EC%9D%B8%EA%B0%80/</link><pubDate>Tue, 28 May 2024 23:21:08 +0000</pubDate><guid>https://sungho94.me/p/%EC%9D%B8%EC%A6%9D-%EC%9D%B8%EA%B0%80/</guid><description>&lt;p>인증과 인가는 보안 시스템에서 중요한 개념으로, 사용자의 신원을 확인하고 자원에 대한 접근 권한을 관리하는 데 사용됩니다. 이 두 개념은 종종 혼동되지만, 서로 다른 목적을 가지고 있습니다.&lt;/p>
+&lt;h2 id="인증-authentication">인증 (Authentication)
+&lt;/h2>&lt;ul>
+&lt;li>사용자가 자신이 주장하는 신원임을 확인하는 과정&lt;/li>
+&lt;li>사용자가 로그인할 때 시스템은 사용자의 신원을 확인하기 위한 방법&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>무엇을 알고 있는가 (What you know): 패스워드, PIN 등.&lt;/li>
+&lt;li>무엇을 가지고 있는가 (What you have): 스마트 카드, 보안 토큰 등.&lt;/li>
+&lt;li>무엇인가 (What you are): 지문, 얼굴 인식, 홍채 스캔 등 생체 인식.&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>사용자나 시스템이 제공하는 정보가 신뢰할 수 있는지를 확인하는 절차로, 이 단계에서 사용자는 본인임을 증명해야 합니다.&lt;/li>
+&lt;/ul>
+&lt;h2 id="인가-authorization">인가 (Authorization)
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>인증을 거친 사용자가 특정 자원에 접근할 수 있는 권한이 있는지를 결정하는 과정&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>인증이 사용자의 신원을 확인하는 것이라면, 인가는 그 사용자가 특정 작업을 수행할 수 있는지를 결정하는 것&lt;/p>
+&lt;ul>
+&lt;li>사용자가 시스템에 로그인을 해서 인증이 완료된 후, 그 사용자가 특정 파일을 읽거나 쓸 수 있는지, 또는 특정 애플리케이션을 실행할 수 있는지 등을 결정하는 것이 인가입니다.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>인가 시스템은 주로 다음과 같은 정보를 바탕으로 작동함&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>역할 기반 접근 제어 (Role-Based Access Control, RBAC): 사용자에게 특정 역할을 부여하고, 그 역할에 따라 접근 권한을 결정합니다.&lt;/li>
+&lt;li>정책 기반 접근 제어 (Policy-Based Access Control, PBAC): 조직의 보안 정책에 따라 접근 권한을 결정합니다.&lt;/li>
+&lt;li>속성 기반 접근 제어 (Attribute-Based Access Control, ABAC): 사용자, 자원, 환경 등의 속성에 따라 접근 권한을 결정합니다.&lt;/li>
+&lt;/ol>
+&lt;h3 id="요약">요약
+&lt;/h3>&lt;ul>
+&lt;li>인증: 사용자가 누구인지 확인하는 과정.&lt;/li>
+&lt;li>인가: 확인된 사용자가 어떤 자원에 접근할 수 있는지를 결정하는 과정.&lt;/li>
+&lt;/ul></description></item></channel></rss>

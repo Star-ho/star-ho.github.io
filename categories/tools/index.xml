@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tools on Sungho's Dev BLog</title><link>https://sungho94.me/categories/tools/</link><description>Recent content in Tools on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Tue, 03 Oct 2023 22:49:58 +0000</lastBuildDate><atom:link href="https://sungho94.me/categories/tools/index.xml" rel="self" type="application/rss+xml"/><item><title>Bazel</title><link>https://sungho94.me/p/bazel/</link><pubDate>Tue, 03 Oct 2023 22:49:58 +0000</pubDate><guid>https://sungho94.me/p/bazel/</guid><description>&lt;ul>
+&lt;li>google build tool&lt;/li>
+&lt;li>멀티모듈 빌드시 변경된 모듈만 재빌드&lt;/li>
+&lt;/ul></description></item><item><title>Codecove</title><link>https://sungho94.me/p/codecove/</link><pubDate>Tue, 03 Oct 2023 22:44:04 +0000</pubDate><guid>https://sungho94.me/p/codecove/</guid><description>&lt;ul>
+&lt;li>코드 커버리지 reporting 솔루션&lt;/li>
+&lt;li>all-in-one code coverage reporting solution&lt;/li>
+&lt;/ul>
+&lt;p>#Java&lt;br>
+#Test&lt;br>
+#Library&lt;/p></description></item><item><title>kotlin-jdsl</title><link>https://sungho94.me/p/kotlin-jdsl/</link><pubDate>Tue, 03 Oct 2023 22:37:47 +0000</pubDate><guid>https://sungho94.me/p/kotlin-jdsl/</guid><description>&lt;p>#Database&lt;br>
+#Library&lt;/p></description></item><item><title>jooq</title><link>https://sungho94.me/p/jooq/</link><pubDate>Sat, 30 Sep 2023 14:48:53 +0000</pubDate><guid>https://sungho94.me/p/jooq/</guid><description>&lt;ul>
+&lt;li>jooq
+&lt;ul>
+&lt;li>jpa가 아닌 native sql builder&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>#Database&lt;br>
+#Library&lt;/p></description></item></channel></rss>

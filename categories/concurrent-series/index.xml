@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Concurrent-Series on Sungho's Dev BLog</title><link>https://sungho94.me/categories/concurrent-series/</link><description>Recent content in Concurrent-Series on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Thu, 02 May 2024 22:41:32 +0000</lastBuildDate><atom:link href="https://sungho94.me/categories/concurrent-series/index.xml" rel="self" type="application/rss+xml"/><item><title>11-분산락(Distributed lock)</title><link>https://sungho94.me/p/11-%EB%B6%84%EC%82%B0%EB%9D%BDdistributed-lock/</link><pubDate>Thu, 02 May 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/11-%EB%B6%84%EC%82%B0%EB%9D%BDdistributed-lock/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>named lock&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>mysql, redis 등 named lock을 지원하는 저장소에서 사용가능&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>redis서버가 없는 상황에서 mysql named lock도 유용한 선택지임&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>mysql은 connection 끊기면 lock도 풀림&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>분산락은 자원에대한 락이 아닌 작업,행위에 대한 락&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>하나의 작업이 한번만 실행되게 할때 유용함&lt;/p>
+&lt;ul>
+&lt;li>따닥 방지&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>데이터베이스에 부하가 가지않음&lt;/p>
+&lt;ul>
+&lt;li>but, 실제로 작업하는 row가 db lock이 걸려있을시 처리&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>실제로 사용하기 위해 멱등성 보장이 필요할 수 있음&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html" target="_blank" rel="noopener"
+>https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul></description></item><item><title>10-Isolation level(격리 수준)</title><link>https://sungho94.me/p/10-isolation-level%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/10-isolation-level%EA%B2%A9%EB%A6%AC-%EC%88%98%EC%A4%80/</guid><description>&lt;ul>
+&lt;li>여러 트랜잭션이 동시에 변경을 수행하고 쿼리를 수행할 때 성능과 안정성, 일관성 및 결과 재현성 간의 균형을 미세 조정하는 설정&lt;/li>
+&lt;/ul>
+&lt;h2 id="read-uncommitted">Read Uncommitted
+&lt;/h2>&lt;ul>
+&lt;li>가장 낮은 격리 수준&lt;/li>
+&lt;li>커밋되지 않은 다른 트랜잭션의 변경 내용을 읽을 수 있음&lt;/li>
+&lt;li>어떤 트랜잭션의 변경 내용이 COMMIT이나 ROLLBACK과 상관없이 다른 트랜잭션에서 보여짐&lt;/li>
+&lt;/ul>
+&lt;h2 id="read-committed">Read Committed
+&lt;/h2>&lt;ul>
+&lt;li>다른 트랜잭션에서 커밋되지 않은 데이터는 읽을수 없음&lt;/li>
+&lt;li>Dirty Read(더티 리드)문제는 해결되지만, Phantom Read(유령 읽기) 문제는 발생함&lt;/li>
+&lt;/ul>
+&lt;h2 id="repeatable-read">REPEATABLE READ
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>한 트랜잭션 내에서 같은 쿼리를 여러 번 실행했을 때, 항상 동일한 결과를 얻을 수 있음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>첫번째 읽기 작업이 이루어진 때를 기준으로 스냅샷을 생성함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>InnoDB의 default isolation level임&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="serializablehttpsdevmysqlcomdocrefman80englossaryhtmlglos_serializable">&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_serializable" target="_blank" rel="noopener"
+>Serializable&lt;/a>
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>어떤 한 트랜잭션이 데이터를 읽었다면, lock을 걸어 이 트랜잭션이 끝날때까지 다른트랜잭션이 읽기, 쓰기가 불가능하도록 하는 level&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>autocommit이 활성화 되어있지 않으면, select 문을 select &amp;hellip; for share 문으로 변경함&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>Mysql doc을 보고 작성했으며, ANSI Isolation level이 궁금하다면 &lt;a class="link" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-95-51.pdf" target="_blank" rel="noopener"
+>참고&lt;/a>&lt;/p>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_isolation_level&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_serializable&lt;/p></description></item><item><title>9-Record Locks</title><link>https://sungho94.me/p/9-record-locks/</link><pubDate>Sat, 02 Mar 2024 22:41:04 +0000</pubDate><guid>https://sungho94.me/p/9-record-locks/</guid><description>&lt;ul>
+&lt;li>record의 index에 거는 lock&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>primary index가 없는 테이블에도 가능&lt;br>
+primary index가 없더라도 mysql에서는 hidden clustered index를 생성하기 때문&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>Mysql Doc에는 row락이라는 용어가 등장하지 않음,&lt;br>
+스택오버플로우에는 record lock과 row lock이 동일 하다는 이야기가 있음&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/74967004/row-level-locks-vs-index-record-locks" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/74967004/row-level-locks-vs-index-record-locks&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>8-Intention shared lock, exclusive lock</title><link>https://sungho94.me/p/8-intention-shared-lock-exclusive-lock/</link><pubDate>Sat, 02 Mar 2024 22:41:03 +0000</pubDate><guid>https://sungho94.me/p/8-intention-shared-lock-exclusive-lock/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>IS, IX lock과 S,X Lock과의 차이는 테이블까지 락이 걸림&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>IS, IX lock을 걸면 해당 테이블에도 락이 걸림&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>해당 테이블에 대해 다른 트래잭션에서 같은 테이블의 다른 row에 IS,IX락은 걸 수 있지만, 같은 테이블에 대해 S,X Lock을 걸 수 없음(실험완료)&lt;/p>
+&lt;ul>
+&lt;li>S,X와 같이, IS가 걸려있으면 해당 테이블에 대해 S락은 가능, X락은 불가&lt;/li>
+&lt;li>S,X와 같이, IX가 걸려있으면 해당 테이블에 대해 S,X락 둘다 불가&lt;/li>
+&lt;li>읽기나 쓰기 도중 테이블이 변경되는것을 막기 위함이라고 추측함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>SELECT ... FOR SHARE&lt;/code>로 S Lock을, &lt;code>SELECT ... FOR UPDATE&lt;/code>로 X락을 걸 수 있음&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;ul>
+&lt;li>IS lock추가&lt;br>
+- select .. lock in share mode ;&lt;br>
+- select .. for share ;&lt;br>
+- 현재(8.0 기준) for share가 lock in share mode를 대체 하려하나 하위호환성 보장을 위해 lock in share mode를 유지하는중&lt;br>
+- 그러나, for share를 사용하면 OF table_name, NOWAIT, and SKIP LOCKED를 사용할 수 있음&lt;/li>
+&lt;/ul>
+&lt;p>SELECT &amp;hellip; FOR SHARE is a replacement for SELECT &amp;hellip; LOCK IN SHARE MODE, but LOCK IN SHARE MODE remains available for backward compatibility. The statements are equivalent. However, FOR SHARE supports OF table_name, NOWAIT, and SKIP LOCKED options. See Locking Read Concurrency with NOWAIT and SKIP LOCKED.&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_shared_lock&lt;/p>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>7-Shared Lock(S-lock)</title><link>https://sungho94.me/p/7-shared-locks-lock/</link><pubDate>Sat, 02 Mar 2024 22:41:02 +0000</pubDate><guid>https://sungho94.me/p/7-shared-locks-lock/</guid><description>&lt;ul>
+&lt;li>특정 행을 읽기위해 거는 락&lt;/li>
+&lt;li>어떤 object에 S-lock이 걸려있다면 다른 트랜잭션에서 읽기는 가능하지만 변경은 불가능함&lt;/li>
+&lt;li>S-lock이 걸려있는 object에 S-lock를 또 걸 수 있지만 X-lock은 걸 수 없음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>6-Exclusive Lock(X-Lock)</title><link>https://sungho94.me/p/6-exclusive-lockx-lock/</link><pubDate>Sat, 02 Mar 2024 22:41:01 +0000</pubDate><guid>https://sungho94.me/p/6-exclusive-lockx-lock/</guid><description>&lt;p>1- X-Lock이 걸린 객체에 대해 다른 트랜잭션에서 읽기, 쓰기 불가능&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>X-Lock이 걸린 객체에 대해 다른 객체에서 S-Lock, X-Lock 걸수 없음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>변경 또는 삭제를 위해 락을 걸떄 활용&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Mysql의 Repeatable-Read는 Constent Read 기술을 사용해여 X-Lock걸린 row를 읽도록 함으로써 효율을 높임&lt;/p>
+&lt;ul>
+&lt;li>X-Lock이 걸리기 전의 값을 읽음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-locking.html&lt;/a>&lt;/p></description></item><item><title>5-Optimistic Lock</title><link>https://sungho94.me/p/5-optimistic-lock/</link><pubDate>Fri, 01 Mar 2024 22:41:07 +0000</pubDate><guid>https://sungho94.me/p/5-optimistic-lock/</guid><description>&lt;ul>
+&lt;li>CAS(compare and Set)이라고도 함&lt;/li>
+&lt;li>데이터베이스 수준이 아닌 어플리케이션 수준에서 자원을 관리&lt;/li>
+&lt;li>record에 version관련 컬럼을 추가하여 자원을 관리&lt;/li>
+&lt;li>변경이 발생할때마다 version값에 1을 추가
+&lt;ul>
+&lt;li>0,1으로 하면 안됨
+&lt;ul>
+&lt;li>변경이 두번 발생하면 0,1,0이 되버리기 때문에 오류가 발생함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>장점
+&lt;ul>
+&lt;li>데이터베이스에서 lock을 걸지 않기 때문에 pessimistic lock보다 데이터 베이스 부하가 적음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://en.wikipedia.org/wiki/Optimistic" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Optimistic&lt;/a>_concurrency_control&lt;/p></description></item><item><title>4-Consistent Read(일관된 읽기)</title><link>https://sungho94.me/p/4-consistent-read%EC%9D%BC%EA%B4%80%EB%90%9C-%EC%9D%BD%EA%B8%B0/</link><pubDate>Fri, 01 Mar 2024 22:41:05 +0000</pubDate><guid>https://sungho94.me/p/4-consistent-read%EC%9D%BC%EA%B4%80%EB%90%9C-%EC%9D%BD%EA%B8%B0/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>첫번째 읽을때 스냅샷을 생성함으로써, 다른 트랜잭션에서 발생한 변경과는 무관하게, 스냅샷을 생성했을 때의 데이터를 읽을수 있는 것을 말함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>다른 트랜잭션에서 데이터를 변경해도, undo log에 기록되어 변경전 데이터를 읽을 수 있음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>이로인해 동시성 문제를 해결&lt;/p>
+&lt;ul>
+&lt;li>undo log를 사용하지 않는다면, 어떤 row를 읽은 트랜잭션이 있다면 해당 트랜잭션이 끝날때 까지 해당 row를 접근하지 못하게 해야 일관된 읽기를 달성할 수 있음&lt;/li>
+&lt;li>하지만 undo log를 사용함으로 각각의 트랜잭션에서는 데이터를 자유롭게 변경해도, 변경전 데이터가 undo log에 있으므로, 변경된 데이터에 대해서는 undo log를 읽어와 일관된 읽기를 달성할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>REPEATABLE READ와 READ COMMITTED에서 기본으로 사용됨&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p> ALTER TABLE문과 DROP TABLE문에서는 작동하지 않음&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos&lt;/a>_consistent_read&lt;br>
+&lt;a class="link" href="https://dev.mysql.com/doc/refman/8.0/en/InnoDB-consistent-read.html" target="_blank" rel="noopener"
+>https://dev.mysql.com/doc/refman/8.0/en/InnoDB-consistent-read.html&lt;/a>&lt;/p></description></item><item><title>3-Critical section(임계영역)</title><link>https://sungho94.me/p/3-critical-section%EC%9E%84%EA%B3%84%EC%98%81%EC%97%AD/</link><pubDate>Fri, 01 Mar 2024 22:41:04 +0000</pubDate><guid>https://sungho94.me/p/3-critical-section%EC%9E%84%EA%B3%84%EC%98%81%EC%97%AD/</guid><description>&lt;ul>
+&lt;li>동시성을 가지는 작업들이 공유하는 자원&lt;/li>
+&lt;li>여러 작업에서 하나의 자원에 대해 동시에 접근하면, 예기치 못한 동작이나 오류가 발생할 수 있음&lt;/li>
+&lt;li>여러 작업에서 하나의 자원을 동시에 엑세스를 방지하도록 보호해야함&lt;/li>
+&lt;li>엑세스를 방지해야하는 자원을 임계영역이라고 부름&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://en.wikipedia.org/wiki/Critical" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Critical&lt;/a>_section&lt;/p>
+&lt;p>#Concurrency&lt;/p></description></item><item><title>2-Semaphore</title><link>https://sungho94.me/p/2-semaphore/</link><pubDate>Fri, 01 Mar 2024 22:41:03 +0000</pubDate><guid>https://sungho94.me/p/2-semaphore/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>임계영역을 보호하는 방법&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>여러 스레드의 임계영역에 대한 엑세스를 제어&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Mutex와의 차이점은 Mutex는 하나의 자원에 대한 엑세스를 제어하는 반면, Semaphore는 여러자원에 대한 엑세스를 제어&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>화장실이 3개이고 키도 3개일때&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>키가 하나도 없다면 화장실 이용불가&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>키가 1개 있다면 화장실 이용가능&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>키가 2개 있어도 화장실 이용가능&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>but, 어느 화장실 칸이 비었는지 모르기에 추가적인 정보가 더 필요함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a class="link" href="https://barrgroup.com/embedded-systems/how-to/rtos-mutex-semaphore" target="_blank" rel="noopener"
+>추가적인 정보가 궁금하다면 여기&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://ko.wikipedia.org/wiki/%EC%8B%9D%EC%82%AC%ED%95%98%EB%8A%94_%EC%B2%A0%ED%95%99%EC%9E%90%EB%93%A4_%EB%AC%B8%EC%A0%9C" target="_blank" rel="noopener"
+>식사하는 철학자들 문제&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/a/2332868/22483906" target="_blank" rel="noopener"
+>https://stackoverflow.com/a/2332868/22483906&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/2350544/in-what-situation-do-you-use-a-semaphore-over-a-mutex-in-c/2350628#2350628" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/2350544/in-what-situation-do-you-use-a-semaphore-over-a-mutex-in-c/2350628#2350628&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/34519/what-is-a-semaphore/40238#40238" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/34519/what-is-a-semaphore/40238#40238&lt;/a>&lt;/p>
+&lt;p>#Concurrency&lt;/p></description></item><item><title>1-Mutex(Lock)</title><link>https://sungho94.me/p/1-mutexlock/</link><pubDate>Fri, 01 Mar 2024 22:41:02 +0000</pubDate><guid>https://sungho94.me/p/1-mutexlock/</guid><description>&lt;ul>
+&lt;li>&lt;strong>Mut&lt;/strong>ual &lt;strong>ex&lt;/strong>clusion의 약자&lt;/li>
+&lt;li>프로세스 간 동기화에 사용할 수도 있는 동기화 기본 형식입니다.&lt;/li>
+&lt;li>둘 이상의 스레드가 동시에 공유 리소스에 액세스해야 하는 경우 시스템은 한 번에 하나의 스레드만 리소스를 사용하도록 하기 위한 동기화 메커니즘&lt;/li>
+&lt;li>공유 리소스에 대한 단독 액세스 권한을 하나의 스레드에만 부여하는 동기화 기본 형식입니다.&lt;/li>
+&lt;li>스레드가 뮤텍스를 획득하면 첫 번째 스레드가 뮤텍스를 해제할 때까지 해당 뮤텍스를 획득하려는 두 번째 스레드가 일시 중단됩니다.&lt;/li>
+&lt;/ul>
+&lt;h3 id="화장실-비유">화장실 비유
+&lt;/h3>&lt;ul>
+&lt;li>화장실에 가고싶은데 키가 하나밖에 없는경우&lt;/li>
+&lt;li>키가 있어야만 화장실에 갈 수 있음&lt;/li>
+&lt;li>화장실에 아무도 없다면 키를 가져갈 수 있음&lt;/li>
+&lt;li>화장실에 사람이 있다면, 사람이 나와 키를 줄때까지 기다려야함&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Mutex와 Lock은 동일한 개념임&lt;br>
+Mutex는 Lock보다는 시스템 전체에 적용될 수 있음&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://learn.microsoft.com/ko-kr/dotnet/api/system.threading.mutex?view=net-7.0#remarks" target="_blank" rel="noopener"
+>https://learn.microsoft.com/ko-kr/dotnet/api/system.threading.mutex?view=net-7.0#remarks&lt;/a>&lt;br>
+&lt;a class="link" href="https://en.wikipedia.org/wiki/Lock" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Lock&lt;/a>_(computer_science)&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/2332765/what-is-the-difference-between-lock-mutex-and-semaphore" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/2332765/what-is-the-difference-between-lock-mutex-and-semaphore&lt;/a>&lt;/p></description></item><item><title>0-동시성(Concurrency)</title><link>https://sungho94.me/p/0-%EB%8F%99%EC%8B%9C%EC%84%B1concurrency/</link><pubDate>Fri, 01 Mar 2024 22:41:01 +0000</pubDate><guid>https://sungho94.me/p/0-%EB%8F%99%EC%8B%9C%EC%84%B1concurrency/</guid><description>&lt;h2 id="개념">개념
+&lt;/h2>&lt;ul>
+&lt;li>프로그램, 알고리즘, 또는 문제의 부분이나 단위 등이, 결과에 영향을 주지 않고 특정한 순서없이 실행되거나 부분적인 순서만을 가지고 실행될 수 있는 성질 &lt;a class="link" href="https://en.wikipedia.org/wiki/Concurrency_%5c%28computer_science%5c%29" target="_blank" rel="noopener"
+>링크&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>하나의 작업을 정말 빠르게 처리하면 되지 않을까?&lt;/p>
+&lt;ul>
+&lt;li>대부분의 서비스에서는 cpu bound보다는 io bound가 많은 일을 처리하기에 동시성이 중요&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>동시성은 한번에 많은일을 처리하는것,&lt;br>
+병렬성은 한번에 많은 일을 하는것을 의미&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="왜-중요한가">왜 중요한가?
+&lt;/h2>&lt;ul>
+&lt;li>한번에 여러가지 일을 처리하니 한번에 많은일을 처리할 수 있음
+&lt;ul>
+&lt;li>성능이 증대됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="but-무결성의-문제">But, 무결성의 문제
+&lt;/h2>&lt;ul>
+&lt;li>&lt;strong>하나의 자원을 가지고 하나이상의 작업이 수행될때 자원의 무결성의 문제&lt;/strong>&lt;/li>
+&lt;li>Lost Update Problem(write-write conflict)
+&lt;ul>
+&lt;li>하나의 로우에 동시에 여러번 변경이 발생했을 때 발생하는 문제&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218230909.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Unrepeatable Read Problem
+&lt;ul>
+&lt;li>다른 트랜잭션에서 변경이 되어, 같은 조회 쿼리에서 다른 데이터가 오는 현상&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218231144.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Temporary Update Problem( dirty read problem)
+&lt;ul>
+&lt;li>커밋되지 않은 데이터를 읽어서 발생하는 문제&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218231800.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Phantom Read Problem
+&lt;ul>
+&lt;li>데이터가 삭제되어 같은 트랜잭션에서 데이터를 못가져오는 문제&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218231610.png"
+loading="lazy"
+alt="center|400"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="해결책">해결책
+&lt;/h2>&lt;ul>
+&lt;li>동시성 문제는 어떻게 동시에 처리하지 않을까에 대한 고민&lt;/li>
+&lt;li>추상화한것들 어떻게 구체화 할것인가&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>개념&lt;/p>
+&lt;ul>
+&lt;li>critical section&lt;/li>
+&lt;li>mutex&lt;/li>
+&lt;li>semaphore&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>JAVA에서 코드레벨 lock &lt;a class="link" href="https://www.baeldung.com/java-mutex" target="_blank" rel="noopener"
+>참고자료&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>synchronized&lt;/li>
+&lt;li>lock&lt;/li>
+&lt;li>Semaphore&lt;/li>
+&lt;li>Guava’s  Monitor&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>데이터베이스에서 동시성 문제 처리&lt;/p>
+&lt;ul>
+&lt;li>lock mode
+&lt;ul>
+&lt;li>Shared Lock&lt;/li>
+&lt;li>Exclusive Lock&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>lock type
+&lt;ul>
+&lt;li>row lock&lt;/li>
+&lt;li>Record Lock&lt;/li>
+&lt;li>Gap Lock&lt;/li>
+&lt;li>Next-key Lock&lt;/li>
+&lt;li>auto increment lock&lt;/li>
+&lt;li>table lock&lt;/li>
+&lt;li>insert intention lock&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>isolation level&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>Named Lock&lt;/p>
+&lt;ul>
+&lt;li>redis&lt;/li>
+&lt;li>database&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://medium.com/@bindubc/distributed-system-concurrency-problem-in-relational-database-59866069ca7c" target="_blank" rel="noopener"
+>https://medium.com/@bindubc/distributed-system-concurrency-problem-in-relational-database-59866069ca7c&lt;/a>&lt;/p></description></item></channel></rss>

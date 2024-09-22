@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Programming-Language on Sungho's Dev BLog</title><link>https://sungho94.me/tags/programming-language/</link><description>Recent content in Programming-Language on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sat, 30 Sep 2023 14:44:40 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/programming-language/index.xml" rel="self" type="application/rss+xml"/><item><title>Static vs Dynamic,Strong vs Weak</title><link>https://sungho94.me/p/static-vs-dynamicstrong-vs-weak/</link><pubDate>Sat, 30 Sep 2023 14:44:40 +0000</pubDate><guid>https://sungho94.me/p/static-vs-dynamicstrong-vs-weak/</guid><description>&lt;h3 id="정적타입">정적타입
+&lt;/h3>&lt;ul>
+&lt;li>자료형을 컴파일시에 확인&lt;/li>
+&lt;li>타입에러를 컴파일 시에 확인가능&lt;/li>
+&lt;li>java, c&lt;/li>
+&lt;/ul>
+&lt;h3 id="동적타입">동적타입
+&lt;/h3>&lt;ul>
+&lt;li>자료형을 런타임시에 확인&lt;/li>
+&lt;li>타입에 대한 고민을 뒤로 넘길 수 있음&lt;/li>
+&lt;li>메서드가 다양한 기능을 할 수 있음&amp;hellip;&lt;/li>
+&lt;li>런타임에 타입에러 발생 가능&lt;/li>
+&lt;li>python, javascript&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h3 id="강타입">강타입
+&lt;/h3>&lt;ul>
+&lt;li>연관이 없는 타입끼리 형변환이 불가, 형변환시 명시적으로 선언해야함&lt;/li>
+&lt;/ul>
+&lt;h3 id="약타입">약타입
+&lt;/h3>&lt;ul>
+&lt;li>연관이 없는 타입끼리 암시적으로 형변환이 가능&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;p>&lt;a class="link" href="https://www.educative.io/answers/statically-v-dynamically-v-strongly-v-weakly-typed-languages" target="_blank" rel="noopener"
+>https://www.educative.io/answers/statically-v-dynamically-v-strongly-v-weakly-typed-languages&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/11889602/difference-between-strong-vs-static-typing-and-weak-vs-dynamic-typing" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/11889602/difference-between-strong-vs-static-typing-and-weak-vs-dynamic-typing&lt;/a>&lt;/p></description></item></channel></rss>

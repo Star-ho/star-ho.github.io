@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DataStructure on Sungho's Dev BLog</title><link>https://sungho94.me/categories/datastructure/</link><description>Recent content in DataStructure on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Wed, 08 May 2024 22:34:01 +0000</lastBuildDate><atom:link href="https://sungho94.me/categories/datastructure/index.xml" rel="self" type="application/rss+xml"/><item><title>B-tree</title><link>https://sungho94.me/p/b-tree/</link><pubDate>Wed, 08 May 2024 22:34:01 +0000</pubDate><guid>https://sungho94.me/p/b-tree/</guid><description>&lt;ul>
+&lt;li>다수의 엘리먼트가 있을때, 지역성을 가질 수 있는 자료구조
+&lt;ul>
+&lt;li>한번읽고, 다음걸 읽을때 빠르게 찾아갈 수 있기 때문&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="특징">특징
+&lt;/h2>&lt;ul>
+&lt;li>모든 데이터는 leaf노드에 있음&lt;/li>
+&lt;li>non-leaf노드에는 키만 존재&lt;/li>
+&lt;li>root노드에서 모든 leaf노드까지는 같음&lt;/li>
+&lt;li>만약, 노드에서 n개의 자식을 가지고 있으면, 이 노드는 n-1개의 키를 가지고 있음&lt;/li>
+&lt;li>루트노드를 제외한 모든 노드는 절반이상 차있음&lt;/li>
+&lt;li>하위노드의 모든 값은, 해당 부모 노드의 양쪽 포인터 값 사이에 있는 키를 가짐&lt;/li>
+&lt;li>루트노드가 leaf노드가 아닌경우, 적어도 2개의 자식을 가지고 있음&lt;/li>
+&lt;li>리프노드의 탐색시간은 O(logN)임&lt;/li>
+&lt;/ul>
+&lt;h2 id="예제">예제
+&lt;/h2>&lt;ul>
+&lt;li>아래 예제는 branch factor가 5인 B-tree임
+&lt;ul>
+&lt;li>branching factor가 5이기에, 리프가 아닌 노드들은 5개의 addr값을 가지고 있음&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240508231341.png"
+loading="lazy"
+alt="center|700"
+>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="key29에-있는-값을-찾는-순서">key29에 있는 값을 찾는 순서
+&lt;/h3>&lt;ol>
+&lt;li>먼저 루트노드에서 10과 50사이의 주소를 찾음&lt;/li>
+&lt;li>1에서 얻은 주소를 따라가, 25와 37사이의 주소를 얻음&lt;/li>
+&lt;li>2에서 얻은 주소를 따라가 28과 31사이의 주소를 얻고, 해당 주소에서 값을 찾음&lt;/li>
+&lt;/ol>
+&lt;h2 id="삽입과정tree가-자라나는-과정">삽입과정(tree가 자라나는 과정)
+&lt;/h2>&lt;ul>
+&lt;li>key 16에 값을 넣는 과정임&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240508232003.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>key 16을 넣으려니, 리프노드에는 5개의 값이 꽉 차있어 분리가 필요함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240508232205.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>부모의 노드가 여유가 있어, 부모트리를 나누어 1개의 leaf노드를 2개의 leaf노드로 분리함&lt;/li>
+&lt;li>이후 key 16에 데이터를 추가함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://www.cs.cornell.edu/courses/cs3110/2012sp/recitations/rec25-B-trees/rec25.html" target="_blank" rel="noopener"
+>https://www.cs.cornell.edu/courses/cs3110/2012sp/recitations/rec25-B-trees/rec25.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.linkedin.com/pulse/data-structures-powering-our-database-part-3-b-trees-saurav-prateek/" target="_blank" rel="noopener"
+>https://www.linkedin.com/pulse/data-structures-powering-our-database-part-3-b-trees-saurav-prateek/&lt;/a>&lt;/p></description></item></channel></rss>

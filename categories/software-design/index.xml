@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Software-Design on Sungho's Dev BLog</title><link>https://sungho94.me/categories/software-design/</link><description>Recent content in Software-Design on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Tue, 09 Apr 2024 17:03:45 +0000</lastBuildDate><atom:link href="https://sungho94.me/categories/software-design/index.xml" rel="self" type="application/rss+xml"/><item><title>필드를 노출시키면 안되는 이유</title><link>https://sungho94.me/p/%ED%95%84%EB%93%9C%EB%A5%BC-%EB%85%B8%EC%B6%9C%EC%8B%9C%ED%82%A4%EB%A9%B4-%EC%95%88%EB%90%98%EB%8A%94-%EC%9D%B4%EC%9C%A0/</link><pubDate>Tue, 09 Apr 2024 17:03:45 +0000</pubDate><guid>https://sungho94.me/p/%ED%95%84%EB%93%9C%EB%A5%BC-%EB%85%B8%EC%B6%9C%EC%8B%9C%ED%82%A4%EB%A9%B4-%EC%95%88%EB%90%98%EB%8A%94-%EC%9D%B4%EC%9C%A0/</guid><description>&lt;h2 id="객체의-필드를-그대로-노출하여-로직을-구하는-경우">객체의 필드를 그대로 노출하여 로직을 구하는 경우
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>캡슐화가 깨지고 결합도가 높아진다.&lt;/p>
+&lt;ul>
+&lt;li>다른 객체의 필드값을 가지고 로직을 구현한다면, 로직 변경되었을때 해당 로직을 가지고 있는 모든 로직을 변경해야한다.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>예약이라는 객체가 있다고 생각해보자&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>예약이라는 객체는 capacity라는 속성이 있고, 기존에는 capacity만으로 주문 가능한 여부를 따졌다.&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>하지만 요구사항이 추가되어, 거리에 따라 capacity를 수정하기로 하였고, 거리마다 capacity가 다르다&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>이렇게 변경 시 기존에 capacity를 사용해서 마감을 확인하던 코드를 다 변경하여, 거리, capacity 두개 다 확인하도록 변경해야한다.&lt;/p>
+&lt;/li>
+&lt;/ul></description></item><item><title>Aggregate</title><link>https://sungho94.me/p/aggregate/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/aggregate/</guid><description>&lt;ul>
+&lt;li>데이터의 변경단위로 다루는 연관 객체의 묶음&lt;/li>
+&lt;li>Root Entity와 Boundary Entity가 존재
+&lt;ul>
+&lt;li>Root Entity
+&lt;ul>
+&lt;li>전역 식별성을 가짐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Boundary Entity
+&lt;ul>
+&lt;li>지역 식별성을 가짐&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>매우 상대적인 개념&lt;br>
+자동차와 바퀴의 예시&lt;br>
+자동차에만 관심만 있고 바퀴에 대한 관심사가 따로 없을 경우, 루트엔티티는 자동차, 경계 엔티티는 바퀴가됨&lt;br>
+하지만 바퀴의 수명주기, 일련번호 어떤 타이어를 찾아 어느 자동차에 있는지 알아야하는 비즈니스가 생긴다면 바퀴또한 루트 엔티티가 될 수 있음&lt;/p>
+&lt;/blockquote>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="aggregate에-적용되어야-하는-규칙">Aggregate에 적용되어야 하는 규칙
+&lt;/h3>&lt;ol>
+&lt;li>루트 Aggregate는 전역 식별성을 가지며 궁극적으로 불변식을 검사할 책임이 있다.&lt;/li>
+&lt;li>경계안의 Entity는 지역식별성을 지니며, 이러한 지역식별성은 해당 Aggregate안에서만 유일하다.&lt;/li>
+&lt;li>Aggregate 경계 밖에서는 루트 Entity를 제외한 Aggregate내부의 구성요소를 참조할 수 없다.&lt;/li>
+&lt;li>Aggregate안의 객체는 다른 Aggregate의 루트만 참조할 수 있다.&lt;/li>
+&lt;li>삭제연산은 Aggregate안의 모든 요소를 제거해야 한다.&lt;/li>
+&lt;li>Aggregate경계 안의 어떤 객체를 변경하더라도 전체 Aggregate의 불변식은 지켜져야 한다.&lt;/li>
+&lt;/ol></description></item><item><title>Aggregate 생명주기(Factory, Repository)</title><link>https://sungho94.me/p/aggregate-%EC%83%9D%EB%AA%85%EC%A3%BC%EA%B8%B0factory-repository/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/aggregate-%EC%83%9D%EB%AA%85%EC%A3%BC%EA%B8%B0factory-repository/</guid><description>&lt;h2 id="factory">Factory
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>Aggregate를 생성하는 일이 복잡하거나 내부구조를 너무 많이 드러내는 경우, Factory로 캡슐화&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Factory의 사용 이유&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>객체 생성이 그 자체로 주요한 연산이 될 수 있지만 복잡한 조립 연산은 생성된 객체의 책임으로는 어울리지 않음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>이 책임을 클라이언트에 두면 클라이언트의 설계가 지저분해 지고 조립되는 객체나 Aggregate의 캡슐화가 위반됨&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>클라이언트와 생성된 객체사이의 구현이 지나치게 결합됨&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Factory사용이 위와 같은 장점이 있지만, 복잡하지 않거나 다른 로직이 필요없을 경우 생성자로 대체&lt;br>
+우리는 복잡한 소프트웨어 구조를 적절한 패턴으로 덜 복잡하게 만드는게 목표임&lt;br>
+간단한 구조를 패턴을 사용할 경우 간단한게 복잡해 보일 수 있음&lt;br>
+트레이드 오프를 항상 생각하자&lt;/p>
+&lt;/blockquote>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="repository">Repository
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>객체를 재구성, 제거를 담당&lt;/p>
+&lt;blockquote>
+&lt;p>객체의 재구성이란?&lt;br>
+저장되어있는 객체로부터 인스턴스를 만들어내는 것&lt;/p>
+&lt;/blockquote>
+&lt;/li>
+&lt;li>
+&lt;p>Aggregate내부에 존재하는 모든 객체는 루트에서부터 탐색을 토대로 접근할것&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>팩토리는 객체의 생성을, 레포지토리는 객체의 재구성, 제거를 담당&lt;/p>
+&lt;/blockquote>
+&lt;p>#Aggregate&lt;/p></description></item><item><title>Entity, VO</title><link>https://sungho94.me/p/entity-vo/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/entity-vo/</guid><description>&lt;h2 id="domain-model">domain model
+&lt;/h2>&lt;p>현실세계의 해결하고싶은 문제를 프로그래밍 언어로 특정 측면을 구현한것&lt;br>
+특정측면인 이유는 비즈니스에 중요한것을 더 부각하고, 중요하지않은것을 적게 표현하거나 생략하기 때문&lt;/p>
+&lt;h2 id="entity">Entity
+&lt;/h2>&lt;p>해당 객체의 식별성을 가질경우 그 객체를 Entity라 한다&lt;/p>
+&lt;h3 id="entity의-상대성">Entity의 상대성
+&lt;/h3>&lt;p>Entity는 매우 상대적이다.&lt;br>
+경기장 좌석이 지정석인 경우, 각 좌석들은 구분해야할 필요가 있기 때문에 식별성을 가진 Entity이다.&lt;br>
+경기장 좌석이 자유석일경우, 각 좌석들의 구분하지않는다. 이는 Entity가 아니다.&lt;/p>
+&lt;h2 id="vo">VO
+&lt;/h2>&lt;p>모델에 포함된 어떤 요소의 식별성이 아닌, 속성에만 관심이 있다면 vo라고 한다&lt;/p>
+&lt;h4 id="불변의-vo">불변의 VO
+&lt;/h4>&lt;p>&lt;strong>vo는 불변이다&lt;/strong>&lt;br>
+vo가 바뀔때 내부 속성이 바뀌는 것이 아닌, vo전체가 수정되어야 한다.&lt;br>
+but 변경가능성을 허용하는 케이스가 존재한다.&lt;br>
+ex) 자주 변경되는경우, 객체 생성이나 삭제에 비용이 많이드는 경우 등..&lt;/p>
+&lt;h3 id="도메인-엔티티란">도메인 엔티티란?
+&lt;/h3>&lt;ul>
+&lt;li>현실세게의 해결하고 싶은 문제를, 프로그래밍 언어적으로 구현한 모델인데, 식별성을 가지는것&lt;/li>
+&lt;li>식별성을 가지지 않는다면, VO라고 부름&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>성능 최적화를 위해 Fly Weight를 사용할 수도 있다&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>dto는?&lt;br>
+data transform object로 계층간, 혹은 메서드간 데이터 이동시, 변수가 너무 많아지는 것 보다는 묶어서 변수들을 조금 더 잘 표현하는 역할&lt;/p>
+&lt;/blockquote></description></item><item><title>Service</title><link>https://sungho94.me/p/service/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/service/</guid><description>&lt;h2 id="service">Service
+&lt;/h2>&lt;p>도메인의 중대한 프로세스나 변환과정이 ENTITY나 VO의 고유한 책임이 아닌 연산을 선언하는 독립 인터페이스 모델&lt;/p>
+&lt;ol>
+&lt;li>Entity난 VO의 일부를 구성하는 것이 아닌, 도메인 개념과 연관되어 있음&lt;/li>
+&lt;li>인터페이스가 도메인 모델의 외적 요소의 측면에서 정의됨&lt;/li>
+&lt;li>연산이 상태를 갖고있지 않음&lt;/li>
+&lt;/ol>
+&lt;h3 id="service의-계층">Service의 계층
+&lt;/h3>&lt;ul>
+&lt;li>응용&lt;/li>
+&lt;li>도메인&lt;/li>
+&lt;li>인프라스트럭처 계층&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>위 세개의 서비스 계층은 클린아키텍쳐에서도 나온다&lt;br>
+응용계층 - 어플리케이션용 계층&lt;br>
+도메인계층 - 도메인 계층&lt;br>
+인프라스트럭처 계층 - 외부 어플리케이션과 소통&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>응용계층과 인프라 계층은 도메인을 감싸고 있다.&lt;br>
+why?&lt;br>
+도메인은 우리가 해결해야 하는 문제로 비즈니스에서 가장 중요한 영역이다.&lt;br>
+응용과 인프라가 변경된다고 도메인계층이 변경되서는 안되기 때문이다.&lt;/p>
+&lt;/blockquote>
+&lt;p>#Software-design&lt;/p></description></item><item><title>협력, 책임, 역할</title><link>https://sungho94.me/p/%ED%98%91%EB%A0%A5-%EC%B1%85%EC%9E%84-%EC%97%AD%ED%95%A0/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/%ED%98%91%EB%A0%A5-%EC%B1%85%EC%9E%84-%EC%97%AD%ED%95%A0/</guid><description>&lt;h2 id="협력">협력
+&lt;/h2>&lt;p>어플리케이션의 기능을 구현하기 위해 수행하는 상호작용&lt;/p>
+&lt;h2 id="책임">책임
+&lt;/h2>&lt;p>객체가 협력에 참여하기 위해 수행하는 로직&lt;/p>
+&lt;h2 id="역할">역할
+&lt;/h2>&lt;p>객체가 어떤 특정한 협력 안에서 수행하는 책임의 집합&lt;/p></description></item><item><title>Saga Pattern</title><link>https://sungho94.me/p/saga-pattern/</link><pubDate>Sun, 05 Nov 2023 16:36:56 +0000</pubDate><guid>https://sungho94.me/p/saga-pattern/</guid><description>&lt;ul>
+&lt;li>이전의 이름은 LLT(Long Lived Transaction)&lt;/li>
+&lt;li>이전의 이름에서 알수 있듯이 오래 살아있는 트랜잭션을 어떻게 처리할까는 문제의 해결책임&lt;/li>
+&lt;li>마이크로서비스화 되면서 서비스별 데이터베이스를 가지고 있음&lt;/li>
+&lt;li>그리고 각각의 서비스들이 트랜잭션을 가지고 있음&lt;/li>
+&lt;li>하나의 요청이 들어왔을때 각각의 서비스들에서 트랜잭션처리를 어떻게 관리할것인가?
+&lt;ul>
+&lt;li>A-B-C서비스를 거처야 하는 요청인데, 이에 관한 트랜잭션 처리를 어떻게 할지&lt;/li>
+&lt;li>ex) 롤백 처리를 어떻게 하는지?&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="정의">정의
+&lt;/h2>&lt;ul>
+&lt;li>SAGA는 로컬 트랜잭션의 연속임&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105210948.png"
+loading="lazy"
+alt="Pasted image 20231105210948"
+>&lt;/li>
+&lt;li>각각의 로컬 트랜잭션은 트랜잭션 완료후 다음 트랜잭션에 메시지를 보내거나, 이벤트를 발생시킴&lt;/li>
+&lt;li>이 과정에서 에러 발생시 보상트랜잭션을 실행하여, 이전 로컬 트랜잭션 내용을 롤백시킴&lt;/li>
+&lt;li>이를 구현하는 두가지 방법이 있음
+&lt;ul>
+&lt;li>아래의 예시는 e-커머스에서 주문을 넣는 예시로, 주문을 넣으면 고객의 잔고를 확인해서 잔고가 주문금액보다 많으면 잔고가 차감이 되며 주문이 승인되고, 적다면 주문이 거절됨&lt;/li>
+&lt;li>주문서비스에서는 고객의 잔고를 알 수 없기에, 고객 서비스에 요청을 해야 주문의 승인여부를 확인할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="choreography-based-saga">Choreography-based saga
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105170101.png"
+loading="lazy"
+alt="Pasted image 20231105170101"
+>&lt;/p>
+&lt;ul>
+&lt;li>서비스 흐름
+&lt;ol>
+&lt;li>Order Service에서 &lt;code>Post /orders&lt;/code>요청을 받고, PENDING 상태의 Order를 생성함&lt;/li>
+&lt;li>Order 생성 이벤트를 발생&lt;/li>
+&lt;li>Customer Service에서 잔고 차감을 시도&lt;/li>
+&lt;li>승인/거절 여부를 Order Service에 응답&lt;/li>
+&lt;li>Order Service에서는 결과를 가지고 승인할지, 거절할지 결정&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>각각의 서비스가 로컬트랜잭션을 수행하고, 작업이 끝나면 다음 서비스로 메시지를 보내는 방식&lt;/li>
+&lt;li>A -&amp;gt; B-&amp;gt; C 순서일때, A가 B를, B가 C를 호출함&lt;/li>
+&lt;li>롤백시 C-&amp;gt;B-&amp;gt;A 순으로 호출&lt;/li>
+&lt;li>Orchestration방식보다 구현이 간편함(중앙 관리자가 없기 때문)&lt;/li>
+&lt;/ul>
+&lt;h3 id="orchestration-based-saga">Orchestration-based saga
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105170046.png"
+loading="lazy"
+alt="Pasted image 20231105170046"
+>&lt;/p>
+&lt;ul>
+&lt;li>서비스 흐름
+&lt;ol>
+&lt;li>order Service에서 &lt;code>Post /orders&lt;/code>요청을 받고, Order saga orchestrator를 생성함&lt;/li>
+&lt;li>saga orchestrator에서 PENDIN상태의 주문을 생성&lt;/li>
+&lt;li>saga orchestrator에서 Customer Service에 잔고 차감명령을 보냄&lt;/li>
+&lt;li>Customer Service에서 잔고 차감 명령을 시도함&lt;/li>
+&lt;li>그 후 orchestrator에 결과를 리턴함&lt;/li>
+&lt;li>saga orchestrator에서 주문을 승인 or 거절&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>Choreography방식보다 구현이 어려움(orchestrator가 추가되기 때문)&lt;/li>
+&lt;li>하지만 A-&amp;gt;B-&amp;gt;C상황보다 처리하기 쉬움(Orchestrator에서 A,B,C를 호출하면 되기 때문)&lt;/li>
+&lt;li>각 서비스가 다음에 호출해야할 서비스를 알 지 않아도 됨&lt;/li>
+&lt;li>orchestrator가 단일 실패 지점이 될 수 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="장점">장점
+&lt;/h2>&lt;ul>
+&lt;li>애플리케이션이 분산 트랜잭션을 사용하지 않고도 여러 서비스에서 데이터 일관성을 유지 가능&lt;/li>
+&lt;/ul>
+&lt;h2 id="단점">단점
+&lt;/h2>&lt;ul>
+&lt;li>낮은 일관성
+&lt;ul>
+&lt;li> 송금을 예로 들면, 사용자 A의 계좌에서 돈이 인출되었지만 최종적으로 송금에 실패하는 중간 상태를 볼 수 있습니다.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>보상 트랜잭션을 추가로구현해야 하기 때문에 개발 난이도가 높음&lt;/li>
+&lt;li>구조가 복잡함&lt;/li>
+&lt;li>주문한 고객이 결과를 바로 알수 없음
+&lt;ol>
+&lt;li>saga가 완료되면 결과를 고객에게 응답&lt;/li>
+&lt;li>saga가 시작할때 주문 ID를 포함한 응답으로 제공하고, client-side에서 결과를 주기적으로 폴링하여 결과 확인&lt;/li>
+&lt;li>saga가 시작할때 주문 ID를 포함한 응답으로 제공하고, saga가 완료되면 webhook으로 고객에게 결과를 알려줌&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>saga의 어원이 정확히 밝혀지지 않았음&lt;br>
+- 아래의 두가지 추측이 존재&lt;br>
+- 연결된 이벤트에 길고 자세한 이야기(문학에서 사용되는 용어)&lt;br>
+- Segregated Access of Global Atomicity의 약어&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://stackoverflow.com/questions/63319018/why-the-pattern-for-microservices-distributed-transactions-named-as-saga" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/63319018/why-the-pattern-for-microservices-distributed-transactions-named-as-saga&lt;/a>&lt;br>
+&lt;a class="link" href="https://microservices.io/patterns/data/saga.html" target="_blank" rel="noopener"
+>https://microservices.io/patterns/data/saga.html&lt;/a>&lt;/p></description></item><item><title>CQRS(Command and Query Responsibility Segregation)</title><link>https://sungho94.me/p/cqrscommand-and-query-responsibility-segregation/</link><pubDate>Sun, 24 Sep 2023 23:14:02 +0000</pubDate><guid>https://sungho94.me/p/cqrscommand-and-query-responsibility-segregation/</guid><description>&lt;ul>
+&lt;li>소프트웨어의 복잡성을 해결하는 방법중 하나&lt;/li>
+&lt;li>객체의 메서드를 Query와 Command로 분리하는것&lt;/li>
+&lt;li>CQRS는 side effect 어떻게 다룰까에 관한 문제임&lt;/li>
+&lt;/ul>
+&lt;h3 id="query">Query
+&lt;/h3>&lt;ul>
+&lt;li>객체의 상태를 변경시키지 않고 특정한 값을 리턴하는 메서드&lt;/li>
+&lt;li>상태를 변경시키지 않기때문에 side effect가 발생하지 않음&lt;/li>
+&lt;li>command에서 사용할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="command">Command
+&lt;/h3>&lt;ul>
+&lt;li>객체의 상태를 변화시키는 메서드&lt;/li>
+&lt;li>리턴값이 존재하지 않음&lt;/li>
+&lt;li>commnd는 객체의 상태를 변경하는 메서드이므로 side effect가 존재&lt;/li>
+&lt;li>query에서 호출할 수 없음&lt;/li>
+&lt;/ul>
+&lt;h3 id="장점">장점
+&lt;/h3>&lt;ul>
+&lt;li>디버깅시 조회에 관한 부분은 Query에서, side effect에 관한 부분은 command만 검사하면 됨&lt;/li>
+&lt;li>복잡성이 줄어든다&lt;/li>
+&lt;/ul>
+&lt;h3 id="단점">단점
+&lt;/h3>&lt;ul>
+&lt;li>하지만 command임에도 리턴값이 필요한 상황이 존재한다&lt;/li>
+&lt;li>ex) 최종 변경사항을 리턴해줘야하는 경우, Stack의 pop메서드&lt;/li>
+&lt;li>command라는 네이밍을 가지고 메서드명도 충분히 command라는걸 표현함에도 이걸 쿼리처럼 사용하는 사람이 문제라는 결론&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Query&lt;/p>
+&lt;ul>
+&lt;li>하나의 값을 받아서 어떠한 처리를 하는 함수&lt;/li>
+&lt;li>side effect가 존재해서는 안됨&lt;/li>
+&lt;li>Procedure에서 호출될 수 있음&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>Procedure&lt;/p>
+&lt;ul>
+&lt;li>하나의 값을 받아서 결과를 리턴해주는 함수&lt;/li>
+&lt;li>side effect가 존재함&lt;/li>
+&lt;li>Query에서 호출할 수 없음
+&lt;ul>
+&lt;li>query에서는 side effect가 생기면 안되기 때문&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://martinfowler.com/bliki/CommandQuerySeparation.html" target="_blank" rel="noopener"
+>https://martinfowler.com/bliki/CommandQuerySeparation.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://blog.ploeh.dk/2014/08/11/cqs-versus-server-generated-ids/" target="_blank" rel="noopener"
+>https://blog.ploeh.dk/2014/08/11/cqs-versus-server-generated-ids/&lt;/a>&lt;/p>
+&lt;p>#Software-design&lt;/p></description></item></channel></rss>

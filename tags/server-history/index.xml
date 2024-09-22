@@ -1,0 +1,1470 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Server-History on Sungho's Dev BLog</title><link>https://sungho94.me/tags/server-history/</link><description>Recent content in Server-History on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sun, 31 Mar 2024 22:41:00 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/server-history/index.xml" rel="self" type="application/rss+xml"/><item><title>15 - 가상스레드 vs 리액티브 스트림즈 vs 코루틴</title><link>https://sungho94.me/p/15-%EA%B0%80%EC%83%81%EC%8A%A4%EB%A0%88%EB%93%9C-vs-%EB%A6%AC%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%8A%A4%ED%8A%B8%EB%A6%BC%EC%A6%88-vs-%EC%BD%94%EB%A3%A8%ED%8B%B4/</link><pubDate>Sun, 31 Mar 2024 22:41:00 +0000</pubDate><guid>https://sungho94.me/p/15-%EA%B0%80%EC%83%81%EC%8A%A4%EB%A0%88%EB%93%9C-vs-%EB%A6%AC%EC%95%A1%ED%8B%B0%EB%B8%8C-%EC%8A%A4%ED%8A%B8%EB%A6%BC%EC%A6%88-vs-%EC%BD%94%EB%A3%A8%ED%8B%B4/</guid><description>&lt;p>가상쓰레드, 리액티브 스트림즈, 코루틴 이 세가지 프로젝트는 모두 Blocking I/O로 인한 병목을 줄이기 위해 nonBlocking I/O를 사용할 목적으로 쓰이고 있습니다.&lt;/p>
+&lt;p>기존에는 리액티브 스트림즈, 코루틴으로 nonBlocking I/O를 사용했다면, 작년 가상쓰레드가 나온 이후, 과연 어떻게될 지에 대해 개인적인 의견 및 정보들을 작성하려 합니다.&lt;/p>
+&lt;p>우선 세가지 프로젝트의 목표에 대해 이야기 하려합니다.&lt;/p>
+&lt;h2 id="리액티브-스트림즈httpswwwreactive-streamsorg">&lt;a class="link" href="https://www.reactive-streams.org/" target="_blank" rel="noopener"
+>리액티브 스트림즈&lt;/a>
+&lt;/h2>&lt;p>&lt;code>The main goal of Reactive Streams is to govern the exchange of stream data across an asynchronous boundary—think passing elements on to another thread or thread-pool—while ensuring that the receiving side is not forced to buffer arbitrary amounts of data. In other words, back pressure is an integral part of this model in order to allow the queues which mediate between threads to be bounded. The benefits of asynchronous processing would be negated if the communication of back pressure were synchronous (see also the [Reactive Manifesto](http://reactivemanifesto.org/)), therefore care has to be taken to mandate fully non-blocking and asynchronous behavior of all aspects of a Reactive Streams implementation.&lt;/code>&lt;/p>
+&lt;p>간단히 요약해보자면&lt;br>
+&lt;code>비동기 뿐만이 아닌, 쓰레드간 element들을 교환하여 백프레셔를 지원하여 수신측에서 리소스를 지원한다&lt;/code>&lt;br>
+입니다&lt;/p>
+&lt;p>리액티브 스트림즈트는 비동기 뿐만이 아닌, 배압까지 신경쓰고 있는 것을 알 수 있습니다&lt;/p>
+&lt;h2 id="코루틴httpsgithubcomkotlinkeepblobmasterproposalscoroutinesmd">&lt;a class="link" href="https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md" target="_blank" rel="noopener"
+>코루틴&lt;/a>
+&lt;/h2>&lt;p>&lt;code>No dependency on a particular implementation of Futures or other such rich library; &lt;/code>Cover equally the &amp;ldquo;async/await&amp;rdquo; use case and &amp;ldquo;generator blocks&amp;rdquo;;&lt;code> &lt;/code>Make it possible to utilize Kotlin coroutines as wrappers for different existing asynchronous APIs (such as Java NIO, different implementations of Futures, etc).`&lt;/p>
+&lt;p>코루틴의 목표는&lt;code>Futures와 다른 라이브러리 의존 없이, 비동기 api의 래퍼를 제공&lt;/code>하는것 입니다&lt;/p>
+&lt;h2 id="가상-스레드httpsopenjdkorgjeps444">&lt;a class="link" href="https://openjdk.org/jeps/444" target="_blank" rel="noopener"
+>가상 스레드&lt;/a>
+&lt;/h2>&lt;p>&lt;code>Enable server applications written in the simple thread-per-request style to scale with near-optimal hardware utilization.&lt;/code>&lt;br>
+&lt;code>Enable existing code that uses the java.lang.Thread API to adopt virtual threads with minimal change.&lt;/code>&lt;br>
+&lt;code>Enable easy troubleshooting, debugging, and profiling of virtual threads with existing JDK tools.&lt;/code>&lt;/p>
+&lt;p>가상스레드의 목표는 &lt;code>최소한의 변경으로, 현재 서버 애플리케이션이 작성된 요청당 스레드 모델의 최적화된 하드웨어 사용&lt;/code>이라는 것을 알 수 있습니다.&lt;br>
+&lt;br>
+추가로 Improving scalability with the asynchronous style을 살펴보면 reactive에 대한 내용이 더 나온다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Some&lt;/span> &lt;span class="n">developers&lt;/span> &lt;span class="n">wishing&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">utilize&lt;/span> &lt;span class="n">hardware&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">its&lt;/span> &lt;span class="n">fullest&lt;/span> &lt;span class="n">have&lt;/span> &lt;span class="n">given&lt;/span> &lt;span class="n">up&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">per&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">request&lt;/span> &lt;span class="n">style&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">favor&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">sharing&lt;/span> &lt;span class="n">style&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">Instead&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">handling&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">request&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">one&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">from&lt;/span> &lt;span class="n">start&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">finish&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">code&lt;/span> &lt;span class="n">returns&lt;/span> &lt;span class="n">its&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">pool&lt;/span> &lt;span class="n">when&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">waits&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">another&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="n">operation&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">complete&lt;/span> &lt;span class="n">so&lt;/span> &lt;span class="n">that&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">can&lt;/span> &lt;span class="n">service&lt;/span> &lt;span class="n">other&lt;/span> &lt;span class="n">requests&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">This&lt;/span> &lt;span class="n">fine&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">grained&lt;/span> &lt;span class="n">sharing&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">threads&lt;/span> &lt;span class="err">—&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">which&lt;/span> &lt;span class="n">code&lt;/span> &lt;span class="n">holds&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">only&lt;/span> &lt;span class="k">while&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">performs&lt;/span> &lt;span class="n">calculations&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="k">while&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">waits&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="err">—&lt;/span> &lt;span class="n">allows&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">high&lt;/span> &lt;span class="n">number&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">concurrent&lt;/span> &lt;span class="n">operations&lt;/span> &lt;span class="n">without&lt;/span> &lt;span class="n">consuming&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">high&lt;/span> &lt;span class="n">number&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">threads&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">While&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">removes&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">limitation&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">throughput&lt;/span> &lt;span class="n">imposed&lt;/span> &lt;span class="n">by&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">scarcity&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="ne">OS&lt;/span> &lt;span class="n">threads&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">it&lt;/span> &lt;span class="n">comes&lt;/span> &lt;span class="n">at&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">high&lt;/span> &lt;span class="n">price&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">It&lt;/span> &lt;span class="n">requires&lt;/span> &lt;span class="n">what&lt;/span> &lt;span class="n">is&lt;/span> &lt;span class="n">known&lt;/span> &lt;span class="n">as&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">_asynchronous_&lt;/span> &lt;span class="n">programming&lt;/span> &lt;span class="n">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">employing&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">separate&lt;/span> &lt;span class="n">set&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="n">methods&lt;/span> &lt;span class="n">that&lt;/span> &lt;span class="k">do&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">wait&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">I&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">O&lt;/span> &lt;span class="n">operations&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">complete&lt;/span> &lt;span class="n">but&lt;/span> &lt;span class="n">rather&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">later&lt;/span> &lt;span class="n">on&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="k">signal&lt;/span> &lt;span class="n">their&lt;/span> &lt;span class="n">completion&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">callback&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">Without&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">dedicated&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">developers&lt;/span> &lt;span class="n">must&lt;/span> &lt;span class="k">break&lt;/span> &lt;span class="n">down&lt;/span> &lt;span class="n">their&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">logic&lt;/span> &lt;span class="n">into&lt;/span> &lt;span class="n">small&lt;/span> &lt;span class="n">stages&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">typically&lt;/span> &lt;span class="n">written&lt;/span> &lt;span class="n">as&lt;/span> &lt;span class="n">lambda&lt;/span> &lt;span class="n">expressions&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">then&lt;/span> &lt;span class="n">compose&lt;/span> &lt;span class="n">them&lt;/span> &lt;span class="n">into&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">sequential&lt;/span> &lt;span class="n">pipeline&lt;/span> &lt;span class="n">with&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">API&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">see&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">CompletableFuture&lt;/span>&lt;span class="p">](&lt;/span>&lt;span class="n">https&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">oracle&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">en&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">javase&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">21&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">base&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">util&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">concurrent&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">CompletableFuture&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="p">),&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">example&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">or&lt;/span> &lt;span class="n">so&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">called&lt;/span> &lt;span class="s2">&amp;#34;reactive&amp;#34;&lt;/span> &lt;span class="n">frameworks&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">They&lt;/span> &lt;span class="n">thus&lt;/span> &lt;span class="n">forsake&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">language&lt;/span>&lt;span class="s1">&amp;#39;s basic sequential composition operators, such as loops and `try/catch` blocks.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">In&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">asynchronous&lt;/span> &lt;span class="n">style&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">each&lt;/span> &lt;span class="n">stage&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">request&lt;/span> &lt;span class="n">might&lt;/span> &lt;span class="n">execute&lt;/span> &lt;span class="n">on&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">different&lt;/span> &lt;span class="n">thread&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">every&lt;/span> &lt;span class="n">thread&lt;/span> &lt;span class="n">runs&lt;/span> &lt;span class="n">stages&lt;/span> &lt;span class="n">belonging&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">different&lt;/span> &lt;span class="n">requests&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">interleaved&lt;/span> &lt;span class="n">fashion&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">This&lt;/span> &lt;span class="n">has&lt;/span> &lt;span class="n">deep&lt;/span> &lt;span class="n">implications&lt;/span> &lt;span class="k">for&lt;/span> &lt;span class="n">understanding&lt;/span> &lt;span class="n">program&lt;/span> &lt;span class="n">behavior&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="n">Stack&lt;/span> &lt;span class="n">traces&lt;/span> &lt;span class="n">provide&lt;/span> &lt;span class="n">no&lt;/span> &lt;span class="n">usable&lt;/span> &lt;span class="n">context&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">debuggers&lt;/span> &lt;span class="n">cannot&lt;/span> &lt;span class="n">step&lt;/span> &lt;span class="n">through&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">logic&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="ow">and&lt;/span> &lt;span class="n">profilers&lt;/span> &lt;span class="n">cannot&lt;/span> &lt;span class="n">associate&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">operation&lt;/span>&lt;span class="s1">&amp;#39;s cost with its caller. Composing lambda expressions is manageable when using Java&amp;#39;&lt;/span>&lt;span class="n">s&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">stream&lt;/span> &lt;span class="n">API&lt;/span>&lt;span class="p">](&lt;/span>&lt;span class="n">https&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">//&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">oracle&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">com&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">en&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">javase&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="mi">21&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">docs&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">api&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">base&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">java&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">util&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">stream&lt;/span>&lt;span class="o">/&lt;/span>&lt;span class="n">package&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">summary&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">html&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="n">to&lt;/span> &lt;span class="n">process&lt;/span> &lt;span class="n">data&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">a&lt;/span> &lt;span class="n">short&lt;/span> &lt;span class="n">pipeline&lt;/span> &lt;span class="n">but&lt;/span> &lt;span class="n">problematic&lt;/span> &lt;span class="n">when&lt;/span> &lt;span class="n">all&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">request&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="n">handling&lt;/span> &lt;span class="n">code&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">an&lt;/span> &lt;span class="n">application&lt;/span> &lt;span class="n">must&lt;/span> &lt;span class="n">be&lt;/span> &lt;span class="n">written&lt;/span> &lt;span class="ow">in&lt;/span> &lt;span class="n">this&lt;/span> &lt;span class="n">way&lt;/span>&lt;span class="o">.&lt;/span> &lt;span class="n">This&lt;/span> &lt;span class="n">programming&lt;/span> &lt;span class="n">style&lt;/span> &lt;span class="n">is&lt;/span> &lt;span class="n">at&lt;/span> &lt;span class="n">odds&lt;/span> &lt;span class="n">with&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">Java&lt;/span> &lt;span class="n">Platform&lt;/span> &lt;span class="n">because&lt;/span> &lt;span class="n">the&lt;/span> &lt;span class="n">application&lt;/span>&lt;span class="s1">&amp;#39;s unit of concurrency — the asynchronous pipeline — is no longer the platform&amp;#39;&lt;/span>&lt;span class="n">s&lt;/span> &lt;span class="n">unit&lt;/span> &lt;span class="n">of&lt;/span> &lt;span class="n">concurrency&lt;/span>&lt;span class="o">.&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>리액티브 스타일의 어려운점(코드 스타일, 스택 트레이스, 디버깅 등)을 언급하는 부분이 있다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">Typically, a virtual thread will unmount when it blocks on I/O or some other blocking operation in the JDK, such as `BlockingQueue.take()`. When the blocking operation is ready to complete (e.g., bytes have been received on a socket), it submits the virtual thread back to the scheduler, which will mount the virtual thread on a carrier to resume execution.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>추가로 virtual Thread는 Blocking작업을 해당 스레드 unmount를 통해 Blocking을 회피할 수 있는것도 알 수 있다.&lt;/p>
+&lt;h2 id="결론">결론
+&lt;/h2>&lt;p>이를보면 가상 스레드가 리액티브 스트림즈를 대체하는 Blocking I/O로 인한 병목을 줄이는 기능을 하지않을까 싶다.&lt;/p>
+&lt;p>java reactor에서 virtual thread를 사용하는 scheduler를 추가하며 vitual thread를 지원한다.&lt;br>
+지원한다고 해도 reactive streams의 단점이 뚜렸다하기에 reactive streams의 추가적인 기능인 배압을 사용하지 않는 이상, virtual thread를 사용하는게 더 나을거란 생각이다.&lt;/p>
+&lt;p>coroutine에서도 가상스레드를 지원하지만, Coroutine 또한 코드의 변경이 필요하기에, 가상스레드가 더 나을거라 생각된다&lt;/p>
+&lt;p>개인적으로 리액티브 스트림즈 구현체인 리액터를 사용하면서 어려운점이 많았기에 얼른 가상스레드를 사용하고 싶다.&lt;br>
+하지만 가상스레드가 나왔지만, 데이터베이스 드라이버 같은 외부 라이브러리의 수정이 완성되지 않아 업무 프로젝트에는 사용하기 어려운점이 아쉽다.&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.reactive-streams.org/" target="_blank" rel="noopener"
+>https://www.reactive-streams.org/&lt;/a>&lt;br>
+&lt;a class="link" href="https://openjdk.org/jeps/444" target="_blank" rel="noopener"
+>https://openjdk.org/jeps/444&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md" target="_blank" rel="noopener"
+>https://github.com/Kotlin/KEEP/blob/master/proposals/coroutines.md&lt;/a>&lt;br>
+&lt;a class="link" href="https://blog.honeybomb.kr/9" target="_blank" rel="noopener"
+>https://blog.honeybomb.kr/9&lt;/a>&lt;br>
+&lt;a class="link" href="https://perfectacle.github.io/2023/07/10/java-virtual-thread-vs-kotlin-coroutine/" target="_blank" rel="noopener"
+>https://perfectacle.github.io/2023/07/10/java-virtual-thread-vs-kotlin-coroutine/&lt;/a>&lt;/p></description></item><item><title>11-Reactor Java(2)</title><link>https://sungho94.me/p/11-reactor-java2/</link><pubDate>Tue, 05 Mar 2024 22:41:02 +0000</pubDate><guid>https://sungho94.me/p/11-reactor-java2/</guid><description>&lt;h1 id="threading-and-scheduler">Threading and Scheduler
+&lt;/h1>&lt;ul>
+&lt;li>Flux나 Mono를 얻는다고 실행되지 않음&lt;/li>
+&lt;li>따로 지정하지 않으면 Reactor는 subscribe가 발생한 쓰레드에서 모든 연산자가 실행됨&lt;/li>
+&lt;li>Reactor가 실행되는 위치는 스케줄러에 의해 정해짐&lt;/li>
+&lt;/ul>
+&lt;h3 id="schedulersimmediate">Schedulers.immediate()
+&lt;/h3>&lt;ul>
+&lt;li>직접적으로 현재 실행되고 있는 쓰레드에서 실행됨&lt;/li>
+&lt;/ul>
+&lt;h3 id="schedulerssingle">Schedulers.single()
+&lt;/h3>&lt;ul>
+&lt;li>쓰레드를 생성하여 스케줄러가 dispose될때까지 모든 호출자에 대해 동일한 쓰레드를 재사용&lt;/li>
+&lt;li>호출별 새로운 쓰레드를 생성하고 싶다면 Schedulers.newSingle()을 사용해야함&lt;/li>
+&lt;/ul>
+&lt;h3 id="schedulerselastic">Schedulers.elastic()
+&lt;/h3>&lt;ul>
+&lt;li>배압 문제를 숨기고 너무많은 쓰레드를 생성하기에 Schedulers.boundedElastic()가 도입된 이후로 잘 사용되지 않음&lt;/li>
+&lt;/ul>
+&lt;h3 id="schedulersboundedelastic">Schedulers.boundedElastic()
+&lt;/h3>&lt;ul>
+&lt;li>필요에 따라 워커풀을 생성하고, idle한 워커풀이 있다면 재사용함&lt;/li>
+&lt;li>워커풀이 일정시간 사용되지 않으면 삭제됨(기본 60초)&lt;/li>
+&lt;li>Schedulers.elastic()과 달리 워커풀 생성에 제한이 있음(기본 cpu core*\10)&lt;/li>
+&lt;li>한도에 도달한다면 최대 100,000 작업이 큐에 추가됨&lt;/li>
+&lt;li>쓰레드가 다시 재사용 될때 큐에 추가됨
+&lt;ul>
+&lt;li>100,000이 넘게 추가되면 에러발생&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>블로킹프로세스에 자체 쓰레드를 부여하여 다른 리소스 묶이지 않도록 할 수 있음
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://projectreactor.io/docs/core/release/reference/#faq.wrap-blocking" target="_blank" rel="noopener"
+>링크&lt;/a>참고&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="schedulersparallel">Schedulers.parallel()
+&lt;/h3>&lt;ul>
+&lt;li>병렬 작업에 맞게 고정된 워커풀을 생성&lt;/li>
+&lt;li>CPU Core개수만큼 워커풀을 생성함&lt;/li>
+&lt;/ul>
+&lt;h3 id="추가">추가
+&lt;/h3>&lt;ul>
+&lt;li>&lt;code>Schedulers.fromExecutorService(ExecutorService)&lt;/code>를 사용하여 ExecutorService를 Scheduler로 사용할 수 있음&lt;/li>
+&lt;li>&lt;code>newXXX&lt;/code>를 사용하여 다양한 스케줄러 타입의 인스턴스를 생성할 수 있음&lt;/li>
+&lt;li>boundedElastic()은 single과 parallel과 다르게 피할 수 없는 legacy blocking콜을 사용하는데
+&lt;ul>
+&lt;li>single과 perallel을 사용한다면 blocking api(block(), blockFirst(), blockLast())를 사용하면 IllegalStateException을 발생시킴&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>어떤 연산자는 기본으로 특정 Schduler를 사용함
+&lt;ul>
+&lt;li>ex) Flux.interval는 Schedulers.parallel()을 사용함
+&lt;ul>
+&lt;li>변경가능함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="publishon-subscribeon">publishOn, subscribeOn
+&lt;/h2>&lt;ul>
+&lt;li>Reactor에서는 Reactor chain 내에서 실행 컨택스트를 바꿀 수 있는 publishOn과 subscribeOn을 제공함&lt;/li>
+&lt;/ul>
+&lt;h3 id="publishon">publishOn
+&lt;/h3>&lt;ul>
+&lt;li>다른 오퍼레이터들과 같이 체인 내에서 적용될 수 있음&lt;/li>
+&lt;li>연관된 Scheduler의 worker에서 콜백이 실행되는 동안 업스트림에서 신호를 받아, 다운스트림으로 재생해줌
+&lt;ul>
+&lt;li>따라서 후속 오퍼레이터가 실행되는 곳에 영향을 미침&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>스케줄러에서 선택된 하나의 쓰레드로 실행 컨텍스트를 변경함&lt;/li>
+&lt;li>시퀀스 내에서 onNext를 호출하면 선택된 쓰레드로 실행됨&lt;/li>
+&lt;li>이후 특정 스케줄러를 지정하지 않는 한, publishOn 이후의 연산자는 동일한 쓰레드에서 실행됨&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">Scheduler s = Schedulers.newParallel(&amp;#34;parallel-scheduler&amp;#34;, 4); 1번 쓰레드
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">final Flux&amp;lt;String&amp;gt; flux = Flux
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .range(1, 2) // 2번 쓰레드로 실행
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .map(i -&amp;gt; 10 + i) // 2번 쓰레드로 실행
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .publishOn(s)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .map(i -&amp;gt; &amp;#34;value &amp;#34; + i); // 1번 쓰레드로 실행
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">new Thread(() -&amp;gt; flux.subscribe(System.out::println)); - 2번 쓰레드
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="subscribeon">subscribeOn
+&lt;/h3>&lt;ul>
+&lt;li>backward chain이 구성될때, 구독처리과정에서 subscribeOn을 적용함&lt;/li>
+&lt;li>중간 연산자가 실행컨택스트에 영향을 줄 수 있으므로 데이터 소스 바로 뒤에 적용하는 것이 좋음&lt;/li>
+&lt;li>publishOn동작에는 영향을 미치지 않음&lt;/li>
+&lt;li>구독하는 전체 체인의 Scheduler의 쓰레드를 변경함&lt;/li>
+&lt;li>스케줄러에서 하나의 쓰레드를 선택함&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">Scheduler s = Schedulers.newParallel(&amp;#34;parallel-scheduler&amp;#34;, 4); - 1번 쓰레드
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">final Flux&amp;lt;String&amp;gt; flux = Flux
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .range(1, 2)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .map(i -&amp;gt; 10 + i) // 1번쓰레드로 실행
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .subscribeOn(s) // 1번쓰레드로 실행
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> .map(i -&amp;gt; &amp;#34;value &amp;#34; + i); // 1번쓰레드로 실행
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">new Thread(() -&amp;gt; flux.subscribe(System.out::println)); - 2번쓰레드
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>
+&lt;p>subscribeOn이 있다면 어디서 구독하든 subscribeOn의 Scheduler를 사용하여 시작함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>스케줄러 공부자료 &lt;a class="link" href="https://wiki.terzeron.com/Programming/Java/Reactor_Flux%EC%9D%98_publishOn_subscribeOn%EC%9D%84_%EC%9D%B4%EC%9A%A9%ED%95%9C_%EC%8A%A4%EC%BC%80%EC%A5%B4%EB%A7%81" target="_blank" rel="noopener"
+>링크&lt;/a>참고&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="sink">Sink
+&lt;/h2>&lt;ul>
+&lt;li>signal을 수동으로 트리거 할 수 있는 구조&lt;/li>
+&lt;li>여러 Subscriber를 처리할 수 있는 Publisher구조를 가짐
+&lt;ul>
+&lt;li>unicast()는 아님&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="hot-vs-cold">Hot vs Cold
+&lt;/h2>&lt;h3 id="cold">Cold
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218210001.png"
+loading="lazy"
+alt="center|400"
+>&lt;/p>
+&lt;ul>
+&lt;li>구독이 생성될때마다 새로운 데이터를 생성&lt;/li>
+&lt;li>구독이 생성되지 않으면, 데이터를 생성하지 않음&lt;/li>
+&lt;li>HTTP 요청에 비유하면, 구독이 생성될때마다 HTTP 요청을 보냄&lt;/li>
+&lt;/ul>
+&lt;h3 id="hot">Hot
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218210038.png"
+loading="lazy"
+alt="center|400"
+>&lt;/p>
+&lt;ul>
+&lt;li>구독자의 수에 영향을 받지 않음&lt;/li>
+&lt;li>즉시 데이터를 publishing 할 수 있음&lt;/li>
+&lt;li>구독하기 전에 실제로 어떠한 일이 발생할 수 있음&lt;/li>
+&lt;li>데이터 생성 중간에 새로운 구독자가 들어오면, 새로온 구독자는 그전의 데이터를 알지 못하고, 구독 이후에 데이터만 전달받음&lt;/li>
+&lt;li>Hot publisher의 예시로 just가 있는데 어셈블리 시점에 데이터를 캡처하고, 나중에 오는 구독자에게 이를 생성함&lt;/li>
+&lt;li>HTTP요청에 비유하면, 인스턴스화 할때 네트워크 요청이 한번 실행되고 구독자에게 이 결과를 전달함
+&lt;ul>
+&lt;li>구독이 늘어난다고 해서 HTTP요청을 여러번 실행하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>just를 cold publisher로 변환하려면 defer를 사용하면 됨&lt;br>
+share 또는 replay를 사용한다면 cold publisher를 hot publisher로 전환가능&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://binux.tistory.com/135" target="_blank" rel="noopener"
+>관련공부자료&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;h2 id="default-scheduler-변경방법">default scheduler 변경방법
+&lt;/h2>&lt;ul>
+&lt;li>Schedulers.Factory를 사용하여 가능&lt;/li>
+&lt;li>&lt;a class="link" href="https://projectreactor.io/docs/core/release/reference/#scheduler-factory" target="_blank" rel="noopener"
+>링크&lt;/a> 참고&lt;/li>
+&lt;/ul>
+&lt;h2 id="context">Context
+&lt;/h2>&lt;ul>
+&lt;li>명령형 프로그래밍에서 사용하는 Thread Local의 대안&lt;/li>
+&lt;li>세부사항
+&lt;ul>
+&lt;li>Map자료 구조와 유사함&lt;/li>
+&lt;li>key와 value가 Object, Object타입으로 다양한 값들을 넣을 수 있음
+&lt;ul>
+&lt;li>다양한 라이브러리들과 호환 위해&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>불변임, put 또는 putAll이 발생한다면 새로운 인스턴스가 생성됨&lt;/li>
+&lt;li>ContextView인 read only api는 write와 관련된 메서드를 제공하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>실제로 체인에 있는 구독자에게 연결됨&lt;/li>
+&lt;li>구독 전파매커니즘을 통해 최종 구독자로부터 위로 올라가면서 각각의 operator가 Context를 사용하게 해줌&lt;/li>
+&lt;li>&lt;em>inner sequence에서 외부의 context를 읽을 수 있음&lt;/em>&lt;/li>
+&lt;li>thread local 데이터를 자동으로 context에 넣어주는 Context-Propagation관련 기능도 있음 &lt;a class="link" href="https://projectreactor.io/docs/core/release/reference/#context.propagation" target="_blank" rel="noopener"
+>링크&lt;/a>참고&lt;/li>
+&lt;li>context 공부 예제 &lt;a class="link" href="https://devfunny.tistory.com/916" target="_blank" rel="noopener"
+>링크&lt;/a> 참고&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://projectreactor.io/docs/core/release/reference/index.html" target="_blank" rel="noopener"
+>https://projectreactor.io/docs/core/release/reference/index.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://brunch.co.kr/@springboot/153" target="_blank" rel="noopener"
+>https://brunch.co.kr/@springboot/153&lt;/a>&lt;/p></description></item><item><title>10-Reactor Java(1)</title><link>https://sungho94.me/p/10-reactor-java1/</link><pubDate>Tue, 05 Mar 2024 22:41:01 +0000</pubDate><guid>https://sungho94.me/p/10-reactor-java1/</guid><description>&lt;ul>
+&lt;li>callback보다 나은점
+&lt;ul>
+&lt;li>callback hell이 발생하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Future보다 나은점
+&lt;ul>
+&lt;li>더 많은 연산자를 지원함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="flux">Flux
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231208223306.png"
+loading="lazy"
+alt="Pasted image 20231208223306"
+>&lt;/p>
+&lt;ul>
+&lt;li>Flux&amp;lt;T&amp;gt;는 0개에서 N개의 비동기 시퀀스 항목을 방출하는 Publisher&amp;lt;T&amp;gt;임&lt;/li>
+&lt;li>onComplete 혹은 onError로 종료됨&lt;/li>
+&lt;li>&lt;code>onNext&lt;/code>, &lt;code>onComplete&lt;/code>, &lt;code>onError&lt;/code> 로 downstream을 호출할 수 있음&lt;/li>
+&lt;li>종료를 포함한 모든 이벤트는 선택사항힘
+&lt;ul>
+&lt;li>onNext가 없고 onComplete만 있다면 빈 유한 시퀀스임&lt;/li>
+&lt;li>onNext 있고 onComplete가 없다면 무한 시퀀스임&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="mono">Mono
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231208224210.png"
+loading="lazy"
+alt="Pasted image 20231208224210"
+>&lt;/p>
+&lt;ul>
+&lt;li>최대 하나의 항목만을 emit하는 Publisher&lt;/li>
+&lt;li>onNext이후 onComplete가 호출되거나 하나의 onError가 호출됨&lt;/li>
+&lt;li>Mono는 Flux에 비해 제한된 연산자를 제공함
+&lt;ul>
+&lt;li>하나의 항목만 방출하니까&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Mono#concatWith(Publisher) 등 여러 메스드로 Mono를 Flux로 변경가능함&lt;/li>
+&lt;li>Mono&amp;lt;Void&amp;gt;로 완료개념만 있는 비동기 시퀀스를 생성가능&lt;/li>
+&lt;/ul>
+&lt;h2 id="그외-개념">그외 개념
+&lt;/h2>&lt;h3 id="hot-sequence-vs-cold-sequence">Hot Sequence vs Cold Sequence
+&lt;/h3>&lt;ul>
+&lt;li>Hot Sequence
+&lt;ul>
+&lt;li>한번 구독하면 생성된 시퀀스를 재사용함&lt;/li>
+&lt;li>나중에 구독한 구독자는 이전꺼 시퀀스를 받지 못하고 구독이후의 시퀀스를 받을 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Cold Sequence
+&lt;ul>
+&lt;li>구독할때마다 시퀀스가 재 생성됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="disposable">Disposable
+&lt;/h3>&lt;ul>
+&lt;li>subscribe()이 리턴하는 값&lt;/li>
+&lt;li>Disposable을 사용해서 cancel가능&lt;/li>
+&lt;li>Disposables.composite()를 사용해서 Disposable을 묶을 수 있으며 한번에 취소가능&lt;/li>
+&lt;/ul>
+&lt;h3 id="basesubscriber">BaseSubscriber
+&lt;/h3>&lt;ul>
+&lt;li>Reactor에서 사용자 정의 Subscriber를 구현할 수 있는 추상클래스&lt;/li>
+&lt;li>BaseSubscriber를 사용하여 Subscriber를 lambda가 아닌 클래스로 구성가능&lt;/li>
+&lt;li>requestUnbounded()를 통해 unbounded한 reqeust를 구현가능
+&lt;ul>
+&lt;li>request(Long.MAX_VALUE)과 동일&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="backpressure">Backpressure
+&lt;/h3>&lt;ul>
+&lt;li>reactor에서 Backpressure를 구현하는 방법은 request를 사용하는것&lt;/li>
+&lt;li>최대 Long.MAX_VALUE까지 가능함&lt;/li>
+&lt;/ul>
+&lt;h3 id="downstream에서-demand가-바뀔-수-있음">DownStream에서 Demand가 바뀔 수 있음
+&lt;/h3>&lt;ul>
+&lt;li>request로 몇개의 item을 받을 것인지 결정됨&lt;/li>
+&lt;li>하지만 중간에 buffer와 같은 연산자로 생산되는 item이 바뀔 수 있음
+&lt;ul>
+&lt;li>request가 2고 중간에 버퍼가 2라면 2*2인 4개의 item이 생산됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>limitRate, prefetch라는 개념도 있음
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://projectreactor.io/docs/core/release/reference/#_operators_that_change_the_demand_from_downstream" target="_blank" rel="noopener"
+>링크&lt;/a>참고&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="sequence를-생성하는법">Sequence를 생성하는법
+&lt;/h3>&lt;ul>
+&lt;li>generate
+&lt;ul>
+&lt;li>동기적으로 하나하나씩 생성&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>create
+&lt;ul>
+&lt;li>비동기, 멀티쓰레드 방식으로 생성&lt;/li>
+&lt;li>Flux sink를 사용&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>push
+&lt;ul>
+&lt;li>비동기, 싱글쓰레드 방식으로 생성&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>create와 push를 사용한 후에는 onCancel과 onDispose로 끝내야함&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>handle
+&lt;ul>
+&lt;li>인스턴스 메소드로 동기로 하나씩 생성된 것들에 대해 값을 변형하거나, 필터링할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul></description></item><item><title>13-Virtual Thread 1</title><link>https://sungho94.me/p/13-virtual-thread-1/</link><pubDate>Tue, 05 Mar 2024 22:41:00 +0000</pubDate><guid>https://sungho94.me/p/13-virtual-thread-1/</guid><description>&lt;h2 id="정의">정의
+&lt;/h2>&lt;ul>
+&lt;li>처리량이 많은 동시성 애플리케이션을 작성, 유지관리 및 관찰는데 드는 수고를 획기적으로 줄여주는 경량쓰레드임
+&lt;ul>
+&lt;li>jep-444&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="platform-thread">Platform Thread
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231223233300.png"
+loading="lazy"
+alt="Pasted image 20231223233300"
+>&lt;/p>
+&lt;ul>
+&lt;li>기존 Java의 Thread 모델&lt;/li>
+&lt;li>하나의 java쓰레드에 OS Thread를 할당해서 사용&lt;/li>
+&lt;li>새로운 쓰레드가 필요하면 os에 요청해서 가져옴&lt;/li>
+&lt;/ul>
+&lt;h2 id="virtual-thread">Virtual Thread
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231223233244.png"
+loading="lazy"
+alt="Pasted image 20231223233244"
+>&lt;/p>
+&lt;ul>
+&lt;li>Virtual Thread의 쓰레드 모델&lt;/li>
+&lt;li>Virtual Thread 생성시 OS에 요청해서 생성하지 않고. java library에서 생성&lt;/li>
+&lt;li>실제 OS쓰레드에는 Carrier Thread가 매핑이 되고, Carrier Thread를 가지고 있는 Virtual Thread가 현재 실행되고 있는 쓰레드임
+&lt;ul>
+&lt;li>Carrier Thread가 없는 Virtual Thread는 동작중이지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>쓰레드 관리를 JVM에서 함
+&lt;ul>
+&lt;li>컨텍스트 스위칭 처리를 OS단이 아닌 JVM내에서 처리함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="비교">비교
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231223233119.png"
+loading="lazy"
+alt="Pasted image 20231223233119"
+>&lt;/p>
+&lt;h3 id="유의사항">유의사항
+&lt;/h3>&lt;ul>
+&lt;li>CPU bound한 상황에서는 Platform Thread가 더 나은 성능을 보여줌&lt;/li>
+&lt;li>정말 스트리밍 데이터를 사용한다면 reactor를 고려하자&lt;/li>
+&lt;li>syncronized 또는 JNI call 시 carrier thread에 블로킹(pinning)이 발생
+&lt;ul>
+&lt;li>syncronized을 reenterantLock으로 변경&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>thread local데이터를 Heap에 저장하므로 무분별하게 사용시 OOM발생 가능성이 있음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://techblog.woowahan.com/15398/" target="_blank" rel="noopener"
+>https://techblog.woowahan.com/15398/&lt;/a>&lt;br>
+&lt;a class="link" href="https://tech.kakao.com/2023/12/22/techmeet-virtualthread/" target="_blank" rel="noopener"
+>https://tech.kakao.com/2023/12/22/techmeet-virtualthread/&lt;/a>&lt;br>
+&lt;a class="link" href="https://medium.com/deno-the-complete-reference/springboot-virtual-threads-vs-webflux-performance-comparison-for-jwt-verify-and-mysql-query-ff94cf251c2c" target="_blank" rel="noopener"
+>https://medium.com/deno-the-complete-reference/springboot-virtual-threads-vs-webflux-performance-comparison-for-jwt-verify-and-mysql-query-ff94cf251c2c&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.diva-portal.org/smash/get/diva2:1763111/FULLTEXT01.pdf" target="_blank" rel="noopener"
+>https://www.diva-portal.org/smash/get/diva2:1763111/FULLTEXT01.pdf&lt;/a>&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/core/virtual-threads.html#GUID-2BCFC2DD-7D84-4B0C-9222-97F9C7C6C521" target="_blank" rel="noopener"
+>https://docs.oracle.com/en/java/javase/20/core/virtual-threads.html#GUID-2BCFC2DD-7D84-4B0C-9222-97F9C7C6C521&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/brettwooldridge/HikariCP/issues/2151" target="_blank" rel="noopener"
+>https://github.com/brettwooldridge/HikariCP/issues/2151&lt;/a>&lt;br>
+&lt;a class="link" href="https://perfectacle.github.io/2022/12/29/look-over-java-virtual-threads/" target="_blank" rel="noopener"
+>https://perfectacle.github.io/2022/12/29/look-over-java-virtual-threads/&lt;/a>&lt;/p>
+&lt;h3 id="deep-dive-link">deep-dive-link
+&lt;/h3>&lt;p>&lt;a class="link" href="https://blog.rockthejvm.com/ultimate-guide-to-java-virtual-threads/" target="_blank" rel="noopener"
+>https://blog.rockthejvm.com/ultimate-guide-to-java-virtual-threads/&lt;/a>&lt;br>
+&lt;a class="link" href="https://openjdk.org/jeps/425" target="_blank" rel="noopener"
+>https://openjdk.org/jeps/425&lt;/a>&lt;br>
+&lt;a class="link" href="https://softwaremill.com/what-is-blocking-in-loom/" target="_blank" rel="noopener"
+>https://softwaremill.com/what-is-blocking-in-loom/&lt;/a>&lt;br>
+&lt;a class="link" href="https://wiki.openjdk.org/display/loom/Main" target="_blank" rel="noopener"
+>https://wiki.openjdk.org/display/loom/Main&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/74581601/how-does-a-java-virtual-thread-know-when-the-thread-is-waiting" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/74581601/how-does-a-java-virtual-thread-know-when-the-thread-is-waiting&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/70174468/project-loom-what-happens-when-virtual-thread-makes-a-blocking-system-call" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/70174468/project-loom-what-happens-when-virtual-thread-makes-a-blocking-system-call&lt;/a>&lt;br>
+#need-to-deep-dive&lt;/p></description></item><item><title>12-Reactor Scheduler(BoundedElasticScheduler)</title><link>https://sungho94.me/p/12-reactor-schedulerboundedelasticscheduler/</link><pubDate>Tue, 05 Mar 2024 22:11:03 +0000</pubDate><guid>https://sungho94.me/p/12-reactor-schedulerboundedelasticscheduler/</guid><description>&lt;h2 id="서론">서론
+&lt;/h2>&lt;p>Reactor에 대해 여러가지 공부해 보았는데, reactor Scheduler에 대한 글이 없어 소스코드를 보며 분석하였다.&lt;br>
+reactor-netty에서 디폴트로 제공하는 BoundedElasticScheduler에서 어떻게 쓰레드에 작업이 할당되는지 알아보자&lt;/p>
+&lt;h2 id="reactor-scheduler">Reactor Scheduler
+&lt;/h2>&lt;p>실제 작업이 실행될 쓰레드를 할당하는 인터페이스이다.&lt;br>
+java reactor에서는 제공하는 여러가지 스케줄러를 제공하는데, BoundedElasticScheduler는 Scheduler의 구현체이다&lt;/p>
+&lt;h2 id="schedulers">Schedulers
+&lt;/h2>&lt;p>subscribeOn, publishOn에는 Schedulers의 정적 메서드를 사용하여 스케줄러를 지정하기에 Schedulers클래스부터 알아보자&lt;/p>
+&lt;p>필드에 대한 설명이다&lt;/p>
+&lt;h3 id="default_pool_size">DEFAULT_POOL_SIZE
+&lt;/h3>&lt;ul>
+&lt;li>기본 풀 사이즈로, ParallelScheduler 사용 시쓰레드 수를 지정하는 필드이다.&lt;/li>
+&lt;li>&lt;code>reactor.schedulers.defaultPoolSize&lt;/code> 설정으로 값을 지정할 수 있으며 디폴트 값은 시스템의 CPU개수이다&lt;/li>
+&lt;/ul>
+&lt;h3 id="default_bounded_elastic_size">DEFAULT_BOUNDED_ELASTIC_SIZE
+&lt;/h3>&lt;ul>
+&lt;li>BoundedElasticScheduler에서 사용하는 쓰레드 풀 사이즈를 지정하는 필드이다.&lt;/li>
+&lt;li>&lt;code>reactor.schedulers.defaultBoundedElasticSize&lt;/code>로 설정할 수 있으며 디폴트는 시스템의 CPU개수 * 10개이다&lt;/li>
+&lt;/ul>
+&lt;h3 id="default_bounded_elastic_queuesize">DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+&lt;/h3>&lt;ul>
+&lt;li>BoundedElasticScheduler에서 쓰레드 별 큐사이즈를 지정하는 필드이다&lt;/li>
+&lt;li>&lt;code>reactor.schedulers.defaultBoundedElasticQueueSize&lt;/code>로 설정할 수 있으며 디폴트는 100,000개이다&lt;/li>
+&lt;/ul>
+&lt;h3 id="default_bounded_elastic_on_virtual_threads">DEFAULT_BOUNDED_ELASTIC_ON_VIRTUAL_THREADS
+&lt;/h3>&lt;ul>
+&lt;li>BoundedElasticScheduler사용 시 가상쓰레드 여부를 결정하는 필드이다&lt;/li>
+&lt;li>reactor.schedulers.defaultBoundedElasticOnVirtualThreads로 설정할 수있으며, 디폴트로 false이다&lt;/li>
+&lt;/ul>
+&lt;p>이제 스케줄러를 생성하는 메서드에 대해 알아보자&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Scheduler&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">boundedElastic&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">cache&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">CACHED_BOUNDED_ELASTIC&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BOUNDED_ELASTIC&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BOUNDED_ELASTIC_SUPPLIER&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>스케줄러를 생성하는 메서드는 static메서드이고 내부에서 cache로 관리한다.&lt;/p>
+&lt;ul>
+&lt;li>한번 스케줄러를 생성하면 내부에서 캐싱된 스케줄러를 가져온다는것을 알 수있다.&lt;/li>
+&lt;li>ImmediateScheduler, BoundedElasticScheduler, ParallelScheduler는 다 아래와 같은 형태이다&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>prefix로 new가 붙은 메서드를 사용하거나 fromExecuter를 사용해서 새로운 스케줄러를 생성할 수 있다.&lt;/p>
+&lt;/blockquote>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">CachedScheduler&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">cache&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">AtomicReference&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">CachedScheduler&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">reference&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">String&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Supplier&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Scheduler&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">supplier&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">CachedScheduler&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">reference&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">get&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">CachedScheduler&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">key&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">supplier&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">get&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">reference&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">compareAndSet&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">reference&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">get&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>cache메서드 간단하다.&lt;br>
+캐싱된 스케줄러가 있는지 확인하고, 있으면 캐싱된 스케줄러를 반환하고, 없다면 인자로 받은 Scheduler Supplier로 스케줄러를 생성하고, 이를 캐싱한다.&lt;/p>
+&lt;p>그럼 이제 BoundedElasticScheduler를 생성하는 BoundedElasticSchedulerSupplier에 대해 알아보자&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">class&lt;/span> &lt;span class="nc">BoundedElasticSchedulerSupplier&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">implements&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Supplier&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Scheduler&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nd">@Override&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Scheduler&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">get&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">newBoundedElastic&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">DEFAULT_BOUNDED_ELASTIC_SIZE&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">DEFAULT_BOUNDED_ELASTIC_QUEUESIZE&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">BOUNDED_ELASTIC&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedElasticScheduler&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">DEFAULT_TTL_SECONDS&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>newBoundedElastic메서드에 Schedulers의 BoundedElasticScheduler의 설정값이 들어가는 것을 볼 수 있다.&lt;/p>
+&lt;h2 id="boundedelasticscheduler">BoundedElasticScheduler
+&lt;/h2>&lt;p>이제 BoundedElasticScheduler에서 작업을 할당하는 schedule메서드를 알아보자&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="nd">@Override&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Disposable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">schedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Runnable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TimeUnit&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">//tasks running once will call dispose on the BoundedState, decreasing its usage by one &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">currentResource&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">pick&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">try&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Schedulers&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">directSchedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">executor&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">catch&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">RejectedExecutionException&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ex&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// ensure to free the BoundedState so it can be reused &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">dispose&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">throw&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ex&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>로직은 간단한데, schedule메서드는 currentResource의 pick메서드를 호출하여 BoundedState를 가져오고, 스케줄러에 작업을 예약한다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="n">BoundedState&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">pick&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">for&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">busyStates&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ALL_SHUTDOWN&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">CREATING&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">get&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="n">idleQueue&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">isEmpty&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">bs&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">idleQueue&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">pollLast&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">bs&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&amp;amp;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">bs&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">markPicked&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">accepted&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">setBusy&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">bs&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="n">accepted&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// shutdown in the meantime &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">bs&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">shutdown&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">CREATING&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">bs&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">maxThreads&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">compareAndSet&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">a&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">))&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ScheduledExecutorService&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Schedulers&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">decorateExecutorService&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">createBoundedExecutorService&lt;/span>&lt;span class="p">());&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">newState&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">markPicked&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">accepted&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">setBusy&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">newState&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="n">accepted&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c1">// shutdown in the meantime &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">newState&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">shutdown&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">CREATING&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">newState&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">choseOneBusy&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&amp;amp;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">markPicked&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">s&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>pick메서드는 무한 루프를 돌며 사용 가능한 BoundedState를 가져온다&lt;/p>
+&lt;p>line 3에서 busyState가 전부 종료되어 있다면 종료상태의 BoundedState를 리턴한다&lt;/p>
+&lt;ul>
+&lt;li>CREATE enum으로 되어있지만, CREATE는 기본 실행기로서 종료와 같은 상태이므로 종료된 BoundedState를 리턴함&lt;/li>
+&lt;li>종료된 상태의 executer가 전달되기에 작업은 실행되지 않음&lt;/li>
+&lt;/ul>
+&lt;p>line 8에서는 idle한 BoundedState가 있는지 확인하고, 있다면 idleQueue에서 BoundedState를 하나 꺼내 리턴함&lt;/p>
+&lt;p>line 19에서는 현재 생성된 쓰레드 수가 최대 생성 가능한 쓰레드보다 작은지 확인 한다. 작다면 새로운 스케줄러 스레드를 생성해 BoundedState를 만들어 리턴함&lt;/p>
+&lt;p>line 33에서는 busy상태에 있는 BoundedState 중 작업이 가장 적게 할당된 BoundedState를 가져와 리턴한다.&lt;/p>
+&lt;p>다시 schedule메서드를 보자&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="nd">@Override&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Disposable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">schedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Runnable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">TimeUnit&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">//tasks running once will call dispose on the BoundedState, decreasing its usage by one &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">currentResource&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">pick&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">try&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Schedulers&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">directSchedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">executor&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">catch&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">RejectedExecutionException&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ex&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c1">// ensure to free the BoundedState so it can be reused &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">picked&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">dispose&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">throw&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ex&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>pick으로 가져온 BoundedState의 executer를 directSchdule의 인자로 넘긴다&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Disposable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">directSchedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ScheduledExecutorService&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">exec&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Runnable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nd">@Nullable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Disposable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">TimeUnit&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">onSchedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">SchedulerTask&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">sr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">new&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">SchedulerTask&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Future&lt;/span>&lt;span class="o">&amp;lt;?&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">f&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;lt;=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">0L&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">f&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">exec&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">submit&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">Callable&lt;/span>&lt;span class="o">&amp;lt;?&amp;gt;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">sr&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">f&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">exec&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">schedule&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">Callable&lt;/span>&lt;span class="o">&amp;lt;?&amp;gt;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">sr&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">sr&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">setFuture&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">f&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">sr&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>directSchedule메서드를 살펴보자&lt;br>
+10번, 13번 라인에서 executer에게 작업을 할당한다&lt;br>
+작업을 할당하는 메서드를 살펴보자&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="nd">@Override&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">synchronized&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Future&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">submit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Callable&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ensureQueueCapacity&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">super&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">submit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">task&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>synchronized 메서드이다&lt;/p>
+&lt;ul>
+&lt;li>synchronized 메서드이므로 객체마다 lock이 걸리고, 해당 메서드를 가지고있는 BoundedScheduledExecutorService는 static클래스이므로 해당 메서드는 하나의 프로세스에서 동시에 실행될 수 없다.&lt;/li>
+&lt;/ul>
+&lt;p>ensureQueueCapacity를 살펴보자&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">ensureQueueCapacity&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">queueCapacity&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">MAX_VALUE&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">queueSize&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">super&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getQueue&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="na">size&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">queueSize&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">queueCapacity&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">throw&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Exceptions&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">failWithRejected&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;Task capacity of bounded elastic scheduler reached while scheduling &amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34; tasks (&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queueSize&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;/&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">queueCapacity&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;)&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>위 메서드는 현재 큐의 크기와, 추가된 작업의 개수의 합이 DEFAULT_BOUNDED_ELASTIC_QUEUESIZE를 넘기는지 확인하고, 넘으면 에러를 리턴하는 로직이다.&lt;/p>
+&lt;hr>
+&lt;p>pick메서드에서 최대 스레드 생성 개수, ensureQueueCapacity메서드에서 쓰레드 당 최대 작업개수를 검증하는 것을 확인할 수 있었다.&lt;br>
+pick메서드에서는 compareAndSet으로 동시성을 제어한다.&lt;br>
+ensureQueueCapacity메서드에서는 호출하는 메서드가 syncronized 메서드로 동시성을 제어한다.&lt;/p>
+&lt;h2 id="추가---boundedelasticscheduler의-inner-class">추가 - BoundedElasticScheduler의 inner class
+&lt;/h2>&lt;p>BoundedElasticScheduler 내부에 4개의 클래스가 있다.&lt;br>
+내부 클래스들을 알게 되면 BoundedElasticScheduler의 동작과정을 더 이해할 수 있다.&lt;/p>
+&lt;p>먼저 BoundedElasticScheduler의 선언부를 보자&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">BoundedElasticScheduler&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">implements&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Scheduler&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">SchedulerState&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">DisposeAwaiter&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">BoundedElasticScheduler&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">BoundedServices&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Scannable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">volatile&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">SchedulerState&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">BoundedServices&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">state&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nd">@SuppressWarnings&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;rawtypes&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">AtomicReferenceFieldUpdater&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">BoundedElasticScheduler&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">SchedulerState&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">STATE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">AtomicReferenceFieldUpdater&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">newUpdater&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">BoundedElasticScheduler&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">SchedulerState&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;state&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>BoundedElasticScheduler는 Scheduler, SchedulerState.DisposeAwaiter, Scannable의 구현체이다.&lt;br>
+필드로 SchedulerState&amp;lt;BoundedServices&amp;gt; 타입의 필드가 있는데, BoundedServices로 스케줄러의 상태를 관리한다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">BoundedServices&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">extends&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">AtomicInteger&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedElasticScheduler&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Deque&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">idleQueue&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">volatile&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BusyStates&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">busyStates&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">pick&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>선언부를 보면, BoundedServices는 AtomicInteger를 상속받은 클래스이다.&lt;br>
+BoundedServices의 Integer 값은, 현재 실행되고 있는 쓰레드의 개수를 의미한다.&lt;/p>
+&lt;p>parent필드에서는 부모인 BoundedElasticScheduler을 가지고 있다&lt;br>
+idleQueue는 idle 상태인 BoundedState를 가지고 있다.&lt;br>
+busyStates는 BusyStates타입인데, busy상태인 BoundedState을 가지고 있다.&lt;br>
+pick메서드는 앞서 설명한 바와 같이, 작업을 실행할 BoundedState을 결정한다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">BusyStates&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="o">[]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">array&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">shutdown&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">BusyStates&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="o">[]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">array&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">boolean&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">shutdown&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">array&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">array&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">shutdown&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">shutdown&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>BusyStates에서는 array 필드에 busy상태인 BoundedState을 가지고 있다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">BoundedState&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">implements&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Disposable&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Scannable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedServices&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ScheduledExecutorService&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">executor&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">volatile&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">markCount&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">BoundedState&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">BoundedServices&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ScheduledExecutorService&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">executor&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">parent&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">parent&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">executor&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">executor&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>parent필드는 부모인 BoundedService를 가지고 있다.&lt;br>
+executer는 ScheduledExecutorService을 가지고 있는데, 실제 생성자로 들어오는 클래스는 ScheduledExecutorService가 아닌, BoundedScheduledExecutorService을 가진다.&lt;br>
+markCount는 executer가 실행하고 있는 작업의 개수를 나타낸다.&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">class&lt;/span> &lt;span class="nc">BoundedScheduledExecutorService&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">extends&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ScheduledThreadPoolExecutor&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">implements&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Scannable&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">final&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">queueCapacity&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">void&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">ensureQueueCapacity&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">queueCapacity&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">==&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">MAX_VALUE&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">int&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">queueSize&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">super&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getQueue&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="na">size&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">queueSize&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">queueCapacity&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">throw&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Exceptions&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">failWithRejected&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;Task capacity of bounded elastic scheduler reached while scheduling &amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34; tasks (&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queueSize&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">taskCount&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;/&amp;#34;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">queueCapacity&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s">&amp;#34;)&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nd">@Override&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">synchronized&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ScheduledFuture&lt;/span>&lt;span class="o">&amp;lt;?&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">schedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Runnable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">command&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="kt">long&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">TimeUnit&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ensureQueueCapacity&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">1&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">return&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">super&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">schedule&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">command&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">delay&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">unit&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>BoundedScheduledExecutorServices는 ScheduledThreadPoolExecutor구현체이다&lt;br>
+ScheduledThreadPoolExecutor와 큰 차이라면 queueCapacity필드와 ensureQueueCapacity메서드를 가지고 있다는 것이다.&lt;br>
+schedule을 할때마다 현재 큐사이즈+새 태스크 개수를 확인해서 queueCapacity를 넘으면 에러를 발생시킨다.&lt;/p></description></item><item><title>9-Reactive Streams</title><link>https://sungho94.me/p/9-reactive-streams/</link><pubDate>Mon, 04 Mar 2024 22:41:09 +0000</pubDate><guid>https://sungho94.me/p/9-reactive-streams/</guid><description>&lt;h2 id="개념">개념
+&lt;/h2>&lt;ul>
+&lt;li>논블로킹 배압(back pressuer)을 사용한 비동기 스트리밍 처리를 위한 표준&lt;/li>
+&lt;li>network protocol 뿐만아니라 JVM, Javascript와 같은 런타임 환경에 대한 표준도 포함함&lt;/li>
+&lt;li>스트림 데이터라고도 표현되는 크기가 정해지지 않은 &amp;rsquo;live&amp;rsquo;데이터는 비동기 시스템에서 주의가 필요함
+&lt;ul>
+&lt;li>들어오는 데이터가 처리되는 속도보다 빠르면 안되기 때문
+&lt;ul>
+&lt;li>데이터가 많으면 쌓이고, 그러다 보면 메모리가 터지기때문&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Reactive Streams의 주요 목표는 비동기 경계를 넘은 데이터 스트림의 교환(데이터를 다른쓰레드 혹은 쓰레드 풀로 전달하는)하며 수신측에서는 임의의 데이터양을 버퍼로 관리하지 않는것임&lt;/li>
+&lt;li>backpressure는 스레드 사이의 대기열을 제한하기 위한 필수적인 부분임&lt;/li>
+&lt;li>또한 백프레셔 신호가 동기식일 경우 비동기 처리의 이점이 없어지기에, Reactive Streams의 구현은 모든측면에서 비차단, 비동기식으로 구성되도록 주의를 기울임&lt;/li>
+&lt;/ul>
+&lt;h2 id="구성요소">구성요소
+&lt;/h2>&lt;ul>
+&lt;li>Publisher는 잠재적으로 무한한 수의 시퀀스 요소를 제공하며, Subscriber의 요청을 받으면 요소를 제공하기 시작함&lt;/li>
+&lt;li>&lt;code>Publisher.subscribe(Subscriber)&lt;/code>에 대한 응답으로 Subscriber는 아래의 신호를 받음```&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">onSubscribe onNext* (onError | onComplete)?
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>Publisher.subscribe를 호출하면, 반드시 한번 onSubscribe가 호출되며, 무한한 onNext를 방출&lt;/li>
+&lt;li>이후 Subscription이 cancel되지 않으면, 에러가 발생하면 onError, 더 이상 전달할 요소가 없다면 onComplete를 호출
+&lt;ul>
+&lt;li>Subscription이 cancel되면 onError, onComplete를 호출하지 않을 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>어떻게 구현해야 하는지에 대한 설명으로, 필자는 구현보다는 사용에 관한 관점에 대해 정리함&lt;br>
+너무 구현에 관한 설명에 대해서는 작성하지 않으므로 구현내용이 궁금하다면 &lt;a class="link" href="https://github.com/reactive-streams/reactive-streams-jvm/blob/v1.0.4/README.md" target="_blank" rel="noopener"
+>링크&lt;/a>를 참조&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="publisher">Publisher
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">public interface Publisher&amp;lt;T&amp;gt; {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> public void subscribe(Subscriber&amp;lt;? super T&amp;gt; s);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>무한한 시퀀스 요소를 Subscriber에게 제공&lt;/li>
+&lt;li>publisher는 요청된 수만큼, 혹은 요청된 수보다 적은 onNext를 호출해야함&lt;/li>
+&lt;li>요청된 수보다 적은 onNext를 보내고, onError 혹은 onCompelete로 구독의 종료를 알릴 수 있음&lt;/li>
+&lt;li>에러발생시 onError, 더이상 전달한 요소가 없다면 onComplete를 반드시 호출해야함&lt;/li>
+&lt;li>Subscriber에게 onError 혹은 onComplete를 보낼 시, Subscriber는 해당 Subscription을 취소된 것으로 간주해야함&lt;/li>
+&lt;li>종료신호(onError 혹은 onComplete)를 보낸 후에는 더이상 신호가 발생하지 않아야함&lt;/li>
+&lt;li>Publisher가 subscribe호출을 받으면 반드시 Subscriber의 onSubscribe을 호출해야함
+&lt;ul>
+&lt;li>제공된 구독자가 null인 상황에서는 NullPointerException예외를 던져야함&lt;/li>
+&lt;li>제공된 구독자가 null이 아닌 상황에서는 정상적으로 응답해야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="subscriber">Subscriber
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">public interface Subscriber&amp;lt;T&amp;gt; {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> public void onSubscribe(Subscription s);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> public void onNext(T t);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> public void onError(Throwable t);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> public void onComplete();
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>onNext 신호를 받기위해서는 반드시 Subscription.request(long n)신호를 보내야함&lt;/li>
+&lt;li>onComplete() 및 onError(Throwable t)는 신호를 수신한다면 구독이 취소된것으로 간주해야함&lt;/li>
+&lt;li>Subscriber가 이미 활성화된 Subscription을 가지고 있을때, 새로운 Subscription을 받는다면 새로운 Subscription에 대해 cancel을 호출해야함
+&lt;ul>
+&lt;li>Subscriber는 반드시 하나의 Publisher를 가져야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Subscription이 더 이상 필요하지 않다면 Subscriber는 cancel을 호출해야함&lt;/li>
+&lt;li>Subscriber는 반드시 Subscription의 request와 cancel이 순차적으로 호출되도록 보장해야함&lt;/li>
+&lt;/ul>
+&lt;h3 id="subscription">Subscription
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">public interface Subscription {
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> public void request(long n);
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> public void cancel();
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>&lt;code>Subscription.request&lt;/code>과 &lt;code>Subscription.cancel&lt;/code>은 반드시 Subscriber 컨택스트 내에서 호출되어야함&lt;/li>
+&lt;li>Subscription이 취소되면 Subscription.request(long n)은 NOP을 반환해야함&lt;/li>
+&lt;li>Subscription이 취소되면 Subscription.cancel()은 NOP을 반환해야함&lt;/li>
+&lt;li>Subscription은 반드시 무한한 request를 지원해야하며, 최대 2^63-1까지 지원해야함
+&lt;ul>
+&lt;li>2^63-1보다 크거나 같은 수요는 무한하다고 간주할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>구독은 한명의 Publisher와 한명의 Subscriber가 공유하며, 이 쌍간의 데이터 교환을 중계하기 위한 목적으로 사용됨
+&lt;ul>
+&lt;li>이러한 위와같은 이유로 subscribe()가 Subscription을 반환하는게 아니라 void를 반환하는 것&lt;/li>
+&lt;li>Subscription은 onSubscribe콜백을 통해서만 구독자에게 전달됨&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="processor">Processor
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">public&lt;/span> &lt;span class="n">interface&lt;/span> &lt;span class="n">Processor&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">R&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="k">extends&lt;/span> &lt;span class="n">Subscriber&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">T&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">Publisher&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">R&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>Processor는 처리 단계를 나타내며, Subscriber이자 Publisher인 동시에 양쪽의 계약을 모두 준수해야 함&lt;/li>
+&lt;li>onError발생시 복구할 수 있도록 선택할 수 있음
+&lt;ul>
+&lt;li>복구를 선택한다면 Subscription은 취소된 것으로 간주함&lt;/li>
+&lt;li>복구를 선택하지 않는다면 Subscriber에게 onError를 전파해야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>필수사항은 아니지만, 마지막 Subscriber가 Subscription을 취소할때 upStream의 구독을 취소하여 취소신호가 upStream으로 전파되게 하는것이 좋음&lt;/li>
+&lt;/ul>
+&lt;h3 id="publisher---subscriber간-프로세스">publisher - subscriber간 프로세스
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231218205808.png"
+loading="lazy"
+alt="center|400"
+>&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.reactive-streams.org/" target="_blank" rel="noopener"
+>https://www.reactive-streams.org/&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/reactive-streams/reactive-streams-jvm/blob/v1.0.4/README.md" target="_blank" rel="noopener"
+>https://github.com/reactive-streams/reactive-streams-jvm/blob/v1.0.4/README.md&lt;/a>&lt;br>
+&lt;a class="link" href="https://souljit2.tistory.com/78" target="_blank" rel="noopener"
+>https://souljit2.tistory.com/78&lt;/a>&lt;/p></description></item><item><title>8-Stream Processing</title><link>https://sungho94.me/p/8-stream-processing/</link><pubDate>Mon, 04 Mar 2024 22:41:08 +0000</pubDate><guid>https://sungho94.me/p/8-stream-processing/</guid><description>&lt;ul>
+&lt;li>
+&lt;p>데이터가 도착하거나 생성되는 즉시실시간으로 데이터를 처리하는 패러다임&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>데이터가 쌓일때까지 기다리지 않고, 데이터가 흐르는 대로 즉각적으로 처리하여 통찰와 조치가 가능하도록 함&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>실시간 데이터분석이 중요한 분야에서 많이 사용됨&lt;/p>
+&lt;ul>
+&lt;li>주식 구매&lt;/li>
+&lt;li>위험 감지&lt;/li>
+&lt;li>위치 데이터&lt;/li>
+&lt;li>IT인프라 분석 및 대응&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>batch처리는 예약된 시간에 일괄로 데이터를 처리하는 방식이라면, stream처리는 데이터가 전송되는 대로 실시간으로 데이터를 처리하는 방식&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/cd/E19455-01/805-7478/index.html" target="_blank" rel="noopener"
+>https://docs.oracle.com/cd/E19455-01/805-7478/index.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://atlan.com/batch-processing-vs-stream-processing/#batch-processing-vs-stream-processing-7-differences-to-know" target="_blank" rel="noopener"
+>https://atlan.com/batch-processing-vs-stream-processing/#batch-processing-vs-stream-processing-7-differences-to-know&lt;/a>&lt;/p></description></item><item><title>7-Reactive Manifesto</title><link>https://sungho94.me/p/7-reactive-manifesto/</link><pubDate>Mon, 04 Mar 2024 22:41:07 +0000</pubDate><guid>https://sungho94.me/p/7-reactive-manifesto/</guid><description>&lt;ul>
+&lt;li>2013년 어플리케이션의 요구사항(짧은 응답시간, 100%가용성)의 변화로 리액티브 시스템을 정의한 리액티브 선언문(reactive manifesto)가 작성됨 (현재 최신 버전 2014년 v2.0)&lt;/li>
+&lt;li>리액티브 선언문에서는 리액티브 시스템이란 Responsive, Resilient, Elastic, Message Driven을 가진 시스템이라고 정의&lt;/li>
+&lt;li>이중 jvm을 타겟으로한 비동기, 논블로킹의 표준인 reactive streams나왔고 이를 구현한 Project Reactor와 rxJava가 나왔다.&lt;/li>
+&lt;li>이중 Project Reactor와 Spring Framework가 손잡고 나온것이 Spring Webflux이다.&lt;/li>
+&lt;li>현재 Spring Webflux에서 많이 사용하는 Http Server인 Reactor Netty는 Project Reactor의 프로젝트중 하나이다&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231214232659.png"
+loading="lazy"
+alt="Pasted image 20231214232659"
+>&lt;/p>
+&lt;h3 id="responsive응답성">Responsive(응답성)
+&lt;/h3>&lt;ul>
+&lt;li>시스템은 가능한 적시에 응답해야함&lt;/li>
+&lt;li>사용성과 유용성 때문에 중요한것도 맞지만, 문제를 신속하게 감지할수 있다는 더 중요한 장점이 있음&lt;/li>
+&lt;li>응답성이 높은 시스템은 신속하고 일관된 응답을 주는것에 중점에 두며, &lt;em>&lt;strong>신뢰할 수 있는 상한선&lt;/strong>&lt;/em>을 두어 일관된 서비스 품질을 제공함&lt;/li>
+&lt;li>위와같은 일관된 행동은 오류를 간소화하고, 최종 사용자와의 신뢰를 구축하며, 더 많은 상호작용을 장려함&lt;/li>
+&lt;/ul>
+&lt;h3 id="resilient회복성">Resilient(회복성)
+&lt;/h3>&lt;ul>
+&lt;li>시스템은 장애가 발생하여도 응답성을 유지해야함&lt;/li>
+&lt;li>고 가용성의 중요한 시스템 뿐만아니라, 중요하지 않은 시스템도 포함됨&lt;/li>
+&lt;li>회복성은 복제, 격리, 위임, 고립를 통해 달성됨&lt;/li>
+&lt;li>구성요소에 장애 발생시, 장애가 발생한 구성요소를 격리하여 전체 시스템에 영향을 주지않으며, 시스템 일부만 장애발생 및 복구가 가능하게함&lt;/li>
+&lt;li>장애가 발생한 시스템에 대한 복구는 다른 구성요소에게 위임되며, 필요한 경우 복제를 통해 고가용성을 달성함&lt;/li>
+&lt;li>구성요소의 클라이언트는 장애를 복구하는데 부담을 덜 느낄수 있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="elastic탄력성">Elastic(탄력성)
+&lt;/h3>&lt;ul>
+&lt;li>다양한 작업량(갑자기 요청이 많아지는 경우)에도 응답성이 유지되어야함&lt;/li>
+&lt;li>reactive system은 이러한 다양한 요청량을 처리하기 위해 자원을 늘리거나 줄이는 것으로 대응할 수 있음&lt;/li>
+&lt;li>컴포넌트를 샤딩이나 복제하고, 이들에게 입력을 분산시키는 기능을 제공하는, 경합지점이나 병목이 없는 설계를 의미함&lt;/li>
+&lt;li>reactive system은 실시간 성능 측정 기능을 통해 예측 및 반응형 확장 알고리즘을 제공함&lt;/li>
+&lt;li>이 시스템은 상용 하드웨어 및 소프트웨어 플랫폼에서 비용 효율적인 측면에서 탄력성을 달성함&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>aws에서 툭하면 elastic이 나오게 되는데 선언문에 나온 elasitc의 개념이다.&lt;a class="link" href="https://wa.aws.amazon.com/wellarchitected/2020-07-02T19-33-23/wat.concept.elasticity.en.html" target="_blank" rel="noopener"
+>링크&lt;/a>&lt;br>
+리액티브 선언문을 많이 읽어보며, 어떻게 개발해야 할지 개발 방향에 좀 감을 잡은거 같다.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="message-driven메시지-전달">Message Driven(메시지 전달)
+&lt;/h3>&lt;ul>
+&lt;li>reactive system은 비동기 메세지 전달에 의존하여 느슨한 결함, 격리 및 위치 투명성을 보장하는 구성요소간에 경계를 설정함&lt;/li>
+&lt;li>이 메세지는 실패를 메시지로 위임할 수 있는 수단도 제공함&lt;/li>
+&lt;li>명시적 메시지 전달을 사용하면 시스템에서 대기열을 형성 및 모니터링 하고, 필요시 배압을 사용하여 부하관리 및 탄력성, 흐름제어가 가능함&lt;/li>
+&lt;li>위치 투명 메시징을 사용하면 클러스터 전체, 혹은 단일 호스트 내에서 동일한 구조로 장애를 관리할 수 있음&lt;/li>
+&lt;li>비차단 통신을 통해 수신자는 활성상태일 때만 리소스를 사용하여 시스템의 오버헤드가 줄어듬&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://www.reactivemanifesto.org/ko" target="_blank" rel="noopener"
+>https://www.reactivemanifesto.org/ko&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.reactive-streams.org/" target="_blank" rel="noopener"
+>https://www.reactive-streams.org/&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/reactor/reactor" target="_blank" rel="noopener"
+>https://github.com/reactor/reactor&lt;/a>&lt;/p>
+&lt;p>#Reactive&lt;br>
+#Concept&lt;/p></description></item><item><title>6-spring mvc request 처리 과정</title><link>https://sungho94.me/p/6-spring-mvc-request-%EC%B2%98%EB%A6%AC-%EA%B3%BC%EC%A0%95/</link><pubDate>Mon, 04 Mar 2024 22:41:06 +0000</pubDate><guid>https://sungho94.me/p/6-spring-mvc-request-%EC%B2%98%EB%A6%AC-%EA%B3%BC%EC%A0%95/</guid><description>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231125233607.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;h3 id="filter">Filter
+&lt;/h3>&lt;ul>
+&lt;li>Dispatcher Servlet으로 가기전 적용되는 필터&lt;/li>
+&lt;li>모든 request에 적용되는 필터&lt;/li>
+&lt;li>설정을 통해 특정 path로 갈때, 우선순위 등 여러 설정 가능&lt;/li>
+&lt;/ul>
+&lt;h3 id="dispatcherservlet">DispatcherServlet
+&lt;/h3>&lt;ul>
+&lt;li>request를 분석하여 처리를 위해 적절한 컨트롤러로 보냄&lt;/li>
+&lt;li>스프링은 FrontController패턴을 사용하여 하나의 Servlet(DispatcherServlet)만 사용
+&lt;ul>
+&lt;li>여러 Servlet을 사용할경우 중복코드가 생성되기에 하나의 Servlet에서 요청을 처리함&lt;/li>
+&lt;li>스프링은 하나의 Dispatcher Servle만 생성 &lt;a class="link" href="https://stackoverflow.com/questions/23049736/working-with-multiple-dispatcher-servlets-in-a-spring-application" target="_blank" rel="noopener"
+>참고링크&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="hander-mapping">Hander Mapping
+&lt;/h3>&lt;ul>
+&lt;li>request가 등록된 controller 중 어떤 controller와 매핑되는지 찾음&lt;/li>
+&lt;/ul>
+&lt;h3 id="hander-adapter">Hander Adapter
+&lt;/h3>&lt;ul>
+&lt;li>Hander Mapping으로 찾은 controller 호출&lt;/li>
+&lt;/ul>
+&lt;h3 id="view-resolver">View Resolver
+&lt;/h3>&lt;ul>
+&lt;li>전달받은 view name가지고 view를 찾음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://terasolunaorg.github.io/guideline/1.0.1.RELEASE/en/Overview/SpringMVCOverview.html" target="_blank" rel="noopener"
+>https://terasolunaorg.github.io/guideline/1.0.1.RELEASE/en/Overview/SpringMVCOverview.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://justforchangesake.wordpress.com/2014/05/07/spring-mvc-request-life-cycle/" target="_blank" rel="noopener"
+>https://justforchangesake.wordpress.com/2014/05/07/spring-mvc-request-life-cycle/&lt;/a>&lt;br>
+&lt;a class="link" href="https://velog.io/@hsw0194/Spring-MVC-HandlerMapping%EC%9D%98-%EB%8F%99%EC%9E%91%EB%B0%A9%EC%8B%9D-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1%ED%8E%B8" target="_blank" rel="noopener"
+>https://velog.io/@hsw0194/Spring-MVC-HandlerMapping%EC%9D%98-%EB%8F%99%EC%9E%91%EB%B0%A9%EC%8B%9D-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1%ED%8E%B8&lt;/a>&lt;/p></description></item><item><title>5-Apache Tomcat</title><link>https://sungho94.me/p/5-apache-tomcat/</link><pubDate>Mon, 04 Mar 2024 22:41:05 +0000</pubDate><guid>https://sungho94.me/p/5-apache-tomcat/</guid><description>&lt;ul>
+&lt;li>Jakarta Servlet, Jakarta Server Page, Jakarta Expression Language, Jakarta WebSocket, Jakarta Annotations, Jakarta Authentication 의 세부사항을 구현한 오픈소스 소프트웨어&lt;/li>
+&lt;/ul>
+&lt;h2 id="architecture">Architecture
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231125230312.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;h3 id="server">Server
+&lt;/h3>&lt;ul>
+&lt;li>Server는 웹 컨테이너 자체를 의미&lt;/li>
+&lt;li>사용자가 거의 customize하지 않는 설정들의 기본 구현들을 제공&lt;/li>
+&lt;/ul>
+&lt;h3 id="service">Service
+&lt;/h3>&lt;ul>
+&lt;li>Server내에있는 중간 구성 요소(intermediate component)로 하나 이상의 커넥터를 정확히 하나의 엔진과 연결시킴&lt;/li>
+&lt;li>기본 구현들이 간단하고 충분하므로, Server와 마찬가지로 사용자들이 거의 customize하지 않음&lt;/li>
+&lt;/ul>
+&lt;h3 id="engine">Engine
+&lt;/h3>&lt;ul>
+&lt;li>특정 서비스에 대한 요청 처리 파이프라인을 나타냄&lt;/li>
+&lt;li>Service는 여러 connector를 가질 수 있고, Engine은 이러한 커넥터로부터 온 모든 요청을 수신하고 처리하여, 클라이언트에 전달한 적절한 커넥터로 응답을 다시 전달함&lt;/li>
+&lt;li>Engine 인터페이스는 사용자에 의해 구현될 수 있지만, 자주 발생하는 일은 아님&lt;/li>
+&lt;/ul>
+&lt;h3 id="host">Host
+&lt;/h3>&lt;ul>
+&lt;li>호스트는 네트워크 이름(예: &lt;a class="link" href="https://www.yourcompany.com" target="_blank" rel="noopener"
+>www.yourcompany.com&lt;/a>)을 Tomcat 서버에 연결한 것&lt;/li>
+&lt;li>엔진에는 여러 개의 호스트가 포함될 수 있으며, 호스트 요소는 yourcompany.com 및 abc.yourcompany.com과 같은 네트워크 별칭도 지원&lt;/li>
+&lt;li>표준 호스트 구현은 상당한 추가 기능을 제공하기 때문에 사용자가 사용자 지정 호스트를 만드는 경우는 거의 없음&lt;/li>
+&lt;/ul>
+&lt;h3 id="context">Context
+&lt;/h3>&lt;ul>
+&lt;li>웹 어플리케이션을 나타냄&lt;/li>
+&lt;li>호스트에는 고유한 경로를 가진 여러개의 context를 가질 수 있음&lt;/li>
+&lt;li>사용자정의 컨텍스트를 생성하기 위해 인터페이스를 구현할 수 있지만, 표준 컨텍스트가 충분히 많은 기능을 제공하기에 이런 경우는 드뭄&lt;/li>
+&lt;/ul>
+&lt;h3 id="connector">Connector
+&lt;/h3>&lt;ul>
+&lt;li>클라이언트와 통신을 처리&lt;/li>
+&lt;li>HTTP 트래픽에 처리되는 HTTP 커넥터와 HTTPD와 같은 웹서버와 연결할때 필요한 ajp프로토콜을 구현한 ajp커넥터가 존재함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://tomcat.apache.org/tomcat-9.0-doc/architecture/overview.html" target="_blank" rel="noopener"
+>https://tomcat.apache.org/tomcat-9.0-doc/architecture/overview.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://medium.com/chequer/tomcat-spring-bootstrapping-sequence-1%ED%8E%B8-tomcat-4402102c0585" target="_blank" rel="noopener"
+>https://medium.com/chequer/tomcat-spring-bootstrapping-sequence-1%ED%8E%B8-tomcat-4402102c0585&lt;/a>&lt;/p></description></item><item><title>3-Servlet Container</title><link>https://sungho94.me/p/3-servlet-container/</link><pubDate>Mon, 04 Mar 2024 22:41:04 +0000</pubDate><guid>https://sungho94.me/p/3-servlet-container/</guid><description>&lt;ul>
+&lt;li>Servlet Engine이라고도 불림&lt;/li>
+&lt;li>서블릿을 실행하고 관리함&lt;/li>
+&lt;li>서블릿 메서드를 실행하고, 서블릿이 호출될때 필요한 서비스들을 제공함&lt;/li>
+&lt;li>서블릿에서 header나 parameter를 쉽게 접근할 수 있도록함&lt;/li>
+&lt;li>서블릿이 호출되면 웹서버는 http요청을 서블릿 컨테이너를 호출함
+&lt;ul>
+&lt;li>컨테이너는 차례로 요청을 서블릿에 전달함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231122230728.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>요청이 들어오면 servlet conatiner는 다음과 같은 일련의 작업을 거침
+&lt;ul>
+&lt;li>서블릿 인스턴스를 생성 후 init메서드를 호출하여 초기화함&lt;/li>
+&lt;li>서블릿에 전달한 request객체를 구성함
+&lt;ul>
+&lt;li>http header, 클라이언트에서 전달된 파라미터, 서블릿 요청의 전체 URI&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>서블릿에 대한 응답 객체를 생성함&lt;/li>
+&lt;li>서블릿의 service메서드를 호출함&lt;/li>
+&lt;li>적절한 상황에 destroy메서드를 호출해 서블릿이 garbage collector에 의해 폐기되도록 함
+&lt;ul>
+&lt;li>성능상의 이유로 서블릿 컨테이너는 작업을 완료할때마다 서블릿을 파괴하지 않고, 메모리에 보관하는것이 일반적임&lt;/li>
+&lt;li>웹서버 종료와 같은 드물게 발생하는 이벤트에 대해서만 소멸시킴&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/cd/A97688" target="_blank" rel="noopener"
+>https://docs.oracle.com/cd/A97688&lt;/a>_16/generic.903/a97680/overview.htm&lt;/p></description></item><item><title>2-Sevlet</title><link>https://sungho94.me/p/2-sevlet/</link><pubDate>Mon, 04 Mar 2024 22:41:03 +0000</pubDate><guid>https://sungho94.me/p/2-sevlet/</guid><description>&lt;ul>
+&lt;li>Server + applet의 합성어&lt;/li>
+&lt;li>서버에서 특정기능을 수행하는 작은 어플리케이션&lt;/li>
+&lt;li>C++, JAVA HTTP 등 많은 Servlet이 존재&lt;/li>
+&lt;li>main method를 가지고 있지 않아 다른 외부 컨테이너의 제어하에 실행됨&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231122220847.png"
+loading="lazy"
+alt="center|600"
+>&lt;/p>
+&lt;ul>
+&lt;li>google definition 참고&lt;/li>
+&lt;/ul></description></item><item><title>1-Applet</title><link>https://sungho94.me/p/1-applet/</link><pubDate>Mon, 04 Mar 2024 22:41:02 +0000</pubDate><guid>https://sungho94.me/p/1-applet/</guid><description>&lt;ul>
+&lt;li>1990 년 PC 매거진에서 처음 사용된 단어&lt;/li>
+&lt;li>하나의 프로그램에서 특정 기능을 수행하는 작은 어플리케이션&lt;/li>
+&lt;li>독립적으로 사용되지 않으며 작은 기능을 가지고 잇음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://en.wikipedia.org/wiki/Applet" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Applet&lt;/a>&lt;br>
+&lt;a class="link" href="https://ko.wikipedia.org/wiki/%EC%95%A0%ED%94%8C%EB%A6%BF" target="_blank" rel="noopener"
+>https://ko.wikipedia.org/wiki/%EC%95%A0%ED%94%8C%EB%A6%BF&lt;/a>&lt;/p></description></item><item><title>0-Static Web Server</title><link>https://sungho94.me/p/0-static-web-server/</link><pubDate>Mon, 04 Mar 2024 22:41:01 +0000</pubDate><guid>https://sungho94.me/p/0-static-web-server/</guid><description>&lt;ul>
+&lt;li>웹서버 소프트웨어와 웹사이트의 구성파일을 저장하는 컴퓨터&lt;/li>
+&lt;li>인터넷에 연결되며 웹에 연결된 다른 장치와의 물리적 데이터 교환을 지원함&lt;/li>
+&lt;/ul>
+&lt;p>#Webserver&lt;/p>
+&lt;p>&lt;a class="link" href="https://developer.mozilla.org/en-US/docs/Learn/Common" target="_blank" rel="noopener"
+>https://developer.mozilla.org/en-US/docs/Learn/Common&lt;/a>_questions/Web_mechanics/What_is_a_web_server&lt;/p></description></item><item><title>4-Jakarta Servlet</title><link>https://sungho94.me/p/4-jakarta-servlet/</link><pubDate>Sun, 03 Mar 2024 22:41:05 +0000</pubDate><guid>https://sungho94.me/p/4-jakarta-servlet/</guid><description>&lt;ul>
+&lt;li>이전의 이름음 java servlet임
+&lt;ul>
+&lt;li>eclipse재단과 oracle과의 상표권 분쟁으로 jakarta로 변경됨 &lt;a class="link" href="https://www.samsungsds.com/kr/insights/java_jakarta.html" target="_blank" rel="noopener"
+>링크&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>HTTP 요청과 응답을 처리하기 위한 서버측 api를 정의한것 &lt;a class="link" href="https://jakarta.ee/specifications/servlet/" target="_blank" rel="noopener"
+>링크&lt;/a>&lt;/li>
+&lt;li>요청을 수신하고 요청에 따라 응답을 생성하는 객체에 대한 정의&lt;/li>
+&lt;li>&lt;a class="link" href="https://jakarta.ee/specifications/platform/9/apidocs/jakarta/servlet/servlet" target="_blank" rel="noopener"
+>요청과 관련된 3가지의 메소드가 존재&lt;/a>
+&lt;ul>
+&lt;li>init
+&lt;ul>
+&lt;li>서블릿이 서비스에 배치되었다는것을 알리기 위해 서블릿컨테이너에서 호출&lt;/li>
+&lt;li>서블릿 컨테이너는 서블릿을 인스턴스 한 후 정확히 한번만 호출함&lt;/li>
+&lt;li>서블릿이 요청을 정상적으로 처리하기 위해서는 초기화가 성공적으로 완료되어야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>service
+&lt;ul>
+&lt;li>반드시 init 메소드가 호출된 이후에 호출됨&lt;/li>
+&lt;li>서블릿 컨테이너에서 호출하여 서블릿이 요청에 응답할 수 잇도록함&lt;/li>
+&lt;li>오류를 던지거나 전송하는 서블릿은 항상 상태코드를 전송해야함&lt;/li>
+&lt;li>서블릿은 일반적으로 여러 요청을 동시에 처리할 수 있는 멀티 스레드 컨테이너 내에서 실행됨
+&lt;ul>
+&lt;li>공유리소스에 대한 동기화에 대해 고려해야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>destroy
+&lt;ul>
+&lt;li>서블릿 컨테이너에서 호출하며, 서비스가 중단중임을 서블릿에 알림&lt;/li>
+&lt;li>서블릿의 서비스 메서드 내의 모든 쓰레드가 종료되거나 시간초과가 지난 후에 호출됨&lt;/li>
+&lt;li>destroy가 호출된 이후에는 service가 다시 호출되지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul></description></item></channel></rss>

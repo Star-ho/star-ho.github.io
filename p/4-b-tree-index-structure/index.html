@@ -1,0 +1,209 @@
+<!doctype html><html lang=ko-kr dir=ltr><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name=description content="B+Tree, root, leaf, level 용어정리 B+Tree는 InnoDB 인덱스의 구조임\n데이터가 메모리 크기와 일치하지 않아, 디스크에서 읽어야하는 경우 효율적임\n트리의 깊이에 따라 요청된 데이터에 엑세스하는데 필요한 최대 읽기 횟수가 고정되어 있어 확장성이 뛰어남 인덱스 트리는 트리에 엑세스하기 위한 시작점으로 root 페이지에서 시작됨\n"><title>4-B+tree index structure</title>
+<link rel=canonical href=https://sungho94.me/p/4-b-tree-index-structure/><link rel=stylesheet href=/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css><meta property='og:title' content="4-B+tree index structure"><meta property='og:description' content="B+Tree, root, leaf, level 용어정리 B+Tree는 InnoDB 인덱스의 구조임\n데이터가 메모리 크기와 일치하지 않아, 디스크에서 읽어야하는 경우 효율적임\n트리의 깊이에 따라 요청된 데이터에 엑세스하는데 필요한 최대 읽기 횟수가 고정되어 있어 확장성이 뛰어남 인덱스 트리는 트리에 엑세스하기 위한 시작점으로 root 페이지에서 시작됨\n"><meta property='og:url' content='https://sungho94.me/p/4-b-tree-index-structure/'><meta property='og:site_name' content="Sungho's Dev BLog"><meta property='og:type' content='article'><meta property='article:section' content='Post'><meta property='article:tag' content='InnoDB'><meta property='article:tag' content='hugo_blog'><meta property='article:tag' content='InnoDB-File-Structure'><meta property='article:tag' content='Database'><meta property='article:published_time' content='2024-05-20T23:10:14+00:00'><meta property='article:modified_time' content='2024-09-22T06:57:53+00:00'><meta name=twitter:title content="4-B+tree index structure"><meta name=twitter:description content="B+Tree, root, leaf, level 용어정리 B+Tree는 InnoDB 인덱스의 구조임\n데이터가 메모리 크기와 일치하지 않아, 디스크에서 읽어야하는 경우 효율적임\n트리의 깊이에 따라 요청된 데이터에 엑세스하는데 필요한 최대 읽기 횟수가 고정되어 있어 확장성이 뛰어남 인덱스 트리는 트리에 엑세스하기 위한 시작점으로 root 페이지에서 시작됨\n"><link rel="shortcut icon" href=/favicon.png><script async src="https://www.googletagmanager.com/gtag/js?id=G-PTKY5BPR7H"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-PTKY5BPR7H")}</script></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label="메뉴 여닫기">
+<span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_hu1582294339771580780.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>Sungho's Dev BLog</a></h1><h2 class=site-description>백엔드 개발자 황성호입니다.</h2></div></header><ol class=menu-social><li><a href=https://github.com/Star-ho target=_blank title=GitHub rel=me><svg class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://www.linkedin.com/in/starho/ target=_blank title=LinkedIn rel=me><svg fill="#000" width="800" height="800" viewBox="0 0 24 24"><path d="M6.975 20.667H3.117V9.059H6.975zM5.072 3.462a2.011 2.011.0 10-.051 4.012h.026a2.012 2.012.0 10.025-4.012zM9.111 20.667h3.858V14.185a2.639 2.639.0 01.127-.941 2.111 2.111.0 011.98-1.411c1.4.0 1.955 1.064 1.955 2.625v6.209h3.858V14.011c0-3.565-1.9-5.225-4.442-5.225A3.828 3.828.0 0012.97 10.7V9.059H9.111c.051 1.089.0 11.609.0 11.609z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+<span>Home</span></a></li><li><a href=/archives/><svg class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+<span>Archives</span></a></li><li><a href=/search/><svg class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+<span>Search</span></a></li><li><a href=/links/><svg class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg>
+<span>Links</span></a></li><li class=menu-bottom-section><ol class=menu><li id=dark-mode-toggle><svg class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<svg class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg>
+<span>다크 모드</span></li></ol></li></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">목차</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#btree-root-leaf-level-용어정리>B+Tree, root, leaf, level 용어정리</a></li><li><a href=#leaf-and-non-leaf-page>Leaf and non-leaf page</a></li><li><a href=#실제로-살펴보기>실제로 살펴보기</a><ol><li><a href=#실제-기본-table-space-파일-구조-확인>실제 기본 table space 파일 구조 확인</a></li><li><a href=#실제-레코드-확인>실제 레코드 확인</a></li><li><a href=#인덱스-재귀>인덱스 재귀</a></li><li><a href=#간단하지-않은-인덱스-트리-구축>간단하지 않은 인덱스 트리 구축</a></li><li><a href=#특별한-root-page>특별한 root page</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><header class=article-category><a href=/categories/database/>Database
+</a><a href=/categories/innodb_ruby/>Innodb_ruby</a></header><div class=article-title-wrapper><h2 class=article-title><a href=/p/4-b-tree-index-structure/>4-B+tree index structure</a></h2></div><footer class=article-time><div><svg class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M11.795 21H5a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v4"/><circle cx="18" cy="18" r="4"/><path d="M15 3v4"/><path d="M7 3v4"/><path d="M3 11h16"/><path d="M18 16.496V18l1 1"/></svg>
+<time class=article-time--published>May 20, 2024</time></div><div><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<time class=article-time--reading>5 분 정도</time></div></footer></div></header><section class=article-content><h2 id=btree-root-leaf-level-용어정리>B+Tree, root, leaf, level 용어정리</h2><ul><li><p>B+Tree는 InnoDB 인덱스의 구조임</p></li><li><p>데이터가 메모리 크기와 일치하지 않아, 디스크에서 읽어야하는 경우 효율적임</p><ul><li>트리의 깊이에 따라 요청된 데이터에 엑세스하는데 필요한 최대 읽기 횟수가 고정되어 있어 확장성이 뛰어남</li></ul></li><li><p>인덱스 트리는 트리에 엑세스하기 위한 시작점으로 root 페이지에서 시작됨</p><ul><li>root page는 InnoDB의 data dictionary에 영구적으로 저장되어 있음</li><li>트리는 단일 루트 페이지일만큼 작을 수 있고, multi-level tree의 수백만 페이지 일 수 있음</li></ul></li><li><p>페이지를 leaf(internal)과 non-leaf(node)페이지로 구분함</p><ul><li>leaf 페이지에는 실제 행 데이터가 포함됨</li><li>non-leaf페이지는 다른 non-leaf페이지 또는 leaf 페이지를 가지고 있음</li><li>tree는 균형이 잡혀있고, 모든 가지의 깊이는 동일함</li></ul></li><li><p>InnoDB는 트리의 각 페이지에 level을 할당함</p><ul><li>리프페이지에는 level 0을 할당하고, 트리 위로 올라갈수록 level이 증가함</li><li>root page의 level은 트리의 깊이와 같음</li><li>구분이 중요하지 않은 경우, leaf페이지와 non-leaf페이지는 둘다 internal페이지라고 부름</li></ul></li></ul><h2 id=leaf-and-non-leaf-page>Leaf and non-leaf page</h2><ul><li>leaf와 non-leaf페이지(Infimum과 supreme을 포함)는 next record의 오프셋을 저장한 &ldquo;next record"포인터를 가지고 있음</li><li>이 연결은 infimum에서 시작하여 모든 레코드를 오름차순으로 연결되며, sumpemum에서 끝남</li><li>레코드는 물리적으로 정렬되어 있지 않고, 링크된 목록에서의 위치가 유일한 순서임<ul><li>insert시 사용 가능한 공간이 있으면 insert됨<br><img src=/image/real-resource-image/Pasted%20image%2020240520232314.png loading=lazy alt=center></li></ul></li><li>leaf page의 구조로, 각 레코드의 데이터의 일부로 키가 아닌 값을 가지고 있음</li></ul><p><img src=/image/real-resource-image/Pasted%20image%2020240520232449.png loading=lazy alt=center></p><ul><li>non-leaf페이지는 동일한 구조를 가지지만, 데이터로 하위 페이지 번호를 가르키며, 정확한 키 대신 하위페이지의 가장 작은 키를 가짐</li></ul><p><img src=/image/real-resource-image/Pasted%20image%2020240520232622.png loading=lazy alt=center></p><ul><li>대부분의 인덱스는 2개 이상의 페이지로 구성되며, 여러 페이지가 오름차순 및 내림차순으로 링크되어 있음</li><li>각각의 페이지는 FIL헤더 안에 이전페이지와 다음 페이지를 가르키는 point를 가지고 있음<ul><li>이로인해 INDEX 페이지들은 동일한 레벨에서 double linked list구조를 가짐</li></ul></li></ul><p><img src=/image/real-resource-image/Pasted%20image%2020240520232907.png loading=lazy alt=center></p><ul><li>위 그림은 B+Tree내의 단일 index page임</li></ul><h2 id=실제로-살펴보기>실제로 살펴보기</h2><ul><li>실제로 그림에서 사용중인 테스트 테이블을 생성하고, 데이터를 삽입해보자!</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=w> </span><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>t_btree</span><span class=w> </span><span class=p>(</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>i</span><span class=w> </span><span class=nb>INT</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>s</span><span class=w> </span><span class=nb>CHAR</span><span class=p>(</span><span class=mi>10</span><span class=p>)</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=p>,</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=k>PRIMARY</span><span class=w> </span><span class=k>KEY</span><span class=p>(</span><span class=n>i</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> </span><span class=p>)</span><span class=w> </span><span class=n>ENGINE</span><span class=o>=</span><span class=n>InnoDB</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w> </span><span class=k>INSERT</span><span class=w> </span><span class=k>INTO</span><span class=w> </span><span class=n>t_btree</span><span class=w> </span><span class=p>(</span><span class=n>i</span><span class=p>,</span><span class=w> </span><span class=n>s</span><span class=p>)</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=k>VALUES</span><span class=w> </span><span class=p>(</span><span class=mi>0</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;A&#34;</span><span class=p>),</span><span class=w> </span><span class=p>(</span><span class=mi>1</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;B&#34;</span><span class=p>),</span><span class=w> </span><span class=p>(</span><span class=mi>2</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;C&#34;</span><span class=p>);</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><ul><li>매우 작고 비현실적이지만, 레코드와 레코드 순회가 어떻게 이루어 지는지 알기 위해 적절한 테이블임</li></ul><h3 id=실제-기본-table-space-파일-구조-확인>실제 기본 table space 파일 구조 확인</h3><ul><li>실제 테이블을 확인해보면, 이전에 보았던 테이블들과 같이 FSP_HDR, IBUF_BITMAP, INODE 페이지가 있고, 루트 인덱스가 있는 INDEX페이지, 아직 사용되지 않은 FREE 페이지 2개가 존재함</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh><span class=line><span class=cl>$ innodb_space -f t_btree.ibd space-page-type-regions
+</span></span><span class=line><span class=cl>start       end         count       <span class=nb>type</span>                
+</span></span><span class=line><span class=cl><span class=m>0</span>           <span class=m>0</span>           <span class=m>1</span>           FSP_HDR             
+</span></span><span class=line><span class=cl><span class=m>1</span>           <span class=m>1</span>           <span class=m>1</span>           IBUF_BITMAP         
+</span></span><span class=line><span class=cl><span class=m>2</span>           <span class=m>2</span>           <span class=m>1</span>           INODE               
+</span></span><span class=line><span class=cl><span class=m>3</span>           <span class=m>3</span>           <span class=m>1</span>           INDEX               
+</span></span><span class=line><span class=cl><span class=m>4</span>           <span class=m>5</span>           <span class=m>2</span>           FREE <span class=o>(</span>ALLOCATED<span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>space-index-pages-summary 명령은 각 페이지에 레코드가 몇개 있는지 알려준다<ul><li>3개가 있을것으로 예상함</li></ul></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh><span class=line><span class=cl>$ innodb_space -f t_btree.ibd space-index-pages-summary
+</span></span><span class=line><span class=cl>page        index   level   data    free    records 
+</span></span><span class=line><span class=cl><span class=m>3</span>           <span class=m>18</span>      <span class=m>0</span>       <span class=m>96</span>      <span class=m>16156</span>   <span class=m>3</span>       
+</span></span><span class=line><span class=cl><span class=m>4</span>           <span class=m>0</span>       <span class=m>0</span>       <span class=m>0</span>       <span class=m>16384</span>   <span class=m>0</span>       
+</span></span><span class=line><span class=cl><span class=m>5</span>           <span class=m>0</span>       <span class=m>0</span>       <span class=m>0</span>       <span class=m>16384</span>   <span class=m>0</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=실제-레코드-확인>실제 레코드 확인</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh><span class=line><span class=cl>$ innodb_space -f t_btree.ibd -r ./simple_t_btree_describer.rb -d SimpleTBTreeDescriber -p <span class=m>3</span> page-dump
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>{</span>:format<span class=o>=</span>&gt;:compact,
+</span></span><span class=line><span class=cl> :offset<span class=o>=</span>&gt;125,
+</span></span><span class=line><span class=cl> :header<span class=o>=</span>&gt;
+</span></span><span class=line><span class=cl>  <span class=o>{</span>:next<span class=o>=</span>&gt;157,
+</span></span><span class=line><span class=cl>   :type<span class=o>=</span>&gt;:conventional,
+</span></span><span class=line><span class=cl>   :heap_number<span class=o>=</span>&gt;2,
+</span></span><span class=line><span class=cl>   :n_owned<span class=o>=</span>&gt;0,
+</span></span><span class=line><span class=cl>   :min_rec<span class=o>=</span>&gt;false,
+</span></span><span class=line><span class=cl>   :deleted<span class=o>=</span>&gt;false,
+</span></span><span class=line><span class=cl>   :field_nulls<span class=o>=</span>&gt;nil,
+</span></span><span class=line><span class=cl>   :field_lengths<span class=o>=</span>&gt;<span class=o>[</span>0, 0, 0, 0<span class=o>]</span>,
+</span></span><span class=line><span class=cl>   :field_externs<span class=o>=</span>&gt;<span class=o>[</span>false, false, false, false<span class=o>]}</span>,
+</span></span><span class=line><span class=cl> :next<span class=o>=</span>&gt;157,
+</span></span><span class=line><span class=cl> :type<span class=o>=</span>&gt;:clustered,
+</span></span><span class=line><span class=cl> :key<span class=o>=</span>&gt;<span class=o>[{</span>:name<span class=o>=</span>&gt;<span class=s2>&#34;i&#34;</span>, :type<span class=o>=</span>&gt;<span class=s2>&#34;INT&#34;</span>, :value<span class=o>=</span>&gt;0, :extern<span class=o>=</span>&gt;nil<span class=o>}]</span>,
+</span></span><span class=line><span class=cl> :transaction_id<span class=o>=</span>&gt;<span class=s2>&#34;0000000f4745&#34;</span>,
+</span></span><span class=line><span class=cl> :roll_pointer<span class=o>=</span>&gt;
+</span></span><span class=line><span class=cl>  <span class=o>{</span>:is_insert<span class=o>=</span>&gt;true, :rseg_id<span class=o>=</span>&gt;8, :undo_log<span class=o>=</span>&gt;<span class=o>{</span>:page<span class=o>=</span>&gt;312, :offset<span class=o>=</span>&gt;272<span class=o>}}</span>,
+</span></span><span class=line><span class=cl> :row<span class=o>=</span>&gt;<span class=o>[{</span>:name<span class=o>=</span>&gt;<span class=s2>&#34;s&#34;</span>, :type<span class=o>=</span>&gt;<span class=s2>&#34;CHAR(10)&#34;</span>, :value<span class=o>=</span>&gt;<span class=s2>&#34;A&#34;</span>, :extern<span class=o>=</span>&gt;nil<span class=o>}]}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>:format<ul><li>레코드가 Barracuda 포맷 테이블 내의 compact포맷인것을 의미<ul><li>반대로 Antelope 테이블 내의 redundant가 있음</li></ul></li></ul></li><li>:key<ul><li>인덱스의 키 필드 배열</li></ul></li><li>:row<ul><li>키가아닌 필드의 배열</li></ul></li><li>:transaction_id and :roll_pointer<ul><li>각 레코드에 포함된 MVCC를 위한 내부 필드</li></ul></li><li>:header내의 :next<ul><li>실제로는 상대저 오프셋(32)가 들어가며, 편의를 위해 계산된 오프셋이 표시됨</li></ul></li></ul><h3 id=인덱스-재귀>인덱스 재귀</h3><ul><li>index-recurse모드를 사용하면 전체 인덱스를 재귀하는 멋지고 간단한 출력을 얻을 수 있음<ul><li>예시는 단일 페이지 인덱스이므로 매우 짧음</li></ul></li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh><span class=line><span class=cl>$ innodb_space -f t_btree.ibd -r ./simple_t_btree_describer.rb -d SimpleTBTreeDescriber -p <span class=m>3</span> index-recurse
+</span></span><span class=line><span class=cl>ROOT NODE <span class=c1>#3: 3 records, 96 bytes</span>
+</span></span><span class=line><span class=cl>  RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>0<span class=o>)</span> -&gt; <span class=o>(</span><span class=nv>s</span><span class=o>=</span>A<span class=o>)</span>
+</span></span><span class=line><span class=cl>  RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>1<span class=o>)</span> -&gt; <span class=o>(</span><span class=nv>s</span><span class=o>=</span>B<span class=o>)</span>
+</span></span><span class=line><span class=cl>  RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>2<span class=o>)</span> -&gt; <span class=o>(</span><span class=nv>s</span><span class=o>=</span>C<span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=간단하지-않은-인덱스-트리-구축>간단하지 않은 인덱스 트리 구축</h3><p><img src=/image/real-resource-image/Pasted%20image%2020240522223300.png loading=lazy alt=center></p><ul><li>multi level 인덱스는 위와같이 나타남</li><li>이전에 설명했듯이, 모든 페이지는 각각 doubly-linked 되어있고, 각 페이지 안의 레코드들은 오름차순으로 singly-linked되어있음</li><li>Non-leaf페이지는 실제 키보다는 자식의 페이지 넘버를 포함한 포인터를 가지고 있음</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh><span class=line><span class=cl>$ innodb_space -f t.ibd -r ./simple_t_describer.rb -d SimpleTDescriber -p <span class=m>3</span> index-recurse
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>ROOT NODE <span class=c1>#3: 2 records, 26 bytes</span>
+</span></span><span class=line><span class=cl>  NODE POINTER RECORD &gt;<span class=o>=</span> <span class=o>(</span><span class=nv>i</span><span class=o>=</span>252<span class=o>)</span> -&gt; <span class=c1>#36</span>
+</span></span><span class=line><span class=cl>  INTERNAL NODE <span class=c1>#36: 1117 records, 14521 bytes</span>
+</span></span><span class=line><span class=cl>    NODE POINTER RECORD &gt;<span class=o>=</span> <span class=o>(</span><span class=nv>i</span><span class=o>=</span>252<span class=o>)</span> -&gt; <span class=c1>#4</span>
+</span></span><span class=line><span class=cl>    LEAF NODE <span class=c1>#4: 446 records, 9812 bytes</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>1<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>2<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>3<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>4<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&lt;many lines omitted&gt;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    NODE POINTER RECORD &gt;<span class=o>=</span> <span class=o>(</span><span class=nv>i</span><span class=o>=</span>447<span class=o>)</span> -&gt; <span class=c1>#1676</span>
+</span></span><span class=line><span class=cl>    LEAF NODE <span class=c1>#1676: 444 records, 9768 bytes</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>447<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>448<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>449<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>450<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>&lt;many lines omitted&gt;
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    NODE POINTER RECORD &gt;<span class=o>=</span> <span class=o>(</span><span class=nv>i</span><span class=o>=</span>891<span class=o>)</span> -&gt; <span class=c1>#771</span>
+</span></span><span class=line><span class=cl>    LEAF NODE <span class=c1>#771: 512 records, 11264 bytes</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>891<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>892<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span><span class=line><span class=cl>      RECORD: <span class=o>(</span><span class=nv>i</span><span class=o>=</span>893<span class=o>)</span> -&gt; <span class=o>()</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>10만개의 row를 가지는 간단한 테이블은 위와같은 구조리르 가짐<ul><li>ROOT, INTERNAL, LEAF NODE를 가지고 있음</li></ul></li><li>일부 페이지는 완전히 꽉차있으며, 468개의 레코드가 16KB페이지의 거의 15KB를 차지하고 있음을 알 수 있음</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh><span class=line><span class=cl>$ innodb_space -f t.ibd -r ./simple_t_describer.rb -d SimpleTDescriber -p <span class=m>36</span> page-dump
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=o>{</span>:format<span class=o>=</span>&gt;:compact,
+</span></span><span class=line><span class=cl> :offset<span class=o>=</span>&gt;125,
+</span></span><span class=line><span class=cl> :header<span class=o>=</span>&gt;
+</span></span><span class=line><span class=cl>  <span class=o>{</span>:next<span class=o>=</span>&gt;11877,
+</span></span><span class=line><span class=cl>   :type<span class=o>=</span>&gt;:node_pointer,
+</span></span><span class=line><span class=cl>   :heap_number<span class=o>=</span>&gt;2,
+</span></span><span class=line><span class=cl>   :n_owned<span class=o>=</span>&gt;0,
+</span></span><span class=line><span class=cl>   :min_rec<span class=o>=</span>&gt;true,
+</span></span><span class=line><span class=cl>   :deleted<span class=o>=</span>&gt;false,
+</span></span><span class=line><span class=cl>   :field_nulls<span class=o>=</span>&gt;nil,
+</span></span><span class=line><span class=cl>   :field_lengths<span class=o>=</span>&gt;<span class=o>[</span>0<span class=o>]</span>,
+</span></span><span class=line><span class=cl>   :field_externs<span class=o>=</span>&gt;<span class=o>[</span>false<span class=o>]}</span>,
+</span></span><span class=line><span class=cl> :next<span class=o>=</span>&gt;11877,
+</span></span><span class=line><span class=cl> :type<span class=o>=</span>&gt;:clustered,
+</span></span><span class=line><span class=cl> :key<span class=o>=</span>&gt;<span class=o>[{</span>:name<span class=o>=</span>&gt;<span class=s2>&#34;i&#34;</span>, :type<span class=o>=</span>&gt;<span class=s2>&#34;INT UNSIGNED&#34;</span>, :value<span class=o>=</span>&gt;252, :extern<span class=o>=</span>&gt;nil<span class=o>}]</span>,
+</span></span><span class=line><span class=cl> :child_page_number<span class=o>=</span>&gt;4<span class=o>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>위는 non-leaf 페이지임</li><li>:key 배열이 나타나고, 정확한 키보다는 자식레코드의 최소키를 포함하고 있음</li><li>:row 필드가 없으며, child_page_number가 해당 필드를 대신함</li></ul><h3 id=특별한-root-page>특별한 root page</h3><ul><li>인덱스가 처음 생성될때 루트페이지가 할당되고, 해당 페이지 번호가 데이터 사전에 저장되므로 루트페이지는 절대 재배치하거나 제거할 수 없음</li><li>루트페이지가 가득 차면, 루트페이지와 두개의 리프 페이지로 구성된 작은 트리를 형성하여 분할해야함</li><li>하지만 루트 페이지 자체는 재배치 할 수 없으므로 분할할 수 없음</li><li>대신 새 빈페이지가 할당되고, 루트 레코드가 그 페이지르 이동되며(루트페이지가 한단계 상향됨) 새페이지가 두개로 분할됨</li><li>그러면 루트페이지는 바로 그 아래 레벨에 하위페이지(node pointer라 부름)로 가득 찰 때까지 다시 분할할 필요가 없으며, 실제로 수천개의 페이지가 될 수 있음</li></ul><p><a class=link href=https://blog.jcole.us/2013/01/10/btree-index-structures-in-innodb/ target=_blank rel=noopener>https://blog.jcole.us/2013/01/10/btree-index-structures-in-innodb/</a></p></section><footer class=article-footer><section class=article-tags><a href=/tags/innodb/>InnoDB</a>
+<a href=/tags/hugo_blog/>Hugo_blog</a>
+<a href=/tags/innodb-file-structure/>InnoDB-File-Structure</a>
+<a href=/tags/database/>Database</a></section><section class=article-copyright><svg class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg>
+<span>Licensed under CC BY-NC-SA 4.0</span></section><section class=article-lastmod><svg class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+<span>마지막 수정: Sep 22, 2024 06:57 UTC</span></section></footer></article><aside class=related-content--wrapper><h2 class=section-title>관련 글</h2><div class=related-content><div class="flex article-list--tile"><article><a href=/p/7-mysql-8.0%EC%97%90%EC%84%9C%EB%8A%94/><div class=article-details><h2 class=article-title>7-Mysql 8.0에서는?</h2></div></a></article><article><a href=/p/5-physical-structure-of-records-in-innodb/><div class=article-details><h2 class=article-title>5-physical structure of records in InnoDB</h2></div></a></article><article><a href=/p/3-innodb-index/><div class=article-details><h2 class=article-title>3-InnoDB Index</h2></div></a></article><article><a href=/p/2-page-management-in-innodb-space-files/><div class=article-details><h2 class=article-title>2-Page management in Innodb space files</h2></div></a></article><article><a href=/p/1-page-space-idb-file-structure/><div class=article-details><h2 class=article-title>1-page, space, idb file structure</h2></div></a></article></div></div></aside><script src=https://utteranc.es/client.js repo=Star-ho/star-ho.github.io issue-term=pathname label=Comments crossorigin=anonymous async></script><style>.utterances{max-width:unset}</style><script>let utterancesLoaded=!1;function setUtterancesTheme(e){let t=document.querySelector(".utterances iframe");t&&t.contentWindow.postMessage({type:"set-theme",theme:`github-${e}`},"https://utteranc.es")}addEventListener("message",e=>{if(e.origin!=="https://utteranc.es")return;utterancesLoaded=!0,setUtterancesTheme(document.documentElement.dataset.scheme)}),window.addEventListener("onColorSchemeChange",e=>{if(!utterancesLoaded)return;setUtterancesTheme(e.detail)})</script><footer class=site-footer><section class=copyright>&copy;
+2020 -
+2024 Sungho's Dev BLog</section><section class=powerby><a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a>로 만듦<br><a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a>의 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.26.0>Stack</a></b> 테마 사용 중</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo=" crossorigin=anonymous defer></script><script src=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU=" crossorigin=anonymous defer></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css crossorigin=anonymous><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css crossorigin=anonymous></main></div><script src=https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z+KMkF24hUW8WePSA9HM=" crossorigin=anonymous></script><script type=text/javascript src=/ts/main.js defer></script><script>(function(){const e=document.createElement("link");e.href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",e.type="text/css",e.rel="stylesheet",document.head.appendChild(e)})()</script></body></html>
