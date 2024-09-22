@@ -18,3 +18,8 @@ disqusShortname = "hugo-theme-stack"
 
 # robots.txt
 enableRobotsTXT = true
+
+[taxonomies]
+category = 'categories'
+series = 'series'
+tag = 'tags'
