@@ -10,12 +10,6 @@ categories:
   - ElasticSearch
 title: ElasticSearch query and fetch
 lastmod: 2024-06-23T12:03:46.521Z
-menu:
-  main:
-    name: title (optional)
-    weight: -90
-    params:
-      icon: icon-name
 ---
 * search쿼리는 도착지를 고정할 수 없고, 잠재적으로 매칭되는 index또는 indices안의 모든 샤드를 검색해야하기에 어려움
 * 일치하는 문서를 찾는 것 뿐만아니라, 검색 api는 결과를 사용자에게 표시하기 전에 통합되고 정리된 목록으로 결합해야함

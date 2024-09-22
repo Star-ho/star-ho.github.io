@@ -8,12 +8,6 @@ categories:
   - ElasticSearch
 title: ElasticSearch
 lastmod: 2024-06-23T11:56:34.327Z
-menu:
-  main:
-    name: title (optional)
-    weight: -90
-    params:
-      icon: icon-name
 ---
 * 분산 문서 장소
 * 분산 시스템으로 구성되어 대용량 데이터와 빠른 검색 가능
