@@ -1,14 +1,15 @@
 ---
 date: 2024-03-03T22:41:04
-updatedAt: 2024-09-22 16:00:47
+updatedAt: 2024-09-22 16:01:45
 tags:
   - hugo_blog
   - Coroutine
   - JVM
 categories:
   - Coroutine
+Series: Coroutine
 title: 3-CoroutinDispatcher
-lastmod: 2024-09-22T07:00:47.051Z
+lastmod: 2024-09-22T07:01:48.308Z
 ---
 * dispatcher의 사전적 정의
   * 사람이나 차량, 특히 긴급 차량을 필요한 곳으로 보낼 책임이 있는 사람
