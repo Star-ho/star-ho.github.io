@@ -1,15 +1,14 @@
 ---
 date: 2024-04-03T23:37:49
-updatedAt: 2024-09-22 15:57:00
+updatedAt: 2024-09-22 16:46:46
 tags:
   - JVM
   - Concurrency
   - hugo_blog
 categories:
   - JVM
-  - JVM/Concurrent
 title: 2-Semaphore
-lastmod: 2024-09-22T06:57:00.055Z
+lastmod: 2024-09-22T07:46:46.036Z
 ---
 * 허가증을 유지함으로서 동시성을 제어
 

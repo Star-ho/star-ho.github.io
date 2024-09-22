@@ -1,15 +1,14 @@
 ---
 date: 2024-04-04T23:11:59
-updatedAt: 2024-09-22 15:56:56
+updatedAt: 2024-09-22 16:46:44
 tags:
   - JVM
   - Concurrency
   - hugo_blog
 categories:
   - JVM
-  - JVM/Concurrent
 title: 4-Volitile
-lastmod: 2024-09-22T06:56:56.608Z
+lastmod: 2024-09-22T07:46:44.276Z
 ---
 ```kotlin
 fun main(){  

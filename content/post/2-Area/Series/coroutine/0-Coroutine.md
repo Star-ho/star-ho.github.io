@@ -9,9 +9,8 @@ tags:
 categories:
   - Coroutine
   - Coroutine-series
-series: "11"
 title: 0-Coroutine
-lastmod: 2024-09-22T07:32:21.040Z
+lastmod: 2024-09-22T07:41:48.869Z
 ---
 * 작은 쓰레드, 하나의 쓰레드를 어떻게 효율적으로 처리할것인가에 대한 방안 중 하나
 * block작업(io요청)이 발생했을때, thread를 block하지않고 해당 작업을 suspend시키고 다른작업을 처리함

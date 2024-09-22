@@ -1,15 +1,14 @@
 ---
 date: 2024-04-02T18:05:04
-updatedAt: 2024-09-22 15:57:01
+updatedAt: 2024-09-22 16:46:48
 tags:
   - JVM
   - Concurrency
   - hugo_blog
 categories:
   - JVM
-  - JVM/Concurrent
 title: 1-ReentrantLock & Condition
-lastmod: 2024-09-22T06:57:01.795Z
+lastmod: 2024-09-22T07:46:48.928Z
 ---
 # ReentrantLock
 

@@ -1,15 +1,14 @@
 ---
 date: 2024-04-05T17:25:00
-updatedAt: 2024-09-22 15:56:49
+updatedAt: 2024-09-22 16:46:42
 tags:
   - JVM
   - Concurrency
   - hugo_blog
 categories:
   - JVM
-  - JVM/Concurrent
 title: 5-ExecutorService & CountDownLatch
-lastmod: 2024-09-22T06:56:49.822Z
+lastmod: 2024-09-22T07:46:42.178Z
 ---
 # ExecutorService
 
