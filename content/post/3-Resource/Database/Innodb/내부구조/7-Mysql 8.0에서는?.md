@@ -1,6 +1,6 @@
 ---
 date: 2024-05-24 16:30:40
-updatedAt: 2024-09-19 23:21:57
+updatedAt: 2024-09-22 15:58:05
 tags:
   - InnoDB
   - InnoDB-File-Structure
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Database
+  - Innodb_ruby
 title: 7-Mysql 8.0에서는?
-lastmod: 2024-09-19T14:21:57.264Z
+lastmod: 2024-09-22T06:58:05.416Z
 ---
 * Jeremy Cole의 InnoDB정보들은 MySQL 5버전에 관한 내용이며, 10년전의 내용임
 * 현재 MySQL 8버전대를 사용하는데, 큰 기본 틀의 큰 차이는 없어 보이지만, 간단하게 알아볼 예정

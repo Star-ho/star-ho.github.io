@@ -1,14 +1,15 @@
 ---
 date: 2024-02-22T23:15:48
-updatedAt: 2024-04-21 18:34:36+3270
+updatedAt: 2024-09-22 15:57:23
 tags:
   - JVM
   - Garbage-Collection
   - hugo_blog
 categories:
   - JVM
+  - JVM/GC
 title: 1-Garbage Collection Process
-lastmod: 2024-04-21T09:36:38.171Z
+lastmod: 2024-09-22T06:57:23.034Z
 ---
 * 앞의 Garbage Collection Concept에서는 heap이 나누어져 저장되는 것을 이해함
 * 여기서는 나누어져 저장되는 것들의 상호작용에 대해 알아봄

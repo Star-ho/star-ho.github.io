@@ -1,14 +1,15 @@
 ---
 date: 2024-02-22T23:19:00
-updatedAt: 2024-04-21 18:36:38+1720
+updatedAt: 2024-09-22 15:57:24
 tags:
   - JVM
   - Garbage-Collection
   - hugo_blog
 categories:
   - JVM
+  - JVM/GC
 title: 2-Garbage Collection Types
-lastmod: 2024-04-21T09:36:38.172Z
+lastmod: 2024-09-22T06:57:24.870Z
 ---
 ## Serial GC
 

@@ -1,6 +1,6 @@
 ---
 date: 2024-05-12 17:45:54
-updatedAt: 2024-09-19 23:21:39
+updatedAt: 2024-09-22 15:57:48
 tags:
   - InnoDB
   - hugo_blog
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Database
+  - Innodb_ruby
 title: 2-Page management in Innodb space files
-lastmod: 2024-09-19T14:21:39.686Z
+lastmod: 2024-09-22T06:57:48.391Z
 ---
 ## Extent
 

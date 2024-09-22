@@ -1,13 +1,15 @@
 ---
 date: 2024-03-02T22:41:32
-updatedAt: 2024-09-21 23:55:51
+updatedAt: 2024-09-22 15:58:32
 tags:
   - Concurrency
   - Database
   - hugo_blog
   - Concept
+categories:
+  - Concurrency
 title: 10-Isolation level(격리 수준)
-lastmod: 2024-09-21T14:56:00.281Z
+lastmod: 2024-09-22T06:58:35.574Z
 ---
 * 여러 트랜잭션이 동시에 변경을 수행하고 쿼리를 수행할 때 성능과 안정성, 일관성 및 결과 재현성 간의 균형을 미세 조정하는 설정
 

@@ -1,14 +1,15 @@
 ---
 date: 2024-02-19T13:24:16
-updatedAt: 2024-07-11 12:07:28
+updatedAt: 2024-09-22 15:57:17
 tags:
   - JVM
   - Garbage-Collection
   - hugo_blog
 categories:
   - JVM
+  - JVM/GC
 title: 0-Garbage Collection Concept
-lastmod: 2024-07-11T03:07:41.917Z
+lastmod: 2024-09-22T06:57:17.726Z
 ---
 * 메모리 관리 기법중 하나로 프로그램이 동적으로 할당했던 메모리 영역 중에서 필요없게된 영역을 해제하는 기능
 * Reference counting이 0이되면 삭제함

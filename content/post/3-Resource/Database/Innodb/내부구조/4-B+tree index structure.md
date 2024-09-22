@@ -1,6 +1,6 @@
 ---
 date: 2024-05-20 23:10:14
-updatedAt: 2024-09-19 23:21:48
+updatedAt: 2024-09-22 15:57:53
 tags:
   - InnoDB
   - hugo_blog
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Database
+  - Innodb_ruby
 title: 4-B+tree index structure
-lastmod: 2024-09-19T14:21:48.868Z
+lastmod: 2024-09-22T06:57:53.281Z
 ---
 ## B+Tree, root, leaf, level 용어정리
 

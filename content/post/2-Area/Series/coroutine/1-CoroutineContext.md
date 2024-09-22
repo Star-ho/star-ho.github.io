@@ -1,12 +1,14 @@
 ---
 date: 2024-03-03T22:41:02
-updatedAt: 2024-09-21 23:52:32
+updatedAt: 2024-09-22 15:58:46
 tags:
   - Coroutine
   - hugo_blog
   - JVM
+categories:
+  - Coroutine
 title: 1-CoroutineContext
-lastmod: 2024-09-21T14:53:36.560Z
+lastmod: 2024-09-22T06:58:48.420Z
 ---
 ## 정의
 

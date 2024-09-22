@@ -1,6 +1,6 @@
 ---
 date: 2024-05-19 22:44:51
-updatedAt: 2024-09-19 23:21:46
+updatedAt: 2024-09-22 15:57:50
 tags:
   - InnoDB
   - InnoDB-File-Structure
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Database
+  - Innodb_ruby
 title: 3-InnoDB Index
-lastmod: 2024-09-19T14:21:46.602Z
+lastmod: 2024-09-22T06:57:50.748Z
 ---
 ## Index
 

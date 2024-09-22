@@ -1,6 +1,6 @@
 ---
 date: 2024-05-10 22:40:29
-updatedAt: 2024-09-19 23:21:33
+updatedAt: 2024-09-22 15:57:45
 tags:
   - "#InnoDB"
   - hugo_blog
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Database
+  - Innodb_ruby
 title: 1-page, space, idb file structure
-lastmod: 2024-09-19T14:21:33.839Z
+lastmod: 2024-09-22T06:57:45.525Z
 ---
 ## Page
 

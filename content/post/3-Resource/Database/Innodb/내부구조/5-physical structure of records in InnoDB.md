@@ -1,6 +1,6 @@
 ---
 date: 2024-05-22 22:43:24
-updatedAt: 2024-09-19 23:21:52
+updatedAt: 2024-09-22 15:57:56
 tags:
   - InnoDB
   - InnoDB-File-Structure
@@ -8,8 +8,9 @@ tags:
   - Database
 categories:
   - Database
+  - Innodb_ruby
 title: 5-physical structure of records in InnoDB
-lastmod: 2024-09-19T14:21:52.407Z
+lastmod: 2024-09-22T06:57:56.156Z
 ---
 ## Record
 
