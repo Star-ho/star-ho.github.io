@@ -7,7 +7,6 @@
     <list default="true" id="83b1f5f4-d4b9-4501-903a-60b067854b38" name="Changes" comment="fix : add post">
       <change beforePath="$PROJECT_DIR$/.idea/codestream.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codestream.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/_default/config.toml" beforeDir="false" afterPath="$PROJECT_DIR$/config/_default/config.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,6 +107,8 @@
       <workItem from="1726755735319" duration="324000" />
       <workItem from="1726794909773" duration="906000" />
       <workItem from="1726814860997" duration="21000" />
+      <workItem from="1727057743264" duration="1751000" />
+      <workItem from="1727230286112" duration="15000" />
     </task>
     <task id="LOCAL-00001" summary="fix : site config">
       <option name="closed" value="true" />

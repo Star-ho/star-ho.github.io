@@ -1,16 +1,15 @@
 ---
 date: 2024-03-02T22:41:03
-updatedAt: 2024-09-22 16:07:27
+updatedAt: 2024-09-25 13:51:17
 tags:
   - Concurrency
-  - Concept
   - hugo_blog
   - Database
 categories:
   - Concurrency
   - Concurrent-series
 title: 8-Intention shared lock, exclusive lock
-lastmod: 2024-09-22T07:07:27.376Z
+lastmod: 2024-09-25T04:51:17.532Z
 ---
 * IS, IX lock과 S,X Lock과의 차이는 테이블까지 락이 걸림
 
@@ -20,6 +19,9 @@ lastmod: 2024-09-22T07:07:27.376Z
   * S,X와 같이, IS가 걸려있으면 해당 테이블에 대해 S락은 가능, X락은 불가
   * S,X와 같이, IX가 걸려있으면 해당 테이블에 대해 S,X락 둘다 불가
   * 읽기나 쓰기 도중 테이블이 변경되는것을 막기 위함이라고 추측함
+
+* FOREIGN\_KEY\_CHECKS = 1 일때, IX락을 걸 시, FK가 걸려있으면 FK걸려있는 row도 같이 IX락이 걸림
+  * 외래키 제약조건을 만족시키기 위해
 
 * `SELECT ... FOR SHARE`로 S Lock을, `SELECT ... FOR UPDATE`로 X락을 걸 수 있음
 
