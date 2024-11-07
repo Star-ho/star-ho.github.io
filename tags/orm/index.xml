@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ORM on Sungho's Dev BLog</title><link>https://sungho94.me/tags/orm/</link><description>Recent content in ORM on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sun, 07 Apr 2024 12:24:58 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/orm/index.xml" rel="self" type="application/rss+xml"/><item><title>Querydsl transform connection leak</title><link>https://sungho94.me/p/querydsl-transform-connection-leak/</link><pubDate>Sun, 07 Apr 2024 12:24:58 +0000</pubDate><guid>https://sungho94.me/p/querydsl-transform-connection-leak/</guid><description>&lt;h2 id="상황">상황
+&lt;/h2>&lt;ul>
+&lt;li>현재 개발중인 기능에서 특정 api가 아래의 로그를 뱉으며 동작하지 않는 문제가 있다고 수정해달라는 요청을 받았다.&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">org.springframework.transaction.CannotCreateTransactionException: Could not open JPA EntityManager for transaction; nested exception is org.hibernate.exception.JDBCConnectionException: Unable to acquire JDBC Connection
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&amp;lt;생략&amp;gt;
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Caused by: java.sql.SQLTransientConnectionException: write-pool - Connection is not available, request timed out after 30000ms.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>write-pool에서 커넥션을 가져올 수 없다는 로그였다.&lt;/li>
+&lt;li>테스트 서버였고, 커넥션 10개로 설정되어있었다.&lt;/li>
+&lt;li>다른 업무도 있었고, 단순 커넥션 부족이라고 생각해서 테스트 서버를 재시작하였고, 커넥션 개수를 20개 까지 늘렸다&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>큰 착오였다, 테스트 서버에서 작업하는 인원은 5명이 채 되지 않았고, 절대 커넥션이 모자라지 않는 개수인데 당시에는 다른 작업으로 바빳고 대수롭지 않게 생각했었다&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>그 이후 2일뒤 커넥션 개수를 늘려도 계속 에러가 나서 수정요청을 받았다.&lt;/li>
+&lt;li>커넥션 수가 모자랄리가 없다고 판단했는데, 계속 에러가 난다고하여 우선 커넥션 관련 로그 설정을 하였다&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-yml" data-lang="yml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">logging&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">level&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">com.zaxxer.hikari.HikariConfig&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">DEBUG &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">com.zaxxer.hikari&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">TRACE &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">org.springframework.transaction.interceptor&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">TRACE &lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>위 로그를 설정하고, 서버 로그를 확인해보니, write-pool의 커넥션이 api요청이 끝난 후에도 반환되지 않는 것을 확인했다.&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">DEBUG 57394 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool : write-pool - Pool stats (total=20, active=0, idle=19, waiting=0)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">DEBUG 57394 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool : write-pool - Pool stats (total=20, active=1, idle=18, waiting=0)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">DEBUG 57394 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool : write-pool - Pool stats (total=20, active=2, idle=17, waiting=0)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>connection을 사용한 후 connection이 반환되지 않는 connection leak이 있는것을 확인하였고, hikariConnection leak을 확인 할 수 있는 설정을 추가하였다&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span class="line">&lt;span class="cl">&lt;span class="n">dataSource&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">leakDetectionThreshold&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="m">2000&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;blockquote>
+&lt;p>커넥션이 누수를 판단하는 시간으로 디폴트로 0(disable)으로 설정됨&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>위 설정을 하니 아래의 로그가 남았다&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">java.lang.Exception: Apparent connection leak detected
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>로그에는 디테일한 메소드 정보까지 남았고, queryDsl의 trasform을 사용하는 메서드였다
+&lt;ul>
+&lt;li>@Transactional어노테이션 붙어있지 않았다!&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>관련해서 검색을 해보니, queryDsl의 transform을 @Transactional없이 사용하면, connection leak이 발생한다는 이슈가 있었다.
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/querydsl/querydsl/issues/2291" target="_blank" rel="noopener"
+>링크참고&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>우선 queryDsl의 transform를 사용하지 않는 로직에 대해 @Transactional을 다 붙여서 이슈를 종료하였다&lt;/li>
+&lt;/ul>
+&lt;h2 id="deep-dive">Deep dive!
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">테스트환경
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">spring boot 2.7.8
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">querydsl 5.0.0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>왜 @Transcational이 붙지않는 querydsl의 transform에 connection leak이 발생했을까?&lt;/li>
+&lt;li>위 이유를 알기 위해 아래 2가지를 알아보려 한다
+&lt;ul>
+&lt;li>@Transcational이 붙을때 커넥션을 어떻게 반납하는지?&lt;/li>
+&lt;li>querydsl의 transform에서 커넥션 왜 반납하지 않는지?&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="transcational이-붙을때-커넥션을-어떻게-반납하는지">@Transcational이 붙을때 커넥션을 어떻게 반납하는지?
+&lt;/h3>&lt;ul>
+&lt;li>커넥션은 쿼리를 실행할때 얻음
+&lt;ul>
+&lt;li>Transactional을 실행할 때 얻지않음&lt;br>
+-&amp;gt; 쿼리가 없는 메서드에 @Transactional을 붙여도 커넥션을 할당하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>@Transactional이 있을떄&lt;/p>
+&lt;ul>
+&lt;li>TransactionAspectSupport::createTransactionIfNecessary에서 txInfo를 리턴함&lt;/li>
+&lt;li>반납은 transaction종료시 발생&lt;/li>
+&lt;li>반납은 앞선 과정에서 받은 txInfo를 가지고, TransactionAspectSupport::commitTransactionAfterReturning의 인자로 넘겨 커넥션을 반납함
+&lt;ul>
+&lt;li>commitTransactionAfterReturning따라가다보면, ConcurrentBag::requite를 호출하는것을 확인함&lt;/li>
+&lt;li>txInfo내 entituManger에 connection에 대한 정보가 있음&lt;br>
+-&amp;gt; @Transactional이 있으면 명시적으로 커넥션을 반환하는 로직이 있어서 @Transactional이 있다면 커넥션 반환이 정상적으로 이루어짐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>@Transactional이 없을때&lt;/p>
+&lt;ul>
+&lt;li>TransactionAspectSupport::createTransactionIfNecessary에서 txInfo가 없음&lt;/li>
+&lt;li>트랜잭션 종료시 TransactionAspectSupport::commitTransactionAfterReturning에 넘길 txInfo가 없으므로 쿼리를 실행 후 커넥션을 반납하는 로직이 필요함&lt;/li>
+&lt;li>아래의 로직으로 커넥션 반납함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-java" data-lang="java">&lt;span class="line">&lt;span class="cl">&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">static&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queryTerminatingMethods&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;execute&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queryTerminatingMethods&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;executeUpdate&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queryTerminatingMethods&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;getSingleResult&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queryTerminatingMethods&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;getResultStream&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queryTerminatingMethods&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;getResultList&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">queryTerminatingMethods&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">add&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;list&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="kd">public&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nf">invoke&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">proxy&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Method&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">method&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="o">[]&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">args&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kd">throws&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Throwable&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">SharedEntityManagerCreator&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">queryTerminatingMethods&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">contains&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">method&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getName&lt;/span>&lt;span class="p">()))&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">outputParameters&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">!=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">&amp;amp;&amp;amp;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">target&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">instanceof&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">StoredProcedureQuery&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">StoredProcedureQuery&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">storedProc&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">StoredProcedureQuery&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">target&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Iterator&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">var12&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">outputParameters&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">entrySet&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="na">iterator&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">while&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">var12&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">hasNext&lt;/span>&lt;span class="p">())&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Map&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">Entry&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">entry&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">Map&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">Entry&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="n">var12&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">next&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">try&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">Object&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">key&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">entry&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getKey&lt;/span>&lt;span class="p">();&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">key&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">instanceof&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">entry&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">setValue&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">storedProc&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getOutputParameterValue&lt;/span>&lt;span class="p">((&lt;/span>&lt;span class="n">Integer&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="n">key&lt;/span>&lt;span class="p">));&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">entry&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">setValue&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">storedProc&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">getOutputParameterValue&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">key&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">toString&lt;/span>&lt;span class="p">()));&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">catch&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">IllegalArgumentException&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">var20&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">IllegalArgumentException&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">ex&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">var20&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">entry&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">setValue&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ex&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">EntityManagerFactoryUtils&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">closeEntityManager&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">entityManager&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="na">entityManager&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">null&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="p">}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>실행한 메서드 명이 queryTerminatingMethods 안에 있을때, closeEntityManager를 호출함&lt;/li>
+&lt;/ul>
+&lt;h3 id="querydsl의-transform에서-커넥션-왜-반납하지-않는지">querydsl의 transform에서 커넥션 왜 반납하지 않는지?
+&lt;/h3>&lt;ul>
+&lt;li>querydsl의 transform는 쿼리 조회시 scroll메서드를 사용함
+&lt;ul>
+&lt;li>queryTerminatingMethods에 존재하지 않음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="정리">정리
+&lt;/h2>&lt;ul>
+&lt;li>@Transactional을 사용한다면 @Transactional 내부에 connection을 종료하는 로직이 있음&lt;/li>
+&lt;li>@Transactional을 사용하지 않는다면, 커넥션이 끝날때, queryTerminatingMethods안에 존재하는 메서드를 사용해 커넥션을 종료해야함&lt;/li>
+&lt;li>querydsl의 transform는 쿼리 조회시 scroll메서드를 사용하여 커넥션이 종료되지 않음&lt;/li>
+&lt;/ul>
+&lt;h2 id="해당-이슈정리">해당 이슈정리
+&lt;/h2>&lt;ul>
+&lt;li>해당 이슈는 2018년 4월부터 발생한 이슈이다.&lt;a class="link" href="https://github.com/querydsl/querydsl/issues/2291" target="_blank" rel="noopener"
+>github 이슈 링크&lt;/a>&lt;/li>
+&lt;li>해당 이슈가 테스트 환경인 spring boot 2.7.8에서도 재현되었고 혹시 아직 고쳐지지 않았나 싶어, spring-orm코드를 보니, 23년 11월 26일에 scroll을 추가 되어 있었다.&lt;/li>
+&lt;li>추가로 spring boot 3.0 버전부터는 JPAQueryFactory생성 자 JPQLTemplates.DEFAULT을 받도록 수정되어, 해당 이슈를 우회할 수 있는것으로 보인다.&lt;/li>
+&lt;/ul></description></item><item><title>HikariCP</title><link>https://sungho94.me/p/hikaricp/</link><pubDate>Sun, 31 Mar 2024 22:41:00 +0000</pubDate><guid>https://sungho94.me/p/hikaricp/</guid><description>&lt;blockquote>
+&lt;p>hikari가 일본어로 빛이라는 의미&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="concurrentbag">ConcurrentBag
+&lt;/h2>&lt;ul>
+&lt;li>hikary cp 에서 커넥션을 관리하는 주체&lt;/li>
+&lt;li>borrow(빌려줌)메서드으로 커넥션을 반환
+&lt;ul>
+&lt;li>Compare and set 연산으로 커넥션을 사용상태로 변경&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>requite(갚음)메스드로 커넥션을 반납
+&lt;ul>
+&lt;li>setState 메서드로 커넥션을 사용가능한상태로 변경&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>빌려줄때는 CAS연산으로 해당 커넥션이 사용가능한 상태인지 확인하지만, 갚을때는 따로 확인하지 않음&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="왜-hikari-cp를-많이-사용하는가">왜 Hikari CP를 많이 사용하는가?
+&lt;/h2>&lt;ul>
+&lt;li>Spring에서 지원하는 기본 connection pool이다&lt;/li>
+&lt;li>Spring에서는 성능과 동시성에서 HikariCP가 장점이 있다고 판단하여 사용함&lt;/li>
+&lt;li>사용이 불가능한 상황에서는 아래와 같은 순서로 Connection pool을를 사용함
+&lt;ul>
+&lt;li>HikariCP &amp;gt; Tomcat pooling DataSource &amp;gt; Commons DBCP2 &amp;gt; Oracle UCP&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>참고&lt;br>
+&lt;a class="link" href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#data.sql.datasource.connection-pool" target="_blank" rel="noopener"
+>https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#data.sql.datasource.connection-pool&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>다른 CP들과 비교 [https://github.com/brettwooldridge/HikariCP/blob/dev/documents/Welcome-To-The-Jungle.md]
+&lt;ul>
+&lt;li>위 링크를 보면 다른 CP에 비해 request spike가 발생했을때 blocking thread가 적고, 커넥션 수가 일정한 것을 확인할 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="기타">기타
+&lt;/h2>&lt;ul>
+&lt;li>HikariCP는 다른 CP에 비해 설정할 수 있는 값이 적음, 간단함을 추구하는 디자인 철학&lt;/li>
+&lt;li>HikariCP와 다른 CP들과의 다르게 PrepareStatement캐싱을 하지 않음&lt;br>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="속성-정리">속성 정리
+&lt;/h2>&lt;h3 id="connectiontimeout">connectionTimeout
+&lt;/h3>&lt;ul>
+&lt;li>연결 타임아웃&lt;/li>
+&lt;li>기본 30초&lt;/li>
+&lt;li>짧게 설정할경우, 설정한 시간보다 조회하는 시간이 길면, time out error 발생&lt;/li>
+&lt;/ul>
+&lt;h3 id="이외의-것들은-링크httpsgithubcombrettwooldridgehikaricptabreadme-ov-filegear-configuration-knobs-baby참고">이외의 것들은 &lt;a class="link" href="https://github.com/brettwooldridge/HikariCP?tab=readme-ov-file#gear-configuration-knobs-baby" target="_blank" rel="noopener"
+>링크&lt;/a>참고
+&lt;/h3>&lt;p>&lt;a class="link" href="https://github.com/brettwooldridge/HikariCP" target="_blank" rel="noopener"
+>https://github.com/brettwooldridge/HikariCP&lt;/a>&lt;br>
+&lt;a class="link" href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#data.sql.datasource.connection-pool" target="_blank" rel="noopener"
+>https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#data.sql.datasource.connection-pool&lt;/a>&lt;/p>
+&lt;p>#Database&lt;/p></description></item><item><title>Hibernate Associate(하이버네이트 연관관계)</title><link>https://sungho94.me/p/hibernate-associate%ED%95%98%EC%9D%B4%EB%B2%84%EB%84%A4%EC%9D%B4%ED%8A%B8-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84/</link><pubDate>Tue, 23 Jan 2024 22:39:11 +0000</pubDate><guid>https://sungho94.me/p/hibernate-associate%ED%95%98%EC%9D%B4%EB%B2%84%EB%84%A4%EC%9D%B4%ED%8A%B8-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84/</guid><description>&lt;h2 id="연관관계의-소유">연관관계의 소유
+&lt;/h2>&lt;ul>
+&lt;li>소유라는 개념은, 외래키를 관리하는 주체를 의미함&lt;/li>
+&lt;li>단방향에서는 소유하는 쪽만 존재&lt;/li>
+&lt;li>양방향에서는 소유하는쪽과 그 반대쪽 둘다 존재
+&lt;ul>
+&lt;li>manyToOne에서는 many쪽이 소유측을 가지고 있음&lt;/li>
+&lt;li>oneToOne에서는 외래키가 있는쪽이 소유측임&lt;/li>
+&lt;li>ManyToMnay에서는 둘 다 소유측이 될 수 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>mappedBy로 관계의 소유자인 엔티티의 속성 또는 필드를 지정함&lt;/li>
+&lt;/ul>
+&lt;h2 id="cascade">Cascade
+&lt;/h2>&lt;ul>
+&lt;li>ALL, DETACH, MERGE, PERSIST, REFRESH, REMOVE 가 있으며 ALL은 다른 모든 속성을 포괄하는 개념&lt;/li>
+&lt;li>부모엔티티의 변경이 발생할때 자식까지 전파할건지에 대한 여부&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>ex) CascadeType.Merge가 지정된경우 부모가 merge되면 자식도 merge됨&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="fetchtype">FetchType
+&lt;/h2>&lt;ul>
+&lt;li>해당 필드를 가져올 시기를 결정&lt;/li>
+&lt;li>Lazy
+&lt;ul>
+&lt;li>*ToMany(oneToMany,ManyToMany)의 default FetchType&lt;/li>
+&lt;li>해당 필드를 엑세스할때 가져옴&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Eager
+&lt;ul>
+&lt;li>*ToOne(ManyToOne,OneToOne)의 default FetchType&lt;/li>
+&lt;li>소유자의 로딩의 일부로 해당 필드를 가져옴
+&lt;ul>
+&lt;li>소유자 로딩시 바로 가져옴&lt;br>
+**fetch=EAGER가 의미가 있는 유일한 시나리오는 연관된 객체가 두 번째 수준 캐시에서 발견될 확률이 항상 매우 높다고 생각하는 경우.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>꺠알팁&lt;br>
+oneToMany, manyToOne설정된 필드에는 Column어노테이션 불가, joinColumn사용해야함&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://docs.jboss.org/hibernate/orm/6.4/introduction/html" target="_blank" rel="noopener"
+>https://docs.jboss.org/hibernate/orm/6.4/introduction/html&lt;/a>_single/Hibernate_Introduction.html#associations&lt;br>
+&lt;a class="link" href="https://docs.jboss.org/hibernate/orm/6.4/userguide/html" target="_blank" rel="noopener"
+>https://docs.jboss.org/hibernate/orm/6.4/userguide/html&lt;/a>_single/Hibernate_User_Guide.html#associations-many-to-one&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/javaee/7/tutorial/persistence-intro001.htm#JEETT01154" target="_blank" rel="noopener"
+>https://docs.oracle.com/javaee/7/tutorial/persistence-intro001.htm#JEETT01154&lt;/a>&lt;/p></description></item><item><title>Hibernate</title><link>https://sungho94.me/p/hibernate/</link><pubDate>Fri, 19 Jan 2024 22:29:15 +0000</pubDate><guid>https://sungho94.me/p/hibernate/</guid><description>&lt;h3 id="hibernate">Hibernate
+&lt;/h3>&lt;ul>
+&lt;li>Java로 작성된 프로그램에서 관계형 데이터를 자연스럽고, typesafe한 형태로 사용할 수 있게함&lt;/li>
+&lt;li>복잡한 쿼리를 작성하고, 그 결과를 쉽게 사용할 수 있도록함&lt;/li>
+&lt;li>프로그램이 메모리에 변경된 내용을 쉽게 데이터베이스와 쉽게 동기화 하고 ACID속성을 준수함&lt;/li>
+&lt;li>기본 영속성 로직이 작성된 후에 성능을 최적화 할 수 있음&lt;/li>
+&lt;li>JPA가 영감을 얻었으며, JPA의 최신 버전 specification을 구현&lt;/li>
+&lt;/ul>
+&lt;h2 id="persistence-context">Persistence Context
+&lt;/h2>&lt;ul>
+&lt;li>first-level cache라 불리는 일종의 캐시&lt;/li>
+&lt;li>영속 컨텍스트 내에서 데이터베이스에서 읽은 모든 엔티티 인스턴스와 새로 생성된 엔티티들에 대해, 영속성 컨택스트는 엔티티 인스턴스 식별자와 인스턴스 자체에 대한 고유한 매핑을 보유&lt;/li>
+&lt;li>persistence Context와 연관된 entity는 아래 4가지중 하나의 상태를 가짐 상태
+&lt;ul>
+&lt;li>transient
+&lt;ul>
+&lt;li>초기화 되었지만 영속성컨텍스트와 연관되지 않은 상태&lt;/li>
+&lt;li>데이터베이스에 나타나지 않았고, 식별자가 할당되지 않은 상태&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>managed or persistent
+&lt;ul>
+&lt;li>연관된 식별자가 있으면서, 영속성 컨텍스트에 연관되어 있음&lt;/li>
+&lt;li>물리적으로 데이터에 존재할수도, 안할 수 도 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>detached
+&lt;ul>
+&lt;li>연관된 식별자가 있으면서, 영속성 컨텍스트와 연관되어있지 않은 상태&lt;/li>
+&lt;li>일반적으로, 영속성 컨택스트가 닫혔거나, 인스턴스가 컨텍스트에서 제외된 경우&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>removed
+&lt;ul>
+&lt;li>연관된 식별자를 가지며, 영속성 컨텍스트에 연관되어 있지만, 데이터베이스에서 삭제가 예약되어 있는 상태&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="persistence-context의-operation">Persistence context의 operation
+&lt;/h2>&lt;ul>
+&lt;li>persist(Object)
+&lt;ul>
+&lt;li>transient 객체를 영속화 하고, SQL insert문을 예약함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>remove(Object)
+&lt;ul>
+&lt;li>영속 객체를 transient하게 만들고, SQL delete 문을 예약함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>merge(Object)
+&lt;ul>
+&lt;li>주어진 detached된 객체를 영속 객체로 복사하고, 영속 객체를 반환&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>detach(Object)
+&lt;ul>
+&lt;li>데이터베이스에 영향을 주지 않고 세션과 영속객체의 연결을 분리함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>clear()
+&lt;ul>
+&lt;li>영속성 컨텍스트를 비우고, 모든 엔티티들을 detache함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>flush
+&lt;ul>
+&lt;li>세션과 연결된 영속객체의 변경을 확인하고, insert, update문을 통해 데이터베이스와 세션의 상태를 동기화함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.jboss.org/hibernate/orm/6.4/introduction/html" target="_blank" rel="noopener"
+>https://docs.jboss.org/hibernate/orm/6.4/introduction/html&lt;/a>_single/Hibernate_Introduction.html&lt;br>
+&lt;a class="link" href="https://docs.jboss.org/hibernate/orm/6.4/userguide/html" target="_blank" rel="noopener"
+>https://docs.jboss.org/hibernate/orm/6.4/userguide/html&lt;/a>_single/Hibernate_User_Guide.html&lt;/p></description></item><item><title>JPA 영속성전이, 프록시객체</title><link>https://sungho94.me/p/jpa-%EC%98%81%EC%86%8D%EC%84%B1%EC%A0%84%EC%9D%B4-%ED%94%84%EB%A1%9D%EC%8B%9C%EA%B0%9D%EC%B2%B4/</link><pubDate>Thu, 05 Oct 2023 23:29:07 +0000</pubDate><guid>https://sungho94.me/p/jpa-%EC%98%81%EC%86%8D%EC%84%B1%EC%A0%84%EC%9D%B4-%ED%94%84%EB%A1%9D%EC%8B%9C%EA%B0%9D%EC%B2%B4/</guid><description>&lt;h2 id="영속성전이">영속성전이
+&lt;/h2>&lt;ul>
+&lt;li>cascade
+&lt;ul>
+&lt;li>부모 엔티티를 영속성 관리시 자식 엔티티도 같이 영향을 끼치게 하는것&lt;/li>
+&lt;li>ALL, PERSIST, REMOVE, MERGE, REFERESH, DETACH&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>orphanRemoval
+&lt;ul>
+&lt;li>부모엔티티 삭제시 자식 엔티티를 삭제하는것을 포함&lt;/li>
+&lt;li>부모엔티티의 자식엔티티 리스트에서 제거하는 것으로도 자식엔티티를 삭제&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="프록시객체">프록시객체
+&lt;/h2>&lt;ul>
+&lt;li>lazy로딩을 구현하기 위해 사용&lt;/li>
+&lt;li>lazy로딩을 사용하면 실제 객체를 사용할때 데이터베이스에서 조회함&lt;/li>
+&lt;li>프록시 객체는 실제로 값을 가지고 있지 않고 데이터를 로딩하기 위한 정보만 가지고 있음&lt;/li>
+&lt;li>getReference메서드로 프록시 객체를 가져옴&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://vladmihalcea.com/how-does-a-jpa-proxy-work-and-how-to-unproxy-it-with-hibernate/" target="_blank" rel="noopener"
+>https://vladmihalcea.com/how-does-a-jpa-proxy-work-and-how-to-unproxy-it-with-hibernate/&lt;/a>&lt;/p>
+&lt;p>#JPA&lt;/p></description></item><item><title>JPA entity manager</title><link>https://sungho94.me/p/jpa-entity-manager/</link><pubDate>Sat, 30 Sep 2023 14:49:42 +0000</pubDate><guid>https://sungho94.me/p/jpa-entity-manager/</guid><description>&lt;h2 id="entity-manager">entity manager
+&lt;/h2>&lt;ul>
+&lt;li>entity 인스턴스의 생명주기를 관리&lt;/li>
+&lt;li>hibernate에서는 entity manager를 상속한 session인터페이스가 있음&lt;/li>
+&lt;li>transaction이 생성될 때 entityManagerFactory에서 생성됨&lt;/li>
+&lt;li>transaction이 끝날 때 삭제됨&lt;/li>
+&lt;li>persist, find, merge 등의 동작이 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="jpa-1차-캐시">jpa 1차 캐시
+&lt;/h2>&lt;ul>
+&lt;li>영속성컨텍스트에 존재하는 엔티티를 가져오는 것&lt;/li>
+&lt;li>hiberante에서는 session에서 find를 호출하거나, 연관관계가 있는 엔티티에서 호출할때만 사용,&lt;/li>
+&lt;li>JPQL이나 Criteria Query를 사용할떄는 사용 불가&lt;/li>
+&lt;/ul>
+&lt;h2 id="2차-캐시">2차 캐시
+&lt;/h2>&lt;ul>
+&lt;li>어플리케이션의 생명주기동안 유지됨&lt;/li>
+&lt;li>궁금할때 찾아볼것&amp;hellip;&lt;/li>
+&lt;/ul>
+&lt;p>&lt;br>&lt;a class="link" href="https://thorben-janssen.com/wp-content/uploads/member-access/1stLevelCache_Handout.pdf" target="_blank" rel="noopener"
+>https://thorben-janssen.com/wp-content/uploads/member-access/1stLevelCache_Handout.pdf&lt;/a>&lt;br>
+&lt;a class="link" href="https://dzone.com/articles/how-does-spring-transactional" target="_blank" rel="noopener"
+>https://dzone.com/articles/how-does-spring-transactional&lt;/a>&lt;/p>
+&lt;p>&lt;a class="link" href="https://www.ibm.com/docs/en/wasdtfe?topic=architecture-entity-manager" target="_blank" rel="noopener"
+>https://www.ibm.com/docs/en/wasdtfe?topic=architecture-entity-manager&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.baeldung.com/jpa-hibernate-persistence-context" target="_blank" rel="noopener"
+>https://www.baeldung.com/jpa-hibernate-persistence-context&lt;/a>&lt;br>
+&lt;a class="link" href="https://openjpa.apache.org/builds/1.2.3/apache-openjpa/docs/jpa_overview_emfactory_perscontext.html" target="_blank" rel="noopener"
+>https://openjpa.apache.org/builds/1.2.3/apache-openjpa/docs/jpa_overview_emfactory_perscontext.html&lt;/a>|&lt;/p></description></item></channel></rss>

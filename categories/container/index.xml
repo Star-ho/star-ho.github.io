@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Container on Sungho's Dev BLog</title><link>https://sungho94.me/categories/container/</link><description>Recent content in Container on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Mon, 14 Oct 2024 22:32:58 +0000</lastBuildDate><atom:link href="https://sungho94.me/categories/container/index.xml" rel="self" type="application/rss+xml"/><item><title>2-컨테이너에서 사용되는 기술</title><link>https://sungho94.me/p/2-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%EB%90%98%EB%8A%94-%EA%B8%B0%EC%88%A0/</link><pubDate>Mon, 14 Oct 2024 22:32:58 +0000</pubDate><guid>https://sungho94.me/p/2-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%EB%90%98%EB%8A%94-%EA%B8%B0%EC%88%A0/</guid><description>&lt;h2 id="namespaces">namespaces
+&lt;/h2>&lt;ul>
+&lt;li>커널 리소스를 분할하여 한 프로세스 집합은 한 리소스집합을, 다른 프로세스 집합은 다른 리소스 집합을 볼 수 있도록 하는 Linux커널의 기능&lt;/li>
+&lt;li>핵심 기능은 프로세스를 서로 격리하는 것&lt;/li>
+&lt;li>컨테이너의 기반이 되는 기술중 하나로, 리소스 분리를 강제하는데 사용됨&lt;/li>
+&lt;/ul>
+&lt;h3 id="종류">종류
+&lt;/h3>&lt;h4 id="user-namespace">user namespace
+&lt;/h4>&lt;ul>
+&lt;li>프로세스에 할당할 수 있는 고유한 사용자 ID 및 그룹 ID 집합이 존재함&lt;/li>
+&lt;li>프로세스가 다른 사용자 스페이스에 루트권한을 갖지 않고도, 해당 사용자 스페이스 내에서 루트 권한을 가질 수 있음&lt;/li>
+&lt;/ul>
+&lt;h4 id="process-id-pid-namespace">process ID (PID) namespace
+&lt;/h4>&lt;ul>
+&lt;li>다른 네임스페이스의 PID집합과 독릭접인 프로세스 집합을 프로세스에 할당함&lt;/li>
+&lt;li>새 네임스페이스에서 생성된 첫번째 프로세스는 PID 1을 가지며, 하위 프로세스는 후속 PID를 할당받음&lt;/li>
+&lt;li>자식 프로세스가 자체 PID 네임스페이스를 사용하여 생성된 경우, 해당 네임스페이스의 PID 1과 부모 프로세스의 네임프로세스에 있는 PID를 가짐&lt;/li>
+&lt;/ul>
+&lt;h4 id="network-namespce">network namespce
+&lt;/h4>&lt;ul>
+&lt;li>독립적인 네트워스택을 가짐&lt;/li>
+&lt;li>자체 private routing table, IP 주소 집합, 소켓 목록(socket list), 연결 추적 테이블(connect tracking table), 방화벽 및 기타 네트워크 관련 리소스를 가짐&lt;/li>
+&lt;/ul>
+&lt;h4 id="mount-namespace">mount namespace
+&lt;/h4>&lt;ul>
+&lt;li>네임스페이스의 프로세스가 볼 수 있는 독립적인 mount point list가 존재함&lt;/li>
+&lt;li>호스트 파일 시스템에 영향을 주지 않고, mount namespace에서 파일 시스템을 마운트 및 마운트 해제할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h4 id="interprocess-communicationipc-namespace">interprocess communication(IPC) namespace
+&lt;/h4>&lt;ul>
+&lt;li>자신만의 IPC 자원을 가짐&lt;/li>
+&lt;/ul>
+&lt;h4 id="unix-time-sharinguts-namespace">UNIX Time-Sharing(UTS) namespace
+&lt;/h4>&lt;ul>
+&lt;li>단일 시스템에서 서로다른 호스트 및 도메인 이름을 다른프로세스에서 사용하는 것처럼 보이게 할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="cgroup">cgroup
+&lt;/h2>&lt;ul>
+&lt;li>프로세스 list들의 CPU, 메모리, 디스크I/O, 네트워크 등 리소스 사용량을 제한, 설명(account for) 격리하는 Linux 커널의 기능&lt;/li>
+&lt;li>프로세스 또는 프로세스 집합에서 특정 주요 리소스에 엑세스하거나 사용할 수 있는 양을 제어함&lt;/li>
+&lt;li>컨테이너에서 함께 제어해야 하는 에러 프로세스가 실행되는 경우가 많기에, cgroup은 컨테이너에서 핵심 구성요소임&lt;/li>
+&lt;/ul>
+&lt;h4 id="resource-limits">Resource limits
+&lt;/h4>&lt;ul>
+&lt;li>하나의 프로세스가 특정한 자원을 얼마나 가능한지 제한할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h4 id="prioritization">Prioritization
+&lt;/h4>&lt;ul>
+&lt;li>리소스가 경합이 있을때, 다른 cgroup의 프로세스에 비해 사용할 수 있는 자원의 양을 제한할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h4 id="accounting">Accounting
+&lt;/h4>&lt;ul>
+&lt;li>cgroup level에서 자훤 제한을 모니터링하고 보고할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h4 id="control">Control
+&lt;/h4>&lt;ul>
+&lt;li>하나의 커맨드로 하나의 cgroup내의 모든 프로세스의 상태를 변경 가능함&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>V1 vs V2&lt;br>
+v2의 가장 큰 변화는 간소화된 트리 아키텍처, cgroup 계층 구조의 새로은 기능 및 인터페이스, rootless 컨테이너의 더 나은 수용임&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="chrootchange-root-directory">chroot(Change Root Directory)
+&lt;/h2>&lt;ul>
+&lt;li>루트 디렉토리를 변경하는 명령어&lt;/li>
+&lt;li>해당 프로세스는 지정한 루트 디렉토리 상위로 올라가지 못함&lt;/li>
+&lt;/ul>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">chroot &lt;span class="o">[&lt;/span>OPTION&lt;span class="o">]&lt;/span> NEWROOT &lt;span class="o">[&lt;/span>COMMAND &lt;span class="o">[&lt;/span>ARG&lt;span class="o">]&lt;/span>...&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ul>
+&lt;li>루트로 사용할 디렉토리명을 지정하고, 이 루트를 기반으로 실행할 프로세스의 경로를 지정&lt;/li>
+&lt;/ul>
+&lt;h2 id="linux-capabilities">Linux capabilities
+&lt;/h2>&lt;ul>
+&lt;li>root권한을 세밀하게 분할하여, 특정 권한만을 프로세스에 부여할 수 있게함&lt;/li>
+&lt;li>ex) 네트워크 소켓을 열 수 있는권한, 시스템 시간을 변경할 수 있는 권한&lt;/li>
+&lt;li>사용자가 권한이 없더라도, 프로세스 실행 권한이 있다면, 해당 권한으로 프로세스를 실행 가능&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>ubuntu에서 테스트를 위해 &lt;code>apt install libcap2-bin&lt;/code> 필요&lt;/p>
+&lt;/blockquote>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Capability&lt;/th>
+&lt;th>의미&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>CAP_CHOWN&lt;/td>
+&lt;td>사용자가 파일의 UID/GID를 임의로 변경할 수 있도록 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_KILL&lt;/td>
+&lt;td>다른 사용자에게 속한 프로세스에 신호를 보낼 수 있도록 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_SETUID&lt;/td>
+&lt;td>UID를 변경할 수 있도록 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_SETPCAP&lt;/td>
+&lt;td>실행 중인 프로세스의 Capability를 설정할 수 있도록 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_NET_ADMIN&lt;/td>
+&lt;td>인터페이스 구성과 같은 다양한 네트워크 관련 작업을 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_NET_RAM&lt;/td>
+&lt;td>RAW 와 PACKET 소켓의 사용을 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_SYS_CHROOT&lt;/td>
+&lt;td>chroot 호출 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_SYS_ADMIN&lt;/td>
+&lt;td>파일 시스템 마운트를 포함한 시스템 관리 작업을 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_SYS_PTRACE&lt;/td>
+&lt;td>strace를 사용하여 프로세스를 디버그할 수 있도록 허용&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>CAP_SYS_MODULE&lt;/td>
+&lt;td>커널 모듈의 로딩을 허용&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="union-filesystem">Union FileSystem
+&lt;/h2>&lt;ul>
+&lt;li>원본 소스를 수정하지 않고, 여러 디렉토리의 콘텐츠를 하나로 병합하는 것처럼 보이게하는 파일 시스템의 유형&lt;/li>
+&lt;li>&lt;a class="link" href="https://martinheinz.dev/blog/44" target="_blank" rel="noopener"
+>참고&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://blog.nginx.org/blog/what-are-namespaces-cgroups-how-do-they-work" target="_blank" rel="noopener"
+>https://blog.nginx.org/blog/what-are-namespaces-cgroups-how-do-they-work&lt;/a>&lt;br>
+&lt;a class="link" href="https://cumulus.tistory.com/154" target="_blank" rel="noopener"
+>https://cumulus.tistory.com/154&lt;/a>&lt;br>
+&lt;a class="link" href="https://blog.naver.com/alice" target="_blank" rel="noopener"
+>https://blog.naver.com/alice&lt;/a>_k106/221530340759&lt;/p></description></item><item><title>1- Container 정리</title><link>https://sungho94.me/p/1-container-%EC%A0%95%EB%A6%AC/</link><pubDate>Thu, 03 Oct 2024 22:04:01 +0000</pubDate><guid>https://sungho94.me/p/1-container-%EC%A0%95%EB%A6%AC/</guid><description>&lt;h1 id="container-runtime">Container runtime
+&lt;/h1>&lt;ul>
+&lt;li>컨테이너가 호스트 시스템 내에서 작동할 수 있도록 하는 기본 소프트웨어&lt;/li>
+&lt;li>컨테이너 레지스트리에서 컨테이너 이미지를 가져오고, 수명주기를 관리하는 것부터 컨테이너를 실행하는 것까지의 모든 작업을 담당&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>vs Container engine&lt;br>
+Container engine은 이미지 배포, 오케스트레이션, 런타임 관리 등 수명주기를 훨씬 더 광범위하기 관리한느 시스템&lt;br>
+Container runtime은 컨테이너 실행을 담당함&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="고수준">고수준
+&lt;/h3>&lt;ul>
+&lt;li>사용자와의 인터페이스 제공&lt;/li>
+&lt;li>Process based
+&lt;ul>
+&lt;li>cri-o
+&lt;ul>
+&lt;li>Lightweight Container Runtime for Kubernetes&lt;/li>
+&lt;li>&lt;a class="link" href="https://cri-o.io/" target="_blank" rel="noopener"
+>https://cri-o.io/&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>docker Engine&lt;/li>
+&lt;li>Podman&lt;/li>
+&lt;li>rtk(ended)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Virtual Machine based
+&lt;ul>
+&lt;li>Kata
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://katacontainers.io/" target="_blank" rel="noopener"
+>https://katacontainers.io/&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Firecracker
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://firecracker-microvm.github.io/" target="_blank" rel="noopener"
+>https://firecracker-microvm.github.io/&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="저수준">저수준
+&lt;/h3>&lt;ul>
+&lt;li>컨테이너를 사용 가능하게 만들고, 실제로 unpacking, creating, starting, stopping함&lt;/li>
+&lt;li>Runc
+&lt;ul>
+&lt;li>리눅스에서 OCI spec을 따르는 container를 생성하고 실행하기 위한 CLI 도구&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/opencontainers/runc" target="_blank" rel="noopener"
+>https://github.com/opencontainers/runc&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>crun
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/containers/crun" target="_blank" rel="noopener"
+>https://github.com/containers/crun&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>runhcs
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/Microsoft/hcsshim/tree/main/cmd/runhcs" target="_blank" rel="noopener"
+>https://github.com/Microsoft/hcsshim/tree/main/cmd/runhcs&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>containerd
+&lt;ul>
+&lt;li>containerd는 고수준과 저수준 사이의 특징을 가지고있음&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/containerd/containerd" target="_blank" rel="noopener"
+>https://github.com/containerd/containerd&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>저수준의 container runtime은 고수준 container runtime에서 사용하므로 우리가 저수준 container runtime을 직접적으로 사용할 일은 없음&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="docker-dockershim-k8s-podman">Docker, Dockershim, k8s, Podman
+&lt;/h2>&lt;ul>
+&lt;li>Docker도 containerd기반이라서 containerd+docker를 사용한다면 차이는 없음, 단, docker에서 cotainerd를 직접 사용하는 것이 아닌, dockershim을 사용하여 containerd를 관리&lt;/li>
+&lt;/ul>
+&lt;h2 id="container에서-사용하는-기술">Container에서 사용하는 기술
+&lt;/h2>&lt;ul>
+&lt;li>cgroup v2&lt;/li>
+&lt;li>namespaces&lt;/li>
+&lt;li>chroot&lt;/li>
+&lt;li>Linux capabilities&lt;/li>
+&lt;li>Union Mount
+&lt;ul>
+&lt;li>Container image layer&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="open-container-initiative">Open Container Initiative
+&lt;/h2>&lt;ul>
+&lt;li>OCI에서 하는 프로젝트
+&lt;ul>
+&lt;li>runc&lt;/li>
+&lt;li>image-spec&lt;/li>
+&lt;li>distiribution-spec&lt;/li>
+&lt;li>runtime-spec&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a class="link" href="https://opencontainers.org/" target="_blank" rel="noopener"
+>https://opencontainers.org/&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="cli-명령도구">CLI 명령도구
+&lt;/h2>&lt;ul>
+&lt;li>crictl
+&lt;ul>
+&lt;li>k8s 컨테이너 관리 CLI명령어&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md" target="_blank" rel="noopener"
+>https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>ctr
+&lt;ul>
+&lt;li>containerd 명령어&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="lxc-linux-container">LXC (Linux Container)
+&lt;/h2>&lt;ul>
+&lt;li>리눅스 컨테이너&lt;/li>
+&lt;/ul>
+&lt;h2 id="cricontainer-runtime-interface">CRI(Container Runtime Interface)
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a class="link" href="https://github.com/kubernetes/cri-api" target="_blank" rel="noopener"
+>https://github.com/kubernetes/cri-api&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="cncfcloud-native-computing-foundation">CNCF(CLOUD NATIVE COMPUTING FOUNDATION)
+&lt;/h2>&lt;p>참고 문서&lt;/p>
+&lt;ul>
+&lt;li>&lt;a class="link" href="https://www.cloudraft.io/blog/container-runtimes" target="_blank" rel="noopener"
+>https://www.cloudraft.io/blog/container-runtimes&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.samsungsds.com/kr/insights/docker.html" target="_blank" rel="noopener"
+>https://www.samsungsds.com/kr/insights/docker.html&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://ikcoo.tistory.com/266#change-root-%EA%B2%A9%EB%A6%ACchroot%EB%9E%80" target="_blank" rel="noopener"
+>https://ikcoo.tistory.com/266#change-root-%EA%B2%A9%EB%A6%ACchroot%EB%9E%80&lt;/a>?&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.wiz.io/academy/container-runtimes" target="_blank" rel="noopener"
+>https://www.wiz.io/academy/container-runtimes&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://velog.io/@whattsup" target="_blank" rel="noopener"
+>https://velog.io/@whattsup&lt;/a>_kim/Linux-Kernel-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EB%A5%BC-%EC%9C%84%ED%95%9C-%EB%A6%AC%EB%88%85%EC%8A%A4%EC%9D%98-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%EA%B2%A9%EB%A6%AC-%EA%B8%B0%EB%8A%A5-cgroup-namespace-union-mount&lt;/li>
+&lt;/ul></description></item></channel></rss>

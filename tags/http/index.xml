@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HTTP on Sungho's Dev BLog</title><link>https://sungho94.me/tags/http/</link><description>Recent content in HTTP on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Tue, 03 Oct 2023 23:00:14 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/http/index.xml" rel="self" type="application/rss+xml"/><item><title>HTTP Method PUT vs PATCH</title><link>https://sungho94.me/p/http-method-put-vs-patch/</link><pubDate>Tue, 03 Oct 2023 23:00:14 +0000</pubDate><guid>https://sungho94.me/p/http-method-put-vs-patch/</guid><description>&lt;p>PUT메소드는 현재 서버에 있는 대체하여 새로운 엔티티를 생성&lt;br>
+PATCH메소드는 현재 서버에 있는 엔티티를 수정하여 새버전을 생성하는것&lt;br>
+-&amp;gt; PUT메소드는 엔티티의 전체 변경 시, PATCH는 엔티티의 일부 변경 시 사용&lt;/p>
+&lt;blockquote>
+&lt;p>The difference between the PUT and PATCH requests is reflected in the&lt;br>
+way the server processes the enclosed entity to modify the resource&lt;br>
+identified by the Request-URI. In a PUT request, the enclosed entity&lt;br>
+is considered to be a modified version of the resource stored on the&lt;br>
+origin server, and the client is requesting that the stored version&lt;br>
+be replaced. With PATCH, however, the enclosed entity contains a set&lt;br>
+of instructions describing how a resource currently residing on the&lt;br>
+origin server should be modified to produce a new version. The PATCH&lt;br>
+method affects the resource identified by the Request-URI, and it&lt;br>
+also MAY have side effects on other resources; i.e., new resources&lt;br>
+may be created, or existing ones modified, by the application of a&lt;br>
+PATCH.&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://datatracker.ietf.org/doc/rfc5789/?include_text=1" target="_blank" rel="noopener"
+>https://datatracker.ietf.org/doc/rfc5789/?include_text=1&lt;/a>&lt;/p>
+&lt;p>#Concept&lt;/p></description></item></channel></rss>

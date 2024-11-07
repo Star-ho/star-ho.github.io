@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Blockng-NonBlocking on Sungho's Dev BLog</title><link>https://sungho94.me/tags/blockng-nonblocking/</link><description>Recent content in Blockng-NonBlocking on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sat, 30 Sep 2023 14:47:58 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/blockng-nonblocking/index.xml" rel="self" type="application/rss+xml"/><item><title>동기 &amp; 비동기, 블로킹 &amp; 논블로킹</title><link>https://sungho94.me/p/%EB%8F%99%EA%B8%B0-%EB%B9%84%EB%8F%99%EA%B8%B0-%EB%B8%94%EB%A1%9C%ED%82%B9-%EB%85%BC%EB%B8%94%EB%A1%9C%ED%82%B9/</link><pubDate>Sat, 30 Sep 2023 14:47:58 +0000</pubDate><guid>https://sungho94.me/p/%EB%8F%99%EA%B8%B0-%EB%B9%84%EB%8F%99%EA%B8%B0-%EB%B8%94%EB%A1%9C%ED%82%B9-%EB%85%BC%EB%B8%94%EB%A1%9C%ED%82%B9/</guid><description>&lt;ul>
+&lt;li>동기
+&lt;ul>
+&lt;li>서비스처리가 완료된 이후에 처리 결과를 확인하는 방식을 동기식 호출(결과가 올때까지 대기해야함)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>비동기
+&lt;ul>
+&lt;li>서비스처리가 완료되기전에 우선 응답을 전달하는 방식(대기하는것을 방지)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>블로킹
+&lt;ul>
+&lt;li>요청한 작업이 성공하거나 에러가 발생하기 전까지는 응답을 돌려주지않는 것을 의미 (ServerSocket, Socket 클래스)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>&amp;ldquo;Blocking&amp;rdquo; means that the caller waits until the callee finishes its processing.&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>논블로킹
+&lt;ul>
+&lt;li>요청한 작업의 성공여부와 상관없이 바로 결과를 돌려줌 (ServerSocketChannel, SocketChannel 클래스)&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="왜-block-io보다-nonblock-io가-느릴까">왜 Block IO보다 NonBlock IO가 느릴까?
+&lt;/h2>&lt;h2 id="block-io">Block I/O
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105204457.png"
+loading="lazy"
+alt="Pasted image 20231105204457"
+>&lt;/p>
+&lt;ul>
+&lt;li>데이터가 커널로 들어오면 데이터가 바로 커널스페이스에서 유저스페이스로 이동함&lt;/li>
+&lt;/ul>
+&lt;h2 id="non-block-io">Non Block I/O
+&lt;/h2>&lt;ul>
+&lt;li>방법이 2가지 있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="데이터가-들어왔는지-반복해서-확인">데이터가 들어왔는지 반복해서 확인
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105204700.png"
+loading="lazy"
+alt="Pasted image 20231105204700"
+>&lt;/p>
+&lt;ul>
+&lt;li>우선 반복적으로 확인하기 때문에 cpu 자원낭비가 됨&lt;/li>
+&lt;li>데이터가 들어온시점과 반복적으로 확인한 시점 사이에 시간차가 발생할 수 밖에 없기 때문에 Block I/O보다 느림&lt;/li>
+&lt;/ul>
+&lt;h3 id="데이터가-들어오면-알려-줌">데이터가 들어오면 알려 줌
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105205052.png"
+loading="lazy"
+alt="Pasted image 20231105205052"
+>&lt;/p>
+&lt;ul>
+&lt;li>데이터가 들어오면 커널에서 알려줌&lt;/li>
+&lt;li>알려주면 쓰레드에서 read syscall을 날려서 데이터를 읽음&lt;/li>
+&lt;li>커널에서 데이터가 들어온걸 알려주고, 쓰레드가 확인해서 해당 데이터를 가져오기 까지 시간 텀이 발생함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://www.youtube.com/watch?v=mb-QHxVfmcs" target="_blank" rel="noopener"
+>https://www.youtube.com/watch?v=mb-QHxVfmcs&lt;/a>&amp;amp;t=757s&lt;br>
+&lt;a class="link" href="https://nesoy.github.io/articles/2017-01/Synchronized" target="_blank" rel="noopener"
+>https://nesoy.github.io/articles/2017-01/Synchronized&lt;/a>&lt;br>
+&lt;a class="link" href="https://d2.naver.com/helloworld/47667" target="_blank" rel="noopener"
+>https://d2.naver.com/helloworld/47667&lt;/a>&lt;/p>
+&lt;p>#Non-Blocking-IO&lt;/p></description></item></channel></rss>

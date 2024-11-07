@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Async-Message on Sungho's Dev BLog</title><link>https://sungho94.me/tags/async-message/</link><description>Recent content in Async-Message on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sat, 02 Mar 2024 22:41:32 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/async-message/index.xml" rel="self" type="application/rss+xml"/><item><title>Async-messaging</title><link>https://sungho94.me/p/async-messaging/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/async-messaging/</guid><description>&lt;h1 id="비동기-메시징">비동기 메시징
+&lt;/h1>&lt;ul>
+&lt;li>결합도를 낮춰줌
+&lt;ul>
+&lt;li>중간의 매개체를 통해 메시지를 전달하므로 수신자와 발신자가 서로를 몰라도 메시지 송/수신이 가능&lt;/li>
+&lt;li>publisher와 consumer가 서로를 알 필요가 없음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>consumer수를 늘림으로써 가용성 확보가 가능해짐&lt;/li>
+&lt;li>consumer가 죽더라도 메시지 큐에 쌓이기 때문에 메시지 유실을 방지할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h1 id="방식">방식
+&lt;/h1>&lt;h2 id="databasetransaction-outbox-pattern">Database(Transaction Outbox Pattern)
+&lt;/h2>&lt;h3 id="구성">구성
+&lt;/h3>&lt;ul>
+&lt;li>데이터베이스 테이블을 messaging box로 이용&lt;/li>
+&lt;li>해당 데이터 + 상태 로 구성됨
+&lt;ul>
+&lt;li>상태는 진행예정, 진행중, 완료 등의 상태가 있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>2번에서 outbox를 읽는 방법으로 polling이나 cdc를 사용하는 방법이 있음
+&lt;ul>
+&lt;li>polling시에는 relay서버가 해당 테이블을 주기적으로 확인&lt;/li>
+&lt;li>cdc를 사용한다면, cdc를 사용해 relay서버로 request보냄&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>응답성이 낮아도 되고, relay server 1개로 부하가 감당 가능할때 사용하기 좋음&lt;/li>
+&lt;/ul>
+&lt;h3 id="장점">장점
+&lt;/h3>&lt;ul>
+&lt;li>거의 모든 서비스가 데이터베이스를 사용하므로 추가 인프라가 필요 없음(비용절감)&lt;/li>
+&lt;/ul>
+&lt;h3 id="단점">단점
+&lt;/h3>&lt;ul>
+&lt;li>다른 방식에 비해 느림
+&lt;ul>
+&lt;li>cdc를 사용하던 polling을 사용하던 늘미&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>relay서버 증설 시 부담이 있음
+&lt;ul>
+&lt;li>한테이블을 여러 서버가 읽을때 락관리를 어떻게 할것인가
+&lt;ul>
+&lt;li>깔끔하게 transaction level을 SERIALIZED로 올린다?&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>인스턴스가 2개 이상이면 lock을 걸어줘야함
+&lt;ul>
+&lt;li>스케일링시 부담있음&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="redis-pub-sub">Redis Pub-sub
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240110132820.png"
+loading="lazy"
+alt="center|700"
+>&lt;/p>
+&lt;ul>
+&lt;li>subscriber가 해당 channel을 구독하고 있을때, publisher가 데이터를 publish하면 구독하고 있는 모든 subscriber에게 데이터를 전달함&lt;/li>
+&lt;li>subscriber가 존재하지 않는다면 따로 보관하지 않으므로 데이터는 사라짐&lt;/li>
+&lt;li>100프로 전송 보장이 되지 않아도 문제없는 케이스에서 사용하기 좋음&lt;/li>
+&lt;li>주로 채팅이나 푸쉬알림 등에 사용됨&lt;/li>
+&lt;/ul>
+&lt;h3 id="장점-1">장점
+&lt;/h3>&lt;ul>
+&lt;li>데이터를 따로 저장하지 않으므로 빠름&lt;/li>
+&lt;/ul>
+&lt;h3 id="단점-1">단점
+&lt;/h3>&lt;ul>
+&lt;li>컨슈머가 항상 해당 토픽을 확인하고 있어야하며 컨슈머가 없을시 데이터가 사라짐&lt;/li>
+&lt;/ul>
+&lt;h2 id="message-queue메시지큐">Message queue(메시지큐)
+&lt;/h2>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240331144001.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;ul>
+&lt;li>pull 방식과 push 방식이 존재
+&lt;ul>
+&lt;li>pull 방식은 컨슈머가 메시지큐에 요청을 보내 메시지를 가져와서 처리하는 방식&lt;/li>
+&lt;li>push방식은 메시지큐가 요청이 생겼을 때 컨슈머에게 메시지를 보내는 방식&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>메모리에 저장하는방식, 파일기반 저장방식, jdbc로 저장하는 방식이 있음&lt;/li>
+&lt;li>kafka, rabbitMQ, ZeroMQ, Pulsar, SQS 등이 존재&lt;/li>
+&lt;/ul>
+&lt;h3 id="참고자료">참고자료
+&lt;/h3>&lt;p>&lt;a class="link" href="https://blog.bytebytego.com/p/why-do-we-need-a-message-queue" target="_blank" rel="noopener"
+>https://blog.bytebytego.com/p/why-do-we-need-a-message-queue&lt;/a>&lt;br>
+&lt;a class="link" href="https://blog.iron.io/message-queue-vs-streaming/" target="_blank" rel="noopener"
+>https://blog.iron.io/message-queue-vs-streaming/&lt;/a>&lt;br>
+&lt;a class="link" href="https://dreamix.eu/insights/message-queue-vs-message-broker-whats-the-difference/" target="_blank" rel="noopener"
+>https://dreamix.eu/insights/message-queue-vs-message-broker-whats-the-difference/&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.baeldung.com/pub-sub-vs-message-queues" target="_blank" rel="noopener"
+>https://www.baeldung.com/pub-sub-vs-message-queues&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.linkedin.com/pulse/differences-between-message-queue-event-stream-frank-lieu" target="_blank" rel="noopener"
+>https://www.linkedin.com/pulse/differences-between-message-queue-event-stream-frank-lieu&lt;/a>&lt;br>
+&lt;a class="link" href="https://risingwave.com/blog/differences-between-messaging-queues-and-streaming-a-deep-dive/" target="_blank" rel="noopener"
+>https://risingwave.com/blog/differences-between-messaging-queues-and-streaming-a-deep-dive/&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.cloudamqp.com/blog/why-is-a-database-not-the-right-tool-for-a-queue-based-system.html" target="_blank" rel="noopener"
+>https://www.cloudamqp.com/blog/why-is-a-database-not-the-right-tool-for-a-queue-based-system.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/48099098/message-broker-vs-database-and-monitoring" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/48099098/message-broker-vs-database-and-monitoring&lt;/a>&lt;br>
+&lt;a class="link" href="https://docs.oracle.com/cd/E19636-01/819-3567/mq" target="_blank" rel="noopener"
+>https://docs.oracle.com/cd/E19636-01/819-3567/mq&lt;/a>_service.html&lt;br>
+&lt;a class="link" href="https://oliveyoung.tech/blog/2023-08-07/async-process-of-coupon-issuance-using-redis/BC" target="_blank" rel="noopener"
+>https://oliveyoung.tech/blog/2023-08-07/async-process-of-coupon-issuance-using-redis/BC&lt;/a>&lt;/p></description></item><item><title>Transactional outbox</title><link>https://sungho94.me/p/transactional-outbox/</link><pubDate>Sun, 05 Nov 2023 22:21:43 +0000</pubDate><guid>https://sungho94.me/p/transactional-outbox/</guid><description>&lt;h2 id="문제-상황">문제 상황
+&lt;/h2>&lt;ul>
+&lt;li>msa 환경에서 도메인 서버스로 보낸 create, update, delete 이벤트는 반드시 수행되어야함&lt;/li>
+&lt;li>하지만 2pc가 지원이 안되는 환경에서, 이벤트를 발행하기는 부담이 있음
+&lt;ul>
+&lt;li>이벤트 발행후 롤백되는 문제&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>메시지가 순서가 보장되어야할 수도 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="개념">개념
+&lt;/h2>&lt;ul>
+&lt;li>메시지를 전송하는 서비스의 일부 비즈니스 엔티티를 저장한느 트랜잭션의 일부로 OUTBOX테이블에 데이터를 추가로 저장&lt;/li>
+&lt;li>이후 별도의 프로세스가 해당 메시지를 메세지 브로커에 전송&lt;br>
+&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105224429.png"
+loading="lazy"
+alt="Pasted image 20231105224429"
+>&lt;/li>
+&lt;li>Sender - 메시지를 전송하는 서비스&lt;/li>
+&lt;li>Database - business entity와 message outbox를 저장하는 데이터베이스&lt;/li>
+&lt;li>Message outbox - 관계형 데이터베이스에서는 하나의 테이블, NoSql 디비에서는 각각의 데이터베이스 레코드의 property(document or item)&lt;/li>
+&lt;li>Message relay - outbox에 저장되어있는 메시지를 메시지 브로커에게 보내는 역할&lt;/li>
+&lt;/ul>
+&lt;h2 id="message-relay의-두가지-방법">Message relay의 두가지 방법
+&lt;/h2>&lt;h3 id="transaction-log-tailing">Transaction log tailing
+&lt;/h3>&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020231105225014.png"
+loading="lazy"
+alt="center|400"
+>&lt;/p>
+&lt;ul>
+&lt;li>아래의 로그를 tailing하여 로그를 확인 하여 message broker에 전송
+&lt;ul>
+&lt;li>MySQL binlog&lt;/li>
+&lt;li>Postgres WAL&lt;/li>
+&lt;li>AWS DynamoDB table streams&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>log tailing시 cdc를 고려&lt;/li>
+&lt;li>kafka connect도 사용할 수 있다니 확인해 볼것&lt;/li>
+&lt;/ul>
+&lt;h3 id="polling-publisher">Polling publisher
+&lt;/h3>&lt;ul>
+&lt;li>outbox 데이터를 주기적으로 polling하여 변경 발생시 message broker에 이벤트 발행&lt;/li>
+&lt;li>주기적으로 db를 확인해야 하니 불필요한 자원 소모 발생&lt;/li>
+&lt;/ul>
+&lt;h3 id="장점">장점
+&lt;/h3>&lt;ul>
+&lt;li>모든 데이터가 outbox에 저장되므로 장애가 났을때 대응이 수월함&lt;/li>
+&lt;li>2PC가 지원이 안되는 환경에서 대안이 될 수 있음&lt;/li>
+&lt;/ul>
+&lt;h3 id="단점">단점
+&lt;/h3>&lt;ul>
+&lt;li>메시지를 직접 보내는 패턴보다 속도가 느릴 수 있음
+&lt;ul>
+&lt;li>메시지는 필요한상황에 바로 보내기때문&lt;/li>
+&lt;li>하지만 Transactional outbox는 중간에 Message Relay서버가 변경을 확인하고 서비스로 요청을 보낼때까지 시간이 빔&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Message Relay 서버가 추가됨으로서 관리해야 할게 하나 더 늘어남&lt;/li>
+&lt;li>한번 이상 명령이 수행될 수 있음
+&lt;ul>
+&lt;li>그러므로 멱등성을 보장해야함&lt;/li>
+&lt;li>작업마다 id를 기록해놓고 해당 id를 가직 작업이 수행되었으면 재처리 하지 않아야함&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>정보는 Transactional outbox로 저장하고 끝난후 id와 함께 api요청을 보내는건 어떨까?&lt;br>
+consumer에서 id와 함께 api요청을 받으면 id로 데이터를 확인 후 처리&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://microservices.io/patterns/data/transactional-outbox.html" target="_blank" rel="noopener"
+>https://microservices.io/patterns/data/transactional-outbox.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://microservices.io/patterns/data/transaction-log-tailing.html" target="_blank" rel="noopener"
+>https://microservices.io/patterns/data/transaction-log-tailing.html&lt;/a>&lt;/p></description></item></channel></rss>

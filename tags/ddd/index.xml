@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DDD on Sungho's Dev BLog</title><link>https://sungho94.me/tags/ddd/</link><description>Recent content in DDD on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sat, 02 Mar 2024 22:41:32 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/ddd/index.xml" rel="self" type="application/rss+xml"/><item><title>Aggregate</title><link>https://sungho94.me/p/aggregate/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/aggregate/</guid><description>&lt;ul>
+&lt;li>데이터의 변경단위로 다루는 연관 객체의 묶음&lt;/li>
+&lt;li>Root Entity와 Boundary Entity가 존재
+&lt;ul>
+&lt;li>Root Entity
+&lt;ul>
+&lt;li>전역 식별성을 가짐&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Boundary Entity
+&lt;ul>
+&lt;li>지역 식별성을 가짐&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>매우 상대적인 개념&lt;br>
+자동차와 바퀴의 예시&lt;br>
+자동차에만 관심만 있고 바퀴에 대한 관심사가 따로 없을 경우, 루트엔티티는 자동차, 경계 엔티티는 바퀴가됨&lt;br>
+하지만 바퀴의 수명주기, 일련번호 어떤 타이어를 찾아 어느 자동차에 있는지 알아야하는 비즈니스가 생긴다면 바퀴또한 루트 엔티티가 될 수 있음&lt;/p>
+&lt;/blockquote>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="aggregate에-적용되어야-하는-규칙">Aggregate에 적용되어야 하는 규칙
+&lt;/h3>&lt;ol>
+&lt;li>루트 Aggregate는 전역 식별성을 가지며 궁극적으로 불변식을 검사할 책임이 있다.&lt;/li>
+&lt;li>경계안의 Entity는 지역식별성을 지니며, 이러한 지역식별성은 해당 Aggregate안에서만 유일하다.&lt;/li>
+&lt;li>Aggregate 경계 밖에서는 루트 Entity를 제외한 Aggregate내부의 구성요소를 참조할 수 없다.&lt;/li>
+&lt;li>Aggregate안의 객체는 다른 Aggregate의 루트만 참조할 수 있다.&lt;/li>
+&lt;li>삭제연산은 Aggregate안의 모든 요소를 제거해야 한다.&lt;/li>
+&lt;li>Aggregate경계 안의 어떤 객체를 변경하더라도 전체 Aggregate의 불변식은 지켜져야 한다.&lt;/li>
+&lt;/ol></description></item><item><title>Aggregate 생명주기(Factory, Repository)</title><link>https://sungho94.me/p/aggregate-%EC%83%9D%EB%AA%85%EC%A3%BC%EA%B8%B0factory-repository/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/aggregate-%EC%83%9D%EB%AA%85%EC%A3%BC%EA%B8%B0factory-repository/</guid><description>&lt;h2 id="factory">Factory
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>Aggregate를 생성하는 일이 복잡하거나 내부구조를 너무 많이 드러내는 경우, Factory로 캡슐화&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Factory의 사용 이유&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>객체 생성이 그 자체로 주요한 연산이 될 수 있지만 복잡한 조립 연산은 생성된 객체의 책임으로는 어울리지 않음&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>이 책임을 클라이언트에 두면 클라이언트의 설계가 지저분해 지고 조립되는 객체나 Aggregate의 캡슐화가 위반됨&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>클라이언트와 생성된 객체사이의 구현이 지나치게 결합됨&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Factory사용이 위와 같은 장점이 있지만, 복잡하지 않거나 다른 로직이 필요없을 경우 생성자로 대체&lt;br>
+우리는 복잡한 소프트웨어 구조를 적절한 패턴으로 덜 복잡하게 만드는게 목표임&lt;br>
+간단한 구조를 패턴을 사용할 경우 간단한게 복잡해 보일 수 있음&lt;br>
+트레이드 오프를 항상 생각하자&lt;/p>
+&lt;/blockquote>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="repository">Repository
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>객체를 재구성, 제거를 담당&lt;/p>
+&lt;blockquote>
+&lt;p>객체의 재구성이란?&lt;br>
+저장되어있는 객체로부터 인스턴스를 만들어내는 것&lt;/p>
+&lt;/blockquote>
+&lt;/li>
+&lt;li>
+&lt;p>Aggregate내부에 존재하는 모든 객체는 루트에서부터 탐색을 토대로 접근할것&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>팩토리는 객체의 생성을, 레포지토리는 객체의 재구성, 제거를 담당&lt;/p>
+&lt;/blockquote>
+&lt;p>#Aggregate&lt;/p></description></item><item><title>Entity, VO</title><link>https://sungho94.me/p/entity-vo/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/entity-vo/</guid><description>&lt;h2 id="domain-model">domain model
+&lt;/h2>&lt;p>현실세계의 해결하고싶은 문제를 프로그래밍 언어로 특정 측면을 구현한것&lt;br>
+특정측면인 이유는 비즈니스에 중요한것을 더 부각하고, 중요하지않은것을 적게 표현하거나 생략하기 때문&lt;/p>
+&lt;h2 id="entity">Entity
+&lt;/h2>&lt;p>해당 객체의 식별성을 가질경우 그 객체를 Entity라 한다&lt;/p>
+&lt;h3 id="entity의-상대성">Entity의 상대성
+&lt;/h3>&lt;p>Entity는 매우 상대적이다.&lt;br>
+경기장 좌석이 지정석인 경우, 각 좌석들은 구분해야할 필요가 있기 때문에 식별성을 가진 Entity이다.&lt;br>
+경기장 좌석이 자유석일경우, 각 좌석들의 구분하지않는다. 이는 Entity가 아니다.&lt;/p>
+&lt;h2 id="vo">VO
+&lt;/h2>&lt;p>모델에 포함된 어떤 요소의 식별성이 아닌, 속성에만 관심이 있다면 vo라고 한다&lt;/p>
+&lt;h4 id="불변의-vo">불변의 VO
+&lt;/h4>&lt;p>&lt;strong>vo는 불변이다&lt;/strong>&lt;br>
+vo가 바뀔때 내부 속성이 바뀌는 것이 아닌, vo전체가 수정되어야 한다.&lt;br>
+but 변경가능성을 허용하는 케이스가 존재한다.&lt;br>
+ex) 자주 변경되는경우, 객체 생성이나 삭제에 비용이 많이드는 경우 등..&lt;/p>
+&lt;h3 id="도메인-엔티티란">도메인 엔티티란?
+&lt;/h3>&lt;ul>
+&lt;li>현실세게의 해결하고 싶은 문제를, 프로그래밍 언어적으로 구현한 모델인데, 식별성을 가지는것&lt;/li>
+&lt;li>식별성을 가지지 않는다면, VO라고 부름&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>성능 최적화를 위해 Fly Weight를 사용할 수도 있다&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>dto는?&lt;br>
+data transform object로 계층간, 혹은 메서드간 데이터 이동시, 변수가 너무 많아지는 것 보다는 묶어서 변수들을 조금 더 잘 표현하는 역할&lt;/p>
+&lt;/blockquote></description></item><item><title>Service</title><link>https://sungho94.me/p/service/</link><pubDate>Sat, 02 Mar 2024 22:41:32 +0000</pubDate><guid>https://sungho94.me/p/service/</guid><description>&lt;h2 id="service">Service
+&lt;/h2>&lt;p>도메인의 중대한 프로세스나 변환과정이 ENTITY나 VO의 고유한 책임이 아닌 연산을 선언하는 독립 인터페이스 모델&lt;/p>
+&lt;ol>
+&lt;li>Entity난 VO의 일부를 구성하는 것이 아닌, 도메인 개념과 연관되어 있음&lt;/li>
+&lt;li>인터페이스가 도메인 모델의 외적 요소의 측면에서 정의됨&lt;/li>
+&lt;li>연산이 상태를 갖고있지 않음&lt;/li>
+&lt;/ol>
+&lt;h3 id="service의-계층">Service의 계층
+&lt;/h3>&lt;ul>
+&lt;li>응용&lt;/li>
+&lt;li>도메인&lt;/li>
+&lt;li>인프라스트럭처 계층&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>위 세개의 서비스 계층은 클린아키텍쳐에서도 나온다&lt;br>
+응용계층 - 어플리케이션용 계층&lt;br>
+도메인계층 - 도메인 계층&lt;br>
+인프라스트럭처 계층 - 외부 어플리케이션과 소통&lt;/p>
+&lt;/blockquote>
+&lt;blockquote>
+&lt;p>응용계층과 인프라 계층은 도메인을 감싸고 있다.&lt;br>
+why?&lt;br>
+도메인은 우리가 해결해야 하는 문제로 비즈니스에서 가장 중요한 영역이다.&lt;br>
+응용과 인프라가 변경된다고 도메인계층이 변경되서는 안되기 때문이다.&lt;/p>
+&lt;/blockquote>
+&lt;p>#Software-design&lt;/p></description></item></channel></rss>

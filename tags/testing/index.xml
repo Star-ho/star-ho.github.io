@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Testing on Sungho's Dev BLog</title><link>https://sungho94.me/tags/testing/</link><description>Recent content in Testing on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sun, 31 Mar 2024 22:41:00 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/testing/index.xml" rel="self" type="application/rss+xml"/><item><title>Test Double</title><link>https://sungho94.me/p/test-double/</link><pubDate>Sun, 31 Mar 2024 22:41:00 +0000</pubDate><guid>https://sungho94.me/p/test-double/</guid><description>&lt;h2 id="fixture">Fixture
+&lt;/h2>&lt;ul>
+&lt;li>소프트웨어를 일관되게 테스트 할 수 있게 해주는 장치&lt;/li>
+&lt;li>테스트를 실행하고, 특정결과를 예상하기 위해 필요한 모든것 &lt;a class="link" href="http://xunitpatterns.com/test%20fixture%20-%20xUnit.html" target="_blank" rel="noopener"
+>링크&lt;/a>&lt;/li>
+&lt;li>테스트 더블과는 다른 용어임&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>SUT(System Under Test)&lt;br>
+우리가 테스트하고 싶어하는 모든것, 테스트 관점에서 정의됨&lt;br>
+단위테스트를 작성할 때는 테스트를 하는 클래스(CUT), 객체(OUT), 메서드(OUT),&lt;br>
+통합 테스트를 작성할때는 어플리케이션(AUT)&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="test-double">Test Double
+&lt;/h2>&lt;ul>
+&lt;li>테스트 목적으로 실제 객체 대신 올 수 있는 모든 종류의 객체를 의미함&lt;/li>
+&lt;li>테스트를 진행하기 어려운 경우, 이를 대신해 테스트를 진행할 수 있도록 만들어 주는 객체&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>영화 촬영시 위험한 역할을 대신한느 스턴트 더블에서 비롯됨&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>Dummy Object, Test Stub, Test Spy, Mock Object, Fake Object 과 같은 구현이 존재함&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="https://sungho94.me/image/real-resource-image/Pasted%20image%2020240409231740.png"
+loading="lazy"
+alt="center"
+>&lt;/p>
+&lt;h2 id="dummy">Dummy
+&lt;/h2>&lt;ul>
+&lt;li>SUT의 메소드 시그니처에 필요한 객체들&lt;/li>
+&lt;li>테스트에 영향은 가지 않지만, SUT 메소드 시그니처에 필요한 객체&lt;/li>
+&lt;li>null 오브젝트, 하드코딩된 값들&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>실제로 테스트에 영향이 가지않아, Test Double로 보지않는 의견도 있음&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="test-stub">Test Stub
+&lt;/h2>&lt;ul>
+&lt;li>SUT가 의존하는 실제 컴포넌트를 대체하기 위해 사용&lt;/li>
+&lt;li>실제 컴포넌트를 대체하여 간접적인 입력에 대해 제어할 수 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="test-spy">Test Spy
+&lt;/h2>&lt;ul>
+&lt;li>Test Stub보다는 더 강력한 버전의 Test Double로써, SUT 간접적인 입력의 관찰지점(observation point)임&lt;/li>
+&lt;li>간접적인 입력에 대해 관찰이 가능하며, SUT에 대한 간접적인 출력을 capture함
+&lt;ul>
+&lt;li>capture한 간접적인 출력에 대해 검증 가능&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Mock Object와 동일한 목적으로 사용하지만, Test Spy를 사용한다면, 테스트 스타일은 Test Stub과 더 유사함&lt;/li>
+&lt;/ul>
+&lt;h2 id="mock-object">Mock Object
+&lt;/h2>&lt;ul>
+&lt;li>SUT의 간접적인 출력을 검증할 수 있는 관찰지점&lt;/li>
+&lt;li>테스트에 실패하지 않은 경우, SUT에 반드시 값을 리턴하는, Test Stub의 기능을 포함함&lt;/li>
+&lt;li>간접 출력의 검증에 더 치우쳐져 있음&lt;/li>
+&lt;li>단순히 Test Stub에 assertion이 추가된것이 아닌, 근본적인 차이가 있음&lt;/li>
+&lt;/ul>
+&lt;h2 id="fake-object">Fake Object
+&lt;/h2>&lt;ul>
+&lt;li>SUT의 간접 입력 및 출력 확인하는 것 이외의 이유로 실제 의존하는 객체의 기능을 대체하기 위해 사용&lt;/li>
+&lt;li>실제 객체와 동일한 기능을 하지만, 간단하게 구현됨&lt;/li>
+&lt;li>테스트를 위해 특별히 구축 되지만, 제어지점이나 관찰지점으로 사용되지 않음&lt;/li>
+&lt;li>실제 의존하는 객체가 아직 사용가능하지 않거나, 테스트에 사용할 수 없을때 Fake Object를 사용함&lt;/li>
+&lt;li>데이터베이스를 인메모리 해시 테이블로 대체하여 테스트를 50배 빠르게 실행 가능하도록 할 수 있음&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://martinfowler.com/articles/mocksArentStubs.html" target="_blank" rel="noopener"
+>https://martinfowler.com/articles/mocksArentStubs.html&lt;/a>&lt;br>
+&lt;a class="link" href="http://xunitpatterns.com/Test%20Double.html" target="_blank" rel="noopener"
+>http://xunitpatterns.com/Test%20Double.html&lt;/a>&lt;/p></description></item><item><title>테스트 픽스처 도구</title><link>https://sungho94.me/p/%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%94%BD%EC%8A%A4%EC%B2%98-%EB%8F%84%EA%B5%AC/</link><pubDate>Sun, 17 Sep 2023 22:21:59 +0000</pubDate><guid>https://sungho94.me/p/%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%94%BD%EC%8A%A4%EC%B2%98-%EB%8F%84%EA%B5%AC/</guid><description>&lt;p>픽스처를 자동으로 생성해주는 도구&lt;/p>
+&lt;p>&lt;a class="link" href="https://github.com/naver/fixture-monkey" target="_blank" rel="noopener"
+>https://github.com/naver/fixture-monkey&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/j-easy/easy-random" target="_blank" rel="noopener"
+>https://github.com/j-easy/easy-random&lt;/a>&lt;/p>
+&lt;p>#Tool&lt;/p></description></item></channel></rss>

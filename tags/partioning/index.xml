@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Partioning on Sungho's Dev BLog</title><link>https://sungho94.me/tags/partioning/</link><description>Recent content in Partioning on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Tue, 03 Oct 2023 23:02:09 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/partioning/index.xml" rel="self" type="application/rss+xml"/><item><title>파티셔닝</title><link>https://sungho94.me/p/%ED%8C%8C%ED%8B%B0%EC%85%94%EB%8B%9D/</link><pubDate>Tue, 03 Oct 2023 23:02:09 +0000</pubDate><guid>https://sungho94.me/p/%ED%8C%8C%ED%8B%B0%EC%85%94%EB%8B%9D/</guid><description>&lt;ul>
+&lt;li>개념
+&lt;ul>
+&lt;li>하나의 큰 테이블을 물리적으로 작은 단위로 분리하는 것&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>파티셔닝 방법
+&lt;ul>
+&lt;li>테이블, 인덱스 파티셔닝이 존재(테이블 또는 인덱스당 최대 15000개까지 지원함)
+&lt;ul>
+&lt;li>수평 파티셔닝
+&lt;ul>
+&lt;li>row의 조건에 따라 파티셔닝함&lt;/li>
+&lt;li>파티셔닝시 proportional fill algorithm에서 나눠지는 단위가 됨&lt;/li>
+&lt;li>데이터베이스의 데이터 저장 알고리즘 &lt;a class="link" href="https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-files-and-filegroups?view=sql-server-ver16#file-and-filegroup-fill-strategy" target="_blank" rel="noopener"
+>proportional fill algorithm&lt;/a>.&lt;/li>
+&lt;li>range, hash, list로 나누는 방법이 있음&lt;/li>
+&lt;li>이로인해 쿼리성능 향상, 대용량 삭제시 적은 영향으로 삭제 와 같은 이점이 존재&lt;/li>
+&lt;li>샤딩과 다름
+&lt;ul>
+&lt;li>샤딩은 다른 머신에 데이터를 나누어 저장, 수평 파티셔닝은 하나의 머신에 나누어 저장&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>수직 파티셔닝
+&lt;ul>
+&lt;li>컬럼 별로 파티션을 나눔&lt;/li>
+&lt;li>중요한정보와 중요하지 않은 정보를 따로 저장해여 보안을 강화할 수 있음&lt;/li>
+&lt;li>자주 조회되는 묶음끼리 나눔으로써 쿼리 성능 향상을 가져옴&lt;/li>
+&lt;li>필요하지 않은 컬럼을 메모리에 올리지 않음으로 I/O향상을 가져옴&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="단점">단점
+&lt;/h3>&lt;ul>
+&lt;li>파티션을 잘못 나눌 시 오히려 성능이 저하될 수 있음&lt;/li>
+&lt;li>저장공간, 메모리의 비용이 증가함&lt;/li>
+&lt;li>잘 나눴는지에 대한 지속적인 모니터링 필요&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>Aggregate에 맞게 수직 파티셔닝 하면 어떨까?&lt;br>
+bucketing에 대해 알아보자&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://docs.gitlab.com/ee/development/database/table_partitioning.html" target="_blank" rel="noopener"
+>https://docs.gitlab.com/ee/development/database/table_partitioning.html&lt;/a>&lt;br>
+&lt;a class="link" href="https://learn.microsoft.com/en-us/sql/relational-databases/partitions/partitioned-tables-and-indexes?view=sql-server-ver16" target="_blank" rel="noopener"
+>https://learn.microsoft.com/en-us/sql/relational-databases/partitions/partitioned-tables-and-indexes?view=sql-server-ver16&lt;/a>&lt;br>
+&lt;a class="link" href="https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-files-and-filegroups?view=sql-server-ver16#file-and-filegroup-fill-strategy" target="_blank" rel="noopener"
+>https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-files-and-filegroups?view=sql-server-ver16#file-and-filegroup-fill-strategy&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.quora.com/Is-the-concept-of-a-database-partition-a-logical-concept-or-is-it-a-physical-concept" target="_blank" rel="noopener"
+>https://www.quora.com/Is-the-concept-of-a-database-partition-a-logical-concept-or-is-it-a-physical-concept&lt;/a>&lt;/p>
+&lt;p>#Database&lt;br>
+#Concept&lt;/p></description></item></channel></rss>

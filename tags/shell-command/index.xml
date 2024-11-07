@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Shell-Command on Sungho's Dev BLog</title><link>https://sungho94.me/tags/shell-command/</link><description>Recent content in Shell-Command on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Sat, 30 Sep 2023 14:42:10 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/shell-command/index.xml" rel="self" type="application/rss+xml"/><item><title>파일목록 보기, 파일디스크립터</title><link>https://sungho94.me/p/%ED%8C%8C%EC%9D%BC%EB%AA%A9%EB%A1%9D-%EB%B3%B4%EA%B8%B0-%ED%8C%8C%EC%9D%BC%EB%94%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%84%B0/</link><pubDate>Sat, 30 Sep 2023 14:42:10 +0000</pubDate><guid>https://sungho94.me/p/%ED%8C%8C%EC%9D%BC%EB%AA%A9%EB%A1%9D-%EB%B3%B4%EA%B8%B0-%ED%8C%8C%EC%9D%BC%EB%94%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%84%B0/</guid><description>&lt;h3 id="파일-목록-보기파일디스크립터-확인-위해">파일 목록 보기(파일디스크립터 확인 위해)
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">- yum install lsof
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - 설치
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">- lsof -p &amp;lt;PID&amp;gt; | wc -l
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - 파일 디스크립터 개수 확인
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">열린포트 확인
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sudo lsof -PiTCP -sTCP:LISTEN
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">특정 포트 확인
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">`sudo lsof -i :3000`
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>#shell-command&lt;/p></description></item><item><title>일정 기간 파일 삭제 및 빈 디렉토리 삭제</title><link>https://sungho94.me/p/%EC%9D%BC%EC%A0%95-%EA%B8%B0%EA%B0%84-%ED%8C%8C%EC%9D%BC-%EC%82%AD%EC%A0%9C-%EB%B0%8F-%EB%B9%88-%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC-%EC%82%AD%EC%A0%9C/</link><pubDate>Mon, 25 Sep 2023 11:02:36 +0000</pubDate><guid>https://sungho94.me/p/%EC%9D%BC%EC%A0%95-%EA%B8%B0%EA%B0%84-%ED%8C%8C%EC%9D%BC-%EC%82%AD%EC%A0%9C-%EB%B0%8F-%EB%B9%88-%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC-%EC%82%AD%EC%A0%9C/</guid><description>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">find ./ -type f -mtime +30 -print
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sudo find ./ -type f -mtime +30 -delete
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">find . -type d -empty -find
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">sudo find . -type d -empty -delete
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">10 0 * * * find /home/ec2-user/efs/es-log -type f -mtime +30 -delete
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">10 0 * * * find /home/ec2-user/efs/es-log -type d -empty -delete
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

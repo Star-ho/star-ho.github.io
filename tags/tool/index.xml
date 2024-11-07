@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tool on Sungho's Dev BLog</title><link>https://sungho94.me/tags/tool/</link><description>Recent content in Tool on Sungho's Dev BLog</description><generator>Hugo -- gohugo.io</generator><language>ko-kr</language><lastBuildDate>Wed, 20 Mar 2024 23:29:00 +0000</lastBuildDate><atom:link href="https://sungho94.me/tags/tool/index.xml" rel="self" type="application/rss+xml"/><item><title>Jfrog</title><link>https://sungho94.me/p/jfrog/</link><pubDate>Wed, 20 Mar 2024 23:29:00 +0000</pubDate><guid>https://sungho94.me/p/jfrog/</guid><description>&lt;p>&lt;a class="link" href="https://jfrog.com/artifactory/" target="_blank" rel="noopener"
+>https://jfrog.com/artifactory/&lt;/a>&lt;br>
+코드, 컨테이너, cloud component를 한번에 관리해주는 툴&lt;br>
+비쌈&lt;/p></description></item><item><title>Eclips memory Analyzer</title><link>https://sungho94.me/p/eclips-memory-analyzer/</link><pubDate>Wed, 04 Oct 2023 23:06:58 +0000</pubDate><guid>https://sungho94.me/p/eclips-memory-analyzer/</guid><description>&lt;p>mac에서 Eclips memory Analyzer 사용시&lt;/p>
+&lt;p>heap dump 분석하는 어플리케이션&lt;/p>
+&lt;p>mat.app파일을 ./Application으로 이동할것!&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/47909239/how-to-run-eclipse-memory-analyzer-on-mac-os" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/47909239/how-to-run-eclipse-memory-analyzer-on-mac-os&lt;/a>&lt;/p>
+&lt;p>어플리케이션이 느리다면 초기 메모리설정이 1g로 되어있으니 늘릴것&lt;br>
+&lt;a class="link" href="https://wiki.eclipse.org/MemoryAnalyzer/FAQ" target="_blank" rel="noopener"
+>https://wiki.eclipse.org/MemoryAnalyzer/FAQ&lt;/a>&lt;/p>
+&lt;p>#Java&lt;br>
+#Tool&lt;br>
+#Heap-dump&lt;/p></description></item><item><title>Java Development Kit Version 20 Tool Specifications</title><link>https://sungho94.me/p/java-development-kit-version-20-tool-specifications/</link><pubDate>Wed, 04 Oct 2023 23:04:11 +0000</pubDate><guid>https://sungho94.me/p/java-development-kit-version-20-tool-specifications/</guid><description>&lt;h2 id="전체-tool-정보">전체 tool 정보
+&lt;/h2>&lt;ul>
+&lt;li>&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/docs/specs/man/index.html" target="_blank" rel="noopener"
+>https://docs.oracle.com/en/java/javase/20/docs/specs/man/index.html&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="트러블-슈팅troubleshooting-시-유용할만한-툴">트러블 슈팅(troubleshooting) 시 유용할만한 툴
+&lt;/h2>&lt;p>&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/docs/specs/man/jconsole.html" target="_blank" rel="noopener"
+>jconsole&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>start a graphical console to monitor and manage Java applications&lt;/li>
+&lt;li>자바 어플리케이션의 모니터링 및 관리할수 있게 도와주는 graphical 콘솔&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/docs/specs/man/jmap.html" target="_blank" rel="noopener"
+>jmap&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>프로세스 정보 제공&lt;/li>
+&lt;li>heap dump뜰수 있음&lt;/li>
+&lt;li>heap dump뜬거는 Eclips memory Analyzer로 분석&lt;/li>
+&lt;li>jmap -dump:format=b,file=heapdump.hprof&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/docs/specs/man/jps.html" target="_blank" rel="noopener"
+>jps&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>jvm에서 돌아가는 프로세스 조회&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/docs/specs/man/jstack.html" target="_blank" rel="noopener"
+>jstack&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>thread dump뜰때 사용&lt;/li>
+&lt;li>jstack&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://docs.oracle.com/en/java/javase/20/docs/specs/man/jstat.html" target="_blank" rel="noopener"
+>jstat&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>jvm상태 모니터링&lt;/li>
+&lt;/ul>
+&lt;p>&lt;a class="link" href="https://tangoblog.tistory.com/16" target="_blank" rel="noopener"
+>https://tangoblog.tistory.com/16&lt;/a>&lt;/p>
+&lt;p>#Java&lt;br>
+#Jps&lt;/p></description></item><item><title>Byte Buddy</title><link>https://sungho94.me/p/byte-buddy/</link><pubDate>Wed, 04 Oct 2023 23:03:23 +0000</pubDate><guid>https://sungho94.me/p/byte-buddy/</guid><description>&lt;p>컴파일러의 도움 없이 Java 애플리케이션의 런타임 동안 Java 클래스를 생성 및 수정하기 위한 코드 생성 및 조작 라이브러리&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">Class&lt;/span>&lt;span class="o">&amp;lt;&lt;/span>&lt;span class="err">?&lt;/span>&lt;span class="o">&amp;gt;&lt;/span> &lt;span class="n">dynamicType&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">new&lt;/span> &lt;span class="n">ByteBuddy&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">.&lt;/span>&lt;span class="n">subclass&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="ne">Object&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="k">class&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">.&lt;/span>&lt;span class="n">method&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">ElementMatchers&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">named&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;toString&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">.&lt;/span>&lt;span class="n">intercept&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">FixedValue&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">value&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Hello World!&amp;#34;&lt;/span>&lt;span class="p">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">.&lt;/span>&lt;span class="n">make&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">.&lt;/span>&lt;span class="n">load&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">getClass&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">getClassLoader&lt;/span>&lt;span class="p">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="o">.&lt;/span>&lt;span class="n">getLoaded&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">assertThat&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">dynamicType&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">newInstance&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">toString&lt;/span>&lt;span class="p">(),&lt;/span> &lt;span class="n">is&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Hello World!&amp;#34;&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>위 방법으로 toString함수를 변경가능하다&lt;/p>
+&lt;blockquote>
+&lt;p>jpa에 ByteBuddy관련한 내용이 나와서 찾아봤는데 추후 더 찾아봐야겠다.&lt;br>
+&lt;a class="link" href="https://stackoverflow.com/questions/30769816/how-do-i-use-byte-buddy-to-create-a-lazy-loading-class" target="_blank" rel="noopener"
+>https://stackoverflow.com/questions/30769816/how-do-i-use-byte-buddy-to-create-a-lazy-loading-class&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://bytebuddy.net/#/" target="_blank" rel="noopener"
+>https://bytebuddy.net/#/&lt;/a>&lt;/p>
+&lt;p>#Java&lt;br>
+#Tool&lt;/p></description></item><item><title>Clippy</title><link>https://sungho94.me/p/clippy/</link><pubDate>Tue, 03 Oct 2023 22:54:44 +0000</pubDate><guid>https://sungho94.me/p/clippy/</guid><description>&lt;ul>
+&lt;li>windows에서는 기본의로 제공하는 클립보드에 매우 만족하고 있었는데 mac으로 넘어오니 유료에다가 만족하는게 잘 없었다.&lt;/li>
+&lt;li>&lt;a class="link" href="https://github.com/Clipy/Clipy" target="_blank" rel="noopener"
+>https://github.com/Clipy/Clipy&lt;/a>&lt;/li>
+&lt;li>간단하게 기능을 제공하면서 무료이다&lt;/li>
+&lt;/ul></description></item><item><title>Brotli</title><link>https://sungho94.me/p/brotli/</link><pubDate>Tue, 03 Oct 2023 22:52:38 +0000</pubDate><guid>https://sungho94.me/p/brotli/</guid><description>&lt;ul>
+&lt;li>google에서 개발한 압축방식&lt;/li>
+&lt;li>gzip 더 나은 압축성능을 보여줌
+&lt;ul>
+&lt;li>14% smaller JavaScript files&lt;/li>
+&lt;li>21% smaller HTML files&lt;/li>
+&lt;li>17% smaller CSS files&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>IE는 지원안함&amp;hellip;ㅠㅠ&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;a class="link" href="https://en.wikipedia.org/wiki/Brotli" target="_blank" rel="noopener"
+>https://en.wikipedia.org/wiki/Brotli&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/google/brotli" target="_blank" rel="noopener"
+>https://github.com/google/brotli&lt;/a>&lt;br>
+&lt;a class="link" href="https://www.siteground.com/blog/brotli-vs-gzip-compression/" target="_blank" rel="noopener"
+>https://www.siteground.com/blog/brotli-vs-gzip-compression/&lt;/a>&lt;/p>
+&lt;p>#Library&lt;/p></description></item><item><title>buck</title><link>https://sungho94.me/p/buck/</link><pubDate>Tue, 03 Oct 2023 22:50:11 +0000</pubDate><guid>https://sungho94.me/p/buck/</guid><description>&lt;ul>
+&lt;li>faceboock build tool&lt;/li>
+&lt;li>멀티모듈 빌드시 변경된 모듈만 재빌드&lt;/li>
+&lt;/ul></description></item><item><title>Bazel</title><link>https://sungho94.me/p/bazel/</link><pubDate>Tue, 03 Oct 2023 22:49:58 +0000</pubDate><guid>https://sungho94.me/p/bazel/</guid><description>&lt;ul>
+&lt;li>google build tool&lt;/li>
+&lt;li>멀티모듈 빌드시 변경된 모듈만 재빌드&lt;/li>
+&lt;/ul></description></item><item><title>Codecove</title><link>https://sungho94.me/p/codecove/</link><pubDate>Tue, 03 Oct 2023 22:44:04 +0000</pubDate><guid>https://sungho94.me/p/codecove/</guid><description>&lt;ul>
+&lt;li>코드 커버리지 reporting 솔루션&lt;/li>
+&lt;li>all-in-one code coverage reporting solution&lt;/li>
+&lt;/ul>
+&lt;p>#Java&lt;br>
+#Test&lt;br>
+#Library&lt;/p></description></item><item><title>Kotlin Auto fill</title><link>https://sungho94.me/p/kotlin-auto-fill/</link><pubDate>Tue, 03 Oct 2023 22:38:37 +0000</pubDate><guid>https://sungho94.me/p/kotlin-auto-fill/</guid><description>&lt;ul>
+&lt;li>kotlin aurgument를 자동으로 만들어줍니다&lt;/li>
+&lt;li>value 없이 생성&lt;/li>
+&lt;li>default value를 사용하여 생성&lt;/li>
+&lt;li>random value를 사용하여 생성&lt;/li>
+&lt;/ul></description></item><item><title>kotlin-jdsl</title><link>https://sungho94.me/p/kotlin-jdsl/</link><pubDate>Tue, 03 Oct 2023 22:37:47 +0000</pubDate><guid>https://sungho94.me/p/kotlin-jdsl/</guid><description>&lt;p>#Database&lt;br>
+#Library&lt;/p></description></item><item><title>Cucumber</title><link>https://sungho94.me/p/cucumber/</link><pubDate>Mon, 02 Oct 2023 23:26:54 +0000</pubDate><guid>https://sungho94.me/p/cucumber/</guid><description>&lt;p>테스트 자동화 도구&lt;br>
+BDD를 지원&lt;/p>
+&lt;p>#Test&lt;/p></description></item><item><title>jooq</title><link>https://sungho94.me/p/jooq/</link><pubDate>Sat, 30 Sep 2023 14:48:53 +0000</pubDate><guid>https://sungho94.me/p/jooq/</guid><description>&lt;ul>
+&lt;li>jooq
+&lt;ul>
+&lt;li>jpa가 아닌 native sql builder&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>#Database&lt;br>
+#Library&lt;/p></description></item><item><title>화면분할 in mac</title><link>https://sungho94.me/p/%ED%99%94%EB%A9%B4%EB%B6%84%ED%95%A0-in-mac/</link><pubDate>Tue, 26 Sep 2023 22:15:55 +0000</pubDate><guid>https://sungho94.me/p/%ED%99%94%EB%A9%B4%EB%B6%84%ED%95%A0-in-mac/</guid><description>&lt;p>Rectangle&lt;br>
+마그네틱&lt;/p></description></item><item><title>ctop</title><link>https://sungho94.me/p/ctop/</link><pubDate>Sun, 17 Sep 2023 22:37:55 +0000</pubDate><guid>https://sungho94.me/p/ctop/</guid><description>&lt;p>#Tool&lt;/p></description></item><item><title>테스트 픽스처 도구</title><link>https://sungho94.me/p/%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%94%BD%EC%8A%A4%EC%B2%98-%EB%8F%84%EA%B5%AC/</link><pubDate>Sun, 17 Sep 2023 22:21:59 +0000</pubDate><guid>https://sungho94.me/p/%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%94%BD%EC%8A%A4%EC%B2%98-%EB%8F%84%EA%B5%AC/</guid><description>&lt;p>픽스처를 자동으로 생성해주는 도구&lt;/p>
+&lt;p>&lt;a class="link" href="https://github.com/naver/fixture-monkey" target="_blank" rel="noopener"
+>https://github.com/naver/fixture-monkey&lt;/a>&lt;br>
+&lt;a class="link" href="https://github.com/j-easy/easy-random" target="_blank" rel="noopener"
+>https://github.com/j-easy/easy-random&lt;/a>&lt;/p>
+&lt;p>#Tool&lt;/p></description></item><item><title>DeepL</title><link>https://sungho94.me/p/deepl/</link><pubDate>Mon, 11 Sep 2023 10:20:02 +0000</pubDate><guid>https://sungho94.me/p/deepl/</guid><description>&lt;p>AI 번역 툴&lt;br>
+다른 번역기보다 번역을 잘해서 유심히 보는중 : )&lt;/p></description></item><item><title>JRebel</title><link>https://sungho94.me/p/jrebel/</link><pubDate>Mon, 11 Sep 2023 10:17:02 +0000</pubDate><guid>https://sungho94.me/p/jrebel/</guid><description>&lt;p>java 코드와 설정사항 변경시 서버 재시작없이 현재 실행하고 있는 어플리케이션에 즉시 반영해주는 도구&lt;br>
+년 550달러이다..&lt;/p></description></item><item><title>드로윙 툴</title><link>https://sungho94.me/p/%EB%93%9C%EB%A1%9C%EC%9C%99-%ED%88%B4/</link><pubDate>Mon, 11 Sep 2023 10:12:53 +0000</pubDate><guid>https://sungho94.me/p/%EB%93%9C%EB%A1%9C%EC%9C%99-%ED%88%B4/</guid><description>&lt;ul>
+&lt;li>&lt;a class="link" href="https://excalidraw.com/" target="_blank" rel="noopener"
+>https://excalidraw.com/&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.lucidchart.com/pages/" target="_blank" rel="noopener"
+>https://www.lucidchart.com/pages/&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://app.diagrams.net/" target="_blank" rel="noopener"
+>drawio&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="http://mermaid.js.org/intro/" target="_blank" rel="noopener"
+>http://mermaid.js.org/intro/&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.cloudcraft.co" target="_blank" rel="noopener"
+>www.cloudcraft.co&lt;/a>&lt;/li>
+&lt;li>&lt;a class="link" href="https://www.cloudcraft.co/" target="_blank" rel="noopener"
+>https://www.cloudcraft.co/&lt;/a>&lt;br>
+#Tool&lt;/li>
+&lt;/ul></description></item></channel></rss>
